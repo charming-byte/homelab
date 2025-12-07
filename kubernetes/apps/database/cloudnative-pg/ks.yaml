@@ -3,24 +3,29 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: cloudnative-pg
-  namespace: flux-system
+  name: &app cloudnative-pg
+  namespace: &namespace database
 spec:
-  interval: 10m
-  path: "./kubernetes/apps/database/cloudnative-pg/app"
+  interval: 30m
+  retryInterval: 1m
+  timeout: 5m
+  path: ./kubernetes/apps/database/cloudnative-pg/app
   prune: true
   sourceRef:
     kind: GitRepository
     name: flux-system
   wait: true
-  targetNamespace: database
+  targetNamespace: *namespace
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: *app
 ---
 # yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/kustomization-kustomize-v1.json
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: cloudnative-pg-cluster
-  namespace: flux-system
+  name: &app cloudnative-pg-cluster
+  namespace: &namespace database
 spec:
   dependsOn:
     - name: cloudnative-pg
@@ -38,5 +43,8 @@ spec:
     kind: GitRepository
     name: flux-system
     namespace: flux-system
-  targetNamespace: database
+  targetNamespace: *namespace
   wait: true
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: *app
