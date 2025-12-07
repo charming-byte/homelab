@@ -12,7 +12,7 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: cloudnative-pg
-        namespace: flux-system
+        namespace: database
       interval: 15m
   maxHistory: 2
   install:
