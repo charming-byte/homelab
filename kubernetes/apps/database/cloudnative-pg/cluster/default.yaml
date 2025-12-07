@@ -7,7 +7,7 @@ spec:
   affinity:
     nodeSelector:
       kubernetes.io/arch: amd64
-  instances: 3
+  instances: 2
   imageName: ghcr.io/cloudnative-pg/postgresql:18.1@sha256:765687b22589dd52a2de969c245d7e2b0667f8ab1aa29a9f70d6254f4a7208e0
   primaryUpdateStrategy: unsupervised
   storage:
@@ -23,6 +23,6 @@ spec:
     requests:
       cpu: 500m
     limits:
-      memory: 3Gi
+      memory: 2Gi
   monitoring:
     enablePodMonitor: true
