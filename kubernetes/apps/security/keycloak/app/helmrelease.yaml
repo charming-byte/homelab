@@ -35,6 +35,7 @@ spec:
               - postgres
             env:
               TZ: "Europe/Berlin"
+              KC_DB: postgres
               KC_HOSTNAME: https://auth.${SECRET_DOMAIN}
               KC_HOSTNAME_STRICT: "true"
               KC_HEALTH_ENABLED: "true"
