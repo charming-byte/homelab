@@ -13,8 +13,8 @@ spec:
   storage:
     size: 50Gi
     storageClass: local-hostpath
-  superuserSecret:
-    name: postgres-superuser
+ # superuserSecret:
+ #   name: postgres-superuser
   enableSuperuserAccess: true
   postgresql:
     parameters:
