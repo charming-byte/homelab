@@ -19,10 +19,10 @@ spec:
     parameters:
       max_connections: "300"
       shared_buffers: "512MB"
-    resources:
-      requests:
-        cpu: 500m
-      limits:
-        memory: 4Gi
+  resources:
+    requests:
+      cpu: 500m
+    limits:
+      memory: 4Gi
   monitoring:
     enablePodMonitor: true
