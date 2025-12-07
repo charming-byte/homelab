@@ -47,6 +47,8 @@ spec:
             ports:
               - name: http
                 containerPort: &port 8080
+              - name: health
+                containerPort: &health 9000
             probes:
               startup:
                 enabled: true
@@ -54,7 +56,7 @@ spec:
                 spec:
                   httpGet:
                     path: /health/started
-                    port: 9000
+                    port: *health
                   periodSeconds: 1
                   failureThreshold: 600
               readiness:
@@ -63,7 +65,7 @@ spec:
                 spec:
                   httpGet:
                     path: /health/ready
-                    port: 9000
+                    port: *health
                   periodSeconds: 10
                   failureThreshold: 3
               liveness:
@@ -72,7 +74,7 @@ spec:
                 spec:
                   httpGet:
                     path: /health/live
-                    port: 9000
+                    port: *health
                   periodSeconds: 10
                   failureThreshold: 3
             resources:
