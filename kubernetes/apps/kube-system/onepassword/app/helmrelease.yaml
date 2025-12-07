@@ -1,24 +1,32 @@
 ---
-# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrelease-helm-v2.json
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
   name: onepassword-connect
-  namespace: kube-system
 spec:
-  interval: 1h
   chartRef:
     kind: OCIRepository
-    name: app-template
+    name: onepassword-connect
+  interval: 30m
   values:
+    defaultPodOptions:
+      securityContext:
+        fsGroup: 999
+        fsGroupChangePolicy: OnRootMismatch
+        runAsGroup: 999
+        runAsNonRoot: true
+        runAsUser: 999
     controllers:
       onepassword-connect:
         strategy: RollingUpdate
+        annotations:
+          reloader.stakater.com/auto: "true"
         containers:
           api:
             image:
-              repository: docker.io/1password/connect-api
-              tag: 1.8.1@sha256:8fe7bcd50c9e73899e0a1aa5aa43421ca75fbceacb33dd07f6418c4116e637a1
+              repository: ghcr.io/1password/connect-api
+              tag: 1.8.1
             env:
               XDG_DATA_HOME: &configDir /config
               OP_HTTP_PORT: &apiPort 8080
@@ -61,8 +69,8 @@ spec:
                 memory: 256M
           sync:
             image:
-              repository: docker.io/1password/connect-sync
-              tag: 1.8.1@sha256:d5e937b2b7e314dbbaffacf469dc8f30376b5954a3ad836c8d96e6cb579d7fab
+              repository: ghcr.io/1password/connect-sync
+              tag: 1.8.1
             env:
               XDG_DATA_HOME: *configDir
               OP_HTTP_PORT: &syncPort 8081
@@ -94,16 +102,8 @@ spec:
                   initialDelaySeconds: 15
             securityContext: *securityContext
             resources: *resources
-    defaultPodOptions:
-      securityContext:
-        runAsNonRoot: true
-        runAsUser: 999
-        runAsGroup: 999
-        fsGroup: 999
-        fsGroupChangePolicy: OnRootMismatch
     service:
       app:
-        controller: onepassword-connect
         ports:
           http:
             port: *apiPort
