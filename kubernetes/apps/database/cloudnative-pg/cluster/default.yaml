@@ -3,7 +3,6 @@ apiVersion: postgresql.cnpg.io/v1
 kind: Cluster
 metadata:
   name: &current postgres
-  namespace: database
 spec:
   affinity:
     nodeSelector:
@@ -18,7 +17,12 @@ spec:
     name: postgres-superuser
   postgresql:
     parameters:
-      max_connections: "800"
+      max_connections: "300"
       shared_buffers: "512MB"
+    resources:
+      requests:
+        cpu: 500m
+      limits:
+        memory: 4Gi
   monitoring:
     enablePodMonitor: true
