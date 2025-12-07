@@ -13,8 +13,11 @@ spec:
   postBuild:
     substitute:
       APP: lldap
+
     substituteFrom:
       - name: cluster-secrets
+        kind: Secret
+      - name: postgres-app
         kind: Secret
   prune: true
   sourceRef:
