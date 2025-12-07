@@ -107,7 +107,7 @@ spec:
             targetPort: *port
 
     route:
-      app:
+      keycloak:
         hostnames: ["auth.${SECRET_DOMAIN}"]
         parentRefs:
           - name: envoy-internal
@@ -115,7 +115,7 @@ spec:
             sectionName: https
         rules:
           - backendRefs:
-              - identifier: app
+              - identifier: keycloak
                 port: *port
     # ingress:
     #   keycloak:
