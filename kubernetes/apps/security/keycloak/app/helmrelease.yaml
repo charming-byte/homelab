@@ -37,7 +37,6 @@ spec:
               TZ: "Europe/Berlin"
               KC_DB: postgres
               KC_HOSTNAME: https://auth.${SECRET_DOMAIN}
-              KC_HOSTNAME_STRICT: "false"
               KC_HEALTH_ENABLED: "true"
               KC_HTTP_ENABLED: "true"
               KC_FEATURES: scripts
@@ -119,7 +118,7 @@ spec:
         rules:
           - backendRefs:
               - identifier: keycloak
-                port: *port
+                port: 80
     # ingress:
     #   keycloak:
     #     hosts:
