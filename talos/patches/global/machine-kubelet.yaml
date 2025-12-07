@@ -13,3 +13,10 @@ machine:
           - bind
           - rshared
           - rw
+      - destination: /var/openebs/local
+        type: bind
+        source:  /var/openebs/local
+        options:
+          - bind
+          - rshared
+          - rw
