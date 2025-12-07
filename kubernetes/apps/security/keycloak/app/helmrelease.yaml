@@ -37,7 +37,7 @@ spec:
               TZ: "Europe/Berlin"
               KC_DB: postgres
               KC_HOSTNAME: https://auth.${SECRET_DOMAIN}
-              KC_HOSTNAME_STRICT: "true"
+              KC_HOSTNAME_STRICT: "false"
               KC_HEALTH_ENABLED: "true"
               KC_HTTP_ENABLED: "true"
               KC_FEATURES: scripts
@@ -81,7 +81,7 @@ spec:
             resources:
               requests:
                 cpu: 10m
-                memory: 666Mi
+                memory: 2048Mi
               limits:
                 memory: 4096Mi
     defaultPodOptions:
