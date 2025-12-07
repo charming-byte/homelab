@@ -66,7 +66,7 @@ spec:
             port: *ldapPort
     route:
       app:
-        hostnames: ["{{ .Release.Name }}.${CLUSTER_DOMAIN}"]
+        hostnames: ["{{ .Release.Name }}.${SECRET_DOMAIN}"]
         parentRefs:
           - name: envoy-internal
             namespace: network
