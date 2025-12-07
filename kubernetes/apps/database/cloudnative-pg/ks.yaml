@@ -24,6 +24,7 @@ metadata:
 spec:
   dependsOn:
     - name: cloudnative-pg
+      namespace: flux-system
     - name: openebs
       namespace: openebs-system
   healthCheckExprs:
