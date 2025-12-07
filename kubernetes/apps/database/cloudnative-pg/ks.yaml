@@ -30,8 +30,8 @@ metadata:
 spec:
   dependsOn:
     - name: cloudnative-pg
-    - name: openebs
-      namespace: openebs-system
+    - name: longhorn
+      namespace: longhorn-system
   interval: 1h
   path: ./kubernetes/apps/database/cloudnative-pg/cluster
   prune: true
