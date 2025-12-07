@@ -6,9 +6,9 @@ machine:
       validSubnets:
         - 192.168.178.0/24
     extraMounts:
-      - destination: /var/openebs/local
+      - destination: /var/lib/longhorn
         type: bind
-        source: /var/openebs/local
+        source: /var/lib/longhorn
         options:
           - bind
           - rshared
