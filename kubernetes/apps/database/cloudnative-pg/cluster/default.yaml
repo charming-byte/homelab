@@ -15,6 +15,7 @@ spec:
     storageClass: local-hostpath
   superuserSecret:
     name: postgres-superuser
+  enableSuperuserAccess: true
   postgresql:
     parameters:
       max_connections: "300"
