@@ -23,6 +23,6 @@ spec:
     requests:
       cpu: 500m
     limits:
-      memory: 4Gi
+      memory: 3Gi
   monitoring:
     enablePodMonitor: true
