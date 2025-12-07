@@ -4,7 +4,7 @@ kind: Kustomization
 namespace: cert-manager
 
 components:
-  - ../../components/sops
+  - ../../components/common
 
 resources:
   - ./namespace.yaml
