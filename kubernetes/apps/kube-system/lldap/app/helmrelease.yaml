@@ -12,7 +12,6 @@ spec:
   values:
     controllers:
       lldap:
-        replicas: 2
         strategy: RollingUpdate
         annotations:
           reloader.stakater.com/auto: "true"
@@ -28,7 +27,7 @@ spec:
           app:
             image:
               repository: ghcr.io/lldap/lldap
-              tag: v0.6.2
+              tag: 2025-12-02-alpine@sha256:091a416f9faa3ef87c5bfebf9d9f3c3b7a3198e2a4f486cdd7e33d3eb2cb78f1
             env:
               TZ: ${TIMEZONE:=Europe/Berlin}
               LLDAP_HTTP_PORT: &port 80
@@ -64,6 +63,10 @@ spec:
             primary: true
           ldap:
             port: *ldapPort
+    serviceMonitor:
+      app:
+        endpoints:
+          - port: http
     route:
       app:
         hostnames: ["{{ .Release.Name }}.${SECRET_DOMAIN}"]
