@@ -12,7 +12,7 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: cloudnative-pg
-        namespace: database
+        namespace: dbms
       interval: 15m
   maxHistory: 2
   install:

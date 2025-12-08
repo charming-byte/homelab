@@ -8,14 +8,14 @@ spec:
   interval: 30m
   retryInterval: 1m
   timeout: 5m
-  path: ./kubernetes/apps/database/cloudnative-pg/app
+  path: ./kubernetes/apps/dbms/cloudnative-pg/app
   prune: true
   sourceRef:
     kind: GitRepository
     name: flux-system
     namespace: flux-system
   wait: true
-  targetNamespace: database
+  targetNamespace: dbms
   commonMetadata:
     labels:
       app.kubernetes.io/name: *app
@@ -31,13 +31,13 @@ spec:
     - name: openebs
       namespace: openebs-system
   interval: 1h
-  path: ./kubernetes/apps/database/cloudnative-pg/cluster
+  path: ./kubernetes/apps/dbms/cloudnative-pg/cluster
   prune: true
   sourceRef:
     kind: GitRepository
     name: flux-system
     namespace: flux-system
-  targetNamespace: database
+  targetNamespace: dbms
   wait: true
   commonMetadata:
     labels:
