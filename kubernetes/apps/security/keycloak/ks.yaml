@@ -22,4 +22,4 @@ spec:
   wait: true
   dependsOn:
     - name: cloudnative-pg-cluster
-      namespace: database
+      namespace: dbms
