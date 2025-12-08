@@ -3,7 +3,6 @@ apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
   name: &appname keycloak
-  namespace: flux-system
 spec:
   targetNamespace: security
   commonMetadata:
@@ -22,3 +21,4 @@ spec:
   wait: true
   dependsOn:
     - name: cloudnative-pg-cluster
+      namespace: database
