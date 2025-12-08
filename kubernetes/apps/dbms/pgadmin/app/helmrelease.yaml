@@ -52,7 +52,7 @@ spec:
       config:
         enabled: true
         type: persistentVolumeClaim
-        existingClaim: "${OPENEBS_CLAIM}"
+        existingClaim: pgadmin
             # server-json:
             #   enabled: true
             #   type: configMap
