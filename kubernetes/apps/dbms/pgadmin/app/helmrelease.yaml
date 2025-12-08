@@ -51,7 +51,7 @@ spec:
             sectionName: https
     persistence:
       config:
-        existingClaim: "${VOLSYNC_CLAIM}"
+        existingClaim: "${OPENEBS_CLAIM}"
         globalMounts:
           - path: /var/lib/pgadmin
             # server-json:
