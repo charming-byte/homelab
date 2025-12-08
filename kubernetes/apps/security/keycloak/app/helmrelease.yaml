@@ -8,7 +8,7 @@ spec:
   interval: 30m
   chartRef:
     kind: OCIRepository
-    name: keycloak
+    name: app-template
   values:
     controllers:
       keycloak:
