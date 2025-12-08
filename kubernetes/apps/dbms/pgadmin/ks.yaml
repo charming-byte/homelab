@@ -27,3 +27,4 @@ spec:
   postBuild:
     substitute:
       APP: *app
+      OPENEBS_CAPACITY: 1Gi
