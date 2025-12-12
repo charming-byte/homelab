@@ -35,7 +35,7 @@ releases:
   - name: cloudnative-pg
     namespace: default
     chart: cloudnative-pg/cloudnative-pg
-    version: 0.26.1
+    version: 0.27.0
 
   - name: external-secrets
     namespace: kube-system
