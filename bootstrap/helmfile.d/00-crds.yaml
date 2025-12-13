@@ -10,7 +10,7 @@ helmDefaults:
   postRenderer: bash
   postRendererArgs:
     - -c
-    - yq ea -e 'select(.kind == "CustomResourceDefinition")'
+    - yq eval-all --exit-status 'select(.kind == "CustomResourceDefinition")'
 
 repositories:
   - name: cloudnative-pg
@@ -31,3 +31,13 @@ releases:
     namespace: observability
     chart: oci://ghcr.io/prometheus-community/charts/kube-prometheus-stack
     version: 80.3.0
+
+  - name: cloudnative-pg
+    namespace: default
+    chart: cloudnative-pg/cloudnative-pg
+    version: 0.27.0
+
+  - name: external-secrets
+    namespace: kube-system
+    chart: oci://ghcr.io/external-secrets/charts/external-secrets
+    version: 1.1.1
