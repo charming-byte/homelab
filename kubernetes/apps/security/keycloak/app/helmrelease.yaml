@@ -33,10 +33,11 @@ spec:
               - start
               - --db
               - postgres
+              - --metrics-enabled=true
             env:
               TZ: "Europe/Berlin"
               KC_DB: postgres
-              KC_HOSTNAME: https://auth.${SECRET_DOMAIN}
+              KC_HOSTNAME: https://sso.${SECRET_DOMAIN}
               KC_HEALTH_ENABLED: "true"
               KC_HTTP_ENABLED: "true"
               KC_FEATURES: scripts
@@ -91,7 +92,7 @@ spec:
 
     route:
       keycloak:
-        hostnames: ["auth.${SECRET_DOMAIN}"]
+        hostnames: ["sso.${SECRET_DOMAIN}"]
         parentRefs:
           - name: envoy-internal
             namespace: network

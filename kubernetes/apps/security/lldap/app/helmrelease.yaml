@@ -71,10 +71,6 @@ spec:
             primary: true
           ldap:
             port: *ldapPort
-    serviceMonitor:
-      app:
-        endpoints:
-          - port: http
     route:
       app:
         hostnames: ["{{ .Release.Name }}.${SECRET_DOMAIN}"]
