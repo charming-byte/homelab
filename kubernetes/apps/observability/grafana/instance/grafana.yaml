@@ -57,7 +57,7 @@ spec:
           volumes:
             - name: grafana-data
               persistentVolumeClaim:
-                claimName: local-hostpath
+                claimName: grafana-pvc
   persistentVolumeClaim:
     spec:
       accessModes:
