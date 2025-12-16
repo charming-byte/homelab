@@ -60,7 +60,7 @@ spec:
           - port: http
     route:
       app:
-        hostnames: ["ai.api.${SECRET_DOMAIN}"]
+        hostnames: ["api.ai.${SECRET_DOMAIN}"]
         parentRefs:
           - name: envoy-internal
             namespace: network
