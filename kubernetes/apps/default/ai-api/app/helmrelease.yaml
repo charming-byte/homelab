@@ -1,0 +1,70 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: ai-api
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: ai-api
+  interval: 1h
+  values:
+    controllers:
+      echo:
+        strategy: RollingUpdate
+        containers:
+          app:
+            image:
+              repository: ghcr.io/ericc-ch/copilot-api
+              tag: v0.7@sha256:528117aa62e0393f90dbdb8f33ab0c8383335690c06eeee9c2abc7f81b6d974f
+            envFrom:
+              - secretRef:
+                  name: ai-api-secret
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /healthz
+                    port: &port 4141
+                  initialDelaySeconds: 0
+                  periodSeconds: 10
+                  timeoutSeconds: 1
+                  failureThreshold: 3
+              readiness: *probes
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: { drop: ["ALL"] }
+            resources:
+              requests:
+                cpu: 10m
+              limits:
+                memory: 64Mi
+    defaultPodOptions:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65534
+        runAsGroup: 65534
+    service:
+      app:
+        ports:
+          http:
+            port: 80
+            targetPort: *port
+    serviceMonitor:
+      app:
+        endpoints:
+          - port: http
+    route:
+      app:
+        hostnames: ["{{ .Release.Name }}.${SECRET_DOMAIN}"]
+        parentRefs:
+          - name: envoy-internal
+            namespace: network
+            sectionName: https
+        rules:
+          - backendRefs:
+              - identifier: app
+                port: 80
