@@ -12,6 +12,8 @@ spec:
     controllers:
       echo:
         strategy: RollingUpdate
+        annotations:
+          reloader.stakater.com/auto: "true"
         containers:
           app:
             image:
@@ -58,7 +60,7 @@ spec:
           - port: http
     route:
       app:
-        hostnames: ["{{ .Release.Name }}.${SECRET_DOMAIN}"]
+        hostnames: ["ai.api.${SECRET_DOMAIN}"]
         parentRefs:
           - name: envoy-internal
             namespace: network
