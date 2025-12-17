@@ -1,0 +1,149 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &name gitea
+spec:
+  interval: 1h
+  timeout: 15m
+  chartRef:
+    kind: OCIRepository
+    name: gitea
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      strategy: rollback
+      retries: 3
+  values:
+    defaultPodOptions:
+      automountServiceAccountToken: false
+      enableServiceLinks: false
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        fsGroupChangePolicy: "OnRootMismatch"
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+    controllers:
+      gitea:
+        annotations:
+          reloader.stakater.com/auto: "true"
+        initContainers:
+          init-db:
+            image:
+              repository: ghcr.io/home-operations/postgres-init
+              tag: 18.1.0@sha256:866f15038ed5185a2b8118821f470bb7ca0df8c4231b8e277446e681ebb1ed84
+            envFrom: &envFrom
+              - secretRef:
+                  name: gitea-secret
+        containers:
+          gitea:
+            image:
+              repository: ghcr.io/go-gitea/gitea
+              tag: 1.25.2-rootless
+            env:
+              TZ: "Europe/Berlin"
+              USER_UID: 1000
+              USER_GID: 1000
+              GITEA__database__DB_TYPE: postgres
+              GITEA__database__HOST: postgres-rw.dbms
+              GITEA__REPOSITORY__ENABLE_PUSH_CREATE_USER: "true"
+              #GITEA__SECURITY__INSTALL_LOCK: "true"
+              GITEA__SERVICE__DISABLE_REGISTRATION: "true"
+              GITEA__SERVER__HTTP_PORT: &port 80
+              GITEA__SERVER__DOMAIN: "git.${SECRET_DOMAIN}"
+              GITEA__SERVER__ROOT_URL: "https://git.${SECRET_DOMAIN}"
+              GITEA__SERVER__SSH_DOMAIN: "git.${SECRET_DOMAIN}"
+              GITEA__SERVER__SSH_PORT: &sshPort 22
+              GITEA__SERVER__START_SSH_SERVER: "true"
+              GITEA__SERVER__SSH_LISTEN_PORT: 2222
+            envFrom: *envFrom
+            probes:
+              liveness: &probes
+                enabled: true
+              readiness: *probes
+              startup: *probes
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities:
+                add:
+                  - CHOWN
+                drop:
+                  - ALL
+            resources:
+              requests:
+                cpu: 500m
+                memory: 266Mi
+              limits:
+                memory: 1Gi
+    service:
+      gitea:
+        controller: *name
+        ports:
+          http:
+            port: *port
+      ssh:
+        controller: *name
+        type: LoadBalancer
+        loadBalancerIP: 192.168.0.167
+        annotations:
+          external-dns.alpha.kubernetes.io/hostname: git.${SECRET_DOMAIN}
+        ports:
+          ssh:
+            port: *sshPort
+            targetPort: 2222
+            protocol: TCP
+    serviceMonitor:
+      gitea:
+        endpoints:
+          - port: http
+            scrapeTimeout: 3s
+            interval: 10s
+        selector:
+          matchLabels:
+            app.kubernetes.io/instance: gitea
+            app.kubernetes.io/name: app
+    route:
+      gitea:
+        hostnames: ["git.${SECRET_DOMAIN}"]
+        parentRefs:
+          - name: envoy-internal
+            namespace: network
+            sectionName: https
+        rules:
+          - backendRefs:
+              - identifier: gitea
+                port: *port
+      git:
+        parentRefs:
+          - name: envoy-internal
+            namespace: network
+            sectionName: git-ssh
+        rules:
+          - backendRefs:
+              - name: gitea
+                port: *sshPort
+    persistence:
+      data:
+        type: persistentVolumeClaim
+        storageClass: local-hostpath
+        accessMode: ReadWriteOnce
+        size: 4Gi
+        advancedMounts:
+          gitea:
+            gitea:
+              - path: /var/lib/gitea
+                subPath: data
+              - path: /etc/gitea
+                subPath: config
+      tmp:
+        type: emptyDir
+        globalMounts:
+          - path: /tmp

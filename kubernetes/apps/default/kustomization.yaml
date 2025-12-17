@@ -8,3 +8,4 @@ resources:
   - ./namespace.yaml
   - ./echo/ks.yaml
   - ./ai-api/ks.yaml
+  - ./gitea/ks.yaml
