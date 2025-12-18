@@ -27,7 +27,7 @@ spec:
           app:
             image:
               repository: ghcr.io/lldap/lldap
-              tag: 2025-12-02-alpine@sha256:091a416f9faa3ef87c5bfebf9d9f3c3b7a3198e2a4f486cdd7e33d3eb2cb78f1
+              tag: 2025-12-12-alpine-rootless@sha256:6ca0e292556af7722676b1ddad86d79e6c40421286f667011587624e01a2226d
             env:
               TZ: ${TIMEZONE:=Europe/Berlin}
               LLDAP_HTTP_PORT: &port 80
@@ -39,8 +39,6 @@ spec:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true
               capabilities:
-                add:
-                  - CHOWN
                 drop:
                   - ALL
             probes:
@@ -91,5 +89,7 @@ spec:
               - identifier: app
                 port: *port
     persistence:
-      app:
+      data:
         type: emptyDir
+        globalMounts:
+          - path: /data
