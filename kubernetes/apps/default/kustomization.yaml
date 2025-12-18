@@ -9,3 +9,4 @@ resources:
   - ./echo/ks.yaml
   - ./ai-api/ks.yaml
   - ./gitea/ks.yaml
+  - ./smtp-relay/ks.yaml
