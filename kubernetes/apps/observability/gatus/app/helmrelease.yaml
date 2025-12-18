@@ -29,6 +29,13 @@ spec:
                 cpu: 10m
               limits:
                 memory: 64Mi
+            env:
+              FOLDER: /config
+              LABEL: gatus.io/enabled
+              NAMESPACE: ALL
+              RESOURCE: both
+              UNIQUE_FILENAMES: true
+              METHOD: WATCH
             restartPolicy: Always
         containers:
           app:
