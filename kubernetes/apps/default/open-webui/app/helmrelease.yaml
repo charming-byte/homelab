@@ -40,6 +40,7 @@ spec:
               RAG_WEB_SEARCH_ENGINE: searxng
               SEARXNG_QUERY_URL: http://searxng:8080/search?q=<query>
               ENABLE_WEBSOCKET_SUPPORT: True
+              ENABLE_VERSION_UPDATE_CHECK: False
               WEBSOCKET_MANAGER: redis
               WEBSOCKET_REDIS_URL: redis://dragonfly.dbms.svc.cluster.local:6379/6
               # Auth
