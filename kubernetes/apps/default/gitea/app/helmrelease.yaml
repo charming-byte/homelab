@@ -120,6 +120,7 @@ spec:
               - identifier: gitea
                 port: *port
       git:
+        kind: TCPRoute
         parentRefs:
           - name: envoy-internal
             namespace: network
