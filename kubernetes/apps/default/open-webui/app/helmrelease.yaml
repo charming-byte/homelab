@@ -37,8 +37,8 @@ spec:
               ENABLE_OLLAMA_API: False
               ENABLE_RAG_WEB_SEARCH: True
               ENABLE_SEARCH_QUERY: True
-              RAG_WEB_SEARCH_ENGINE: searxng
-              SEARXNG_QUERY_URL: http://searxng:8080/search?q=<query>
+              RAG_WEB_SEARCH_ENGINE: tavily
+              #SEARXNG_QUERY_URL: http://searxng:8080/search?q=<query>
               ENABLE_WEBSOCKET_SUPPORT: True
               ENABLE_VERSION_UPDATE_CHECK: False
               WEBSOCKET_MANAGER: redis
@@ -111,3 +111,10 @@ spec:
         size: 2G
         globalMounts:
           - path: /app/backend/data
+      tmpfs:
+        type: emptyDir
+        advancedMounts:
+          open-webui:
+            app:
+              - path: /tmp
+                subPath: tmp
