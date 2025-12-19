@@ -21,7 +21,7 @@ spec:
     keepHistory: false
   values:
     controllers:
-      jellyfin:
+      jellyfin2:
         annotations:
           reloader.stakater.com/auto: "true"
         containers:
@@ -132,6 +132,6 @@ spec:
         globalMounts:
           - path: /data2
       cache:
-        existingClaim: jellyfin-cache
+        existingClaim: jellyfin2-cache
         globalMounts:
           - path: /cache
