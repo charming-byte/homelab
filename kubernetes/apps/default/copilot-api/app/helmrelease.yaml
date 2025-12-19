@@ -2,15 +2,15 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: ai-api
+  name: copilot-api
 spec:
   chartRef:
     kind: OCIRepository
-    name: ai-api
+    name: copilot-api
   interval: 1h
   values:
     controllers:
-      ai-api:
+      copilot-api:
         replicas: 1
         strategy: RollingUpdate
         annotations:
@@ -22,7 +22,7 @@ spec:
               tag: v0.7@sha256:528117aa62e0393f90dbdb8f33ab0c8383335690c06eeee9c2abc7f81b6d974f
             envFrom:
               - secretRef:
-                  name: ai-api-secret
+                  name: copilot-api-secret
             probes:
               liveness: &probes
                 enabled: true

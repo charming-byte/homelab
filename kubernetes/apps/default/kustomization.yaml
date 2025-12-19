@@ -7,7 +7,7 @@ components:
 resources:
   - ./namespace.yaml
   - ./echo/ks.yaml
-  - ./ai-api/ks.yaml
+  - ./copilot-api/ks.yaml
   - ./gitea/ks.yaml
   - ./smtp-relay/ks.yaml
   - ./jellyfin/ks.yaml
