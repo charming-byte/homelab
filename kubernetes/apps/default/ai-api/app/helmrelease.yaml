@@ -10,7 +10,8 @@ spec:
   interval: 1h
   values:
     controllers:
-      echo:
+      ai-api:
+        replicas: 2
         strategy: RollingUpdate
         annotations:
           reloader.stakater.com/auto: "true"

@@ -31,7 +31,7 @@ spec:
               DOTNET_SYSTEM_IO_DISABLEFILELOCKING: "true"
               JELLYFIN_FFmpeg__probesize: 50000000
               JELLYFIN_FFmpeg__analyzeduration: 50000000
-              JELLYFIN_PublishedServerUrl: &ip 10.0.20.70
+              #JELLYFIN_PublishedServerUrl: &ip 10.0.20.70
               TZ: Europe/Berlin
             resources:
               requests:
@@ -83,9 +83,9 @@ spec:
     service:
       app:
         controller: *app
-        type: LoadBalancer
-        annotations:
-          lbipam.cilium.io/ips: *ip
+        #type: LoadBalancer
+        #annotations:
+        #  lbipam.cilium.io/ips: *ip
         ports:
           http:
             port: &port 8096
