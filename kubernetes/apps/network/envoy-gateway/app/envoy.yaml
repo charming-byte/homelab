@@ -108,7 +108,7 @@ spec:
           from: Selector
           selector:
               matchLabels:
-                  kubernetes.io/metadata.name: gitea
+                  kubernetes.io/metadata.name: default
 ---
 apiVersion: gateway.envoyproxy.io/v1alpha1
 kind: BackendTrafficPolicy
