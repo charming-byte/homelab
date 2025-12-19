@@ -85,12 +85,13 @@ spec:
     service:
       app:
         controller: *app
-        #type: LoadBalancer
+        type: LoadBalancer
         #annotations:
         #  lbipam.cilium.io/ips: *ip
         ports:
           http:
-            port: &port 8096
+            port: &port 80
+            targetPort: 8096
 
     route:
       app:
