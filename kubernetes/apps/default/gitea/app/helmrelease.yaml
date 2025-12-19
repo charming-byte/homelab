@@ -110,6 +110,7 @@ spec:
             app.kubernetes.io/name: app
     route:
       gitea:
+        enabled: true
         hostnames: ["git.${SECRET_DOMAIN}"]
         parentRefs:
           - name: envoy-internal
@@ -120,6 +121,7 @@ spec:
               - identifier: gitea
                 port: *port
       git:
+        enabled: true
         kind: TCPRoute
         parentRefs:
           - name: envoy-internal
