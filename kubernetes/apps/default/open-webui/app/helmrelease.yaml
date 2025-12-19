@@ -12,6 +12,7 @@ spec:
   values:
     controllers:
       open-webui:
+        strategy: RollingUpdate
         pod:
           annotations:
             reloader.stakater.com/auto: "true"
