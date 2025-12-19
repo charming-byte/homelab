@@ -72,6 +72,8 @@ spec:
                 cpu: 100m
               limits:
                 memory: 256Mi
+        serviceAccount:
+          identifier: gatus
         statefulset:
           volumeClaimTemplates:
             - name: config
@@ -96,8 +98,6 @@ spec:
           - port: http
     route:
       app:
-        annotations:
-          gatus.home-operations.com/enabled: "false"
         hostnames:
           - "{{ .Release.Name }}.${SECRET_DOMAIN}"
           - status.${SECRET_DOMAIN}
@@ -138,6 +138,8 @@ spec:
     serviceAccount:
       gatus: {}
     persistence:
+      config:
+        type: emptyDir
       config-file:
         type: configMap
         name: "{{ .Release.Name }}-configmap"
