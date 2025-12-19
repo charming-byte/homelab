@@ -46,7 +46,7 @@ spec:
           gitea:
             image:
               repository: ghcr.io/go-gitea/gitea
-              tag: 1.25.2-rootless
+              tag: 1.25.3-rootless
             env:
               TZ: "Europe/Berlin"
               USER_UID: 1000
