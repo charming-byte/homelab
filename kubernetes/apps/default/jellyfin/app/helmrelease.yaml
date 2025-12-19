@@ -106,7 +106,7 @@ spec:
               - "[STATUS] == 200"
         parentRefs:
           - name: envoy-internal
-            namespace: networking
+            namespace: network
             sectionName: https
         rules:
           - backendRefs:
