@@ -126,7 +126,7 @@ spec:
             sectionName: git-ssh
         rules:
           - backendRefs:
-              - name: gitea
+              - name: ssh
                 port: *sshPort
     persistence:
       data:
