@@ -55,7 +55,7 @@ spec:
               OAUTH_ALLOWED_ROLES: "users, admin"
               OAUTH_ADMIN_ROLES: admin
               OAUTH_ROLES_CLAIM: groups
-              OAUTH_SCOPES: "openid email profile groups"
+              OAUTH_SCOPES: "openid email profile"
               DEFAULT_USER_ROLE: user
               ENABLE_LOGIN_FORM: False
               OAUTH_UPDATE_PICTURE_ON_LOGIN: True
