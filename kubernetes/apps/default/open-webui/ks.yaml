@@ -11,11 +11,11 @@ spec:
       app.kubernetes.io/name: *app
   dependsOn:
     - name: cloudnative-pg-cluster
-      namespace: database
+      namespace: dbms
     - name: dragonfly-cluster
-      namespace: database
+      namespace: dbms
     - name: onepassword
-      namespace: external-secrets
+      namespace: kube-system
     - name: openebs
       namespace: openebs-system
   path: ./kubernetes/apps/default/open-webui/app
