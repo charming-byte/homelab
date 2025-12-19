@@ -99,7 +99,7 @@ spec:
             sectionName: https
         rules:
           - backendRefs:
-              - identifier: app
+              - identifier: open-webui
                 port: *port
 
     persistence:
