@@ -10,3 +10,4 @@ resources:
   - ./ai-api/ks.yaml
   - ./gitea/ks.yaml
   - ./smtp-relay/ks.yaml
+  - ./jellyfin/ks.yaml
