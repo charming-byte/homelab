@@ -14,7 +14,7 @@ spec:
       namespace: dbms
     - name: dragonfly-cluster
       namespace: dbms
-    - name: onepassword
+    - name: onepassword-connect
       namespace: kube-system
     - name: openebs
       namespace: openebs-system
