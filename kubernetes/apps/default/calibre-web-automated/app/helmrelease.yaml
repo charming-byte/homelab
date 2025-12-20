@@ -94,13 +94,12 @@ spec:
 
     persistence:
       config:
-        enabled: true
         type: persistentVolumeClaim
         storageClass: local-hostpath
         accessMode: ReadWriteOnce
         size: 5Gi
         advancedMounts:
-          calibre-web:
+          calibre-web-automated:
             app:
               - path: /config
       ingest:
