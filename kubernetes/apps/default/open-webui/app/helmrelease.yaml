@@ -88,12 +88,12 @@ spec:
     route:
       app:
         annotations:
-          # gethomepage.dev/enabled: "true"
-          # gethomepage.dev/description: Interact with your AI models
-          # gethomepage.dev/group: LLM/Ai
-          # gethomepage.dev/icon: sh-open-webui.svg
-          # gethomepage.dev/name: Open WebUI
-          # gethomepage.dev/app: open-webui
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/description: Interact with your AI models
+          gethomepage.dev/group: AI
+          gethomepage.dev/icon: sh-open-webui.svg
+          gethomepage.dev/name: Open WebUI
+          gethomepage.dev/app: open-webui
         hostnames: ["chat.${SECRET_DOMAIN}"]
         parentRefs:
           - name: envoy-internal

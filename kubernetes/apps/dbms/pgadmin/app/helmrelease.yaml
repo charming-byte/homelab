@@ -43,6 +43,11 @@ spec:
             port: 80
     route:
       app:
+        annotations:
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/icon: pgadmin.png
+          gethomepage.dev/name: PGAdmin
+          gethomepage.dev/group: Infrastructure
         hostnames: ["{{ .Release.Name }}.${SECRET_DOMAIN}"]
         parentRefs:
           - name: envoy-internal
@@ -53,10 +58,3 @@ spec:
         enabled: true
         type: persistentVolumeClaim
         existingClaim: pgadmin
-            # server-json:
-            #   enabled: true
-            #   type: configMap
-            #   name: servers-json
-            #   globalMounts:
-            #     - path: /pgadmin4/servers.json
-            #       subPath: servers.json

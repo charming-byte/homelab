@@ -79,14 +79,12 @@ spec:
           - 44
           - 105
           - 10000
-      #nodeSelector:
-        #intel.feature.node.kubernetes.io/gpu: "true"
+      nodeSelector:
+        intel.feature.node.kubernetes.io/gpu: "true"
 
     service:
       app:
         controller: *app
-        #annotations:
-        #  lbipam.cilium.io/ips: *ip
         ports:
           http:
             port: &port 80
@@ -128,7 +126,7 @@ spec:
         type: emptyDir
       data:
         type: nfs
-        server: 192.168.178.54
+        server: nas.internal
         path: /media
         globalMounts:
           - path: /data
