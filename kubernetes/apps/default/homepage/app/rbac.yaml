@@ -17,7 +17,7 @@ rules:
       - get
       - list
   - apiGroups:
-      - gateway.network.k8s.io
+      - gateway.networking.k8s.io
     resources:
       - httproutes
       - gateways
