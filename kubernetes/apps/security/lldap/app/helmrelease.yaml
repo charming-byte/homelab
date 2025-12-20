@@ -78,6 +78,12 @@ spec:
             port: *ldapPort
     route:
       app:
+        annotations:
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/group: Security
+          gethomepage.dev/description: LLDAP Provider
+          gethomepage.dev/name: LLDAP
+          gethomepage.dev/icon: lldap.png
         hostnames: ["{{ .Release.Name }}.${SECRET_DOMAIN}"]
         parentRefs:
           - name: envoy-internal
