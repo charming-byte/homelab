@@ -14,3 +14,4 @@ resources:
   - ./open-webui/ks.yaml
   - ./jellyfin2/ks.yaml
   - ./sonarr/ks.yaml
+  - ./calibre-web-automated/ks.yaml
