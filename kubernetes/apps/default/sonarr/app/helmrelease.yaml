@@ -94,11 +94,18 @@ spec:
         storageClass: local-hostpath
         accessMode: ReadWriteOnce
         size: "2Gi"
+        advancedMounts:
+          sonarr:
+            app:
+              - path: /config
       media:
         type: nfs
+        enabled: true
         server: nas.internal
         path: /media
-        globalMounts:
-          - path: /media
+        advancedMounts:
+          sonarr:
+            app:
+              - path: /media
       tmp:
         type: emptyDir
