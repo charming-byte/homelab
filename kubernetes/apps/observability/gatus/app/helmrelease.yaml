@@ -99,6 +99,14 @@ spec:
           - port: http
     route:
       app:
+        annotations:
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/group: Infrastructure
+          gethomepage.dev/description: Status Dashboard
+          gethomepage.dev/name: Gatus
+          gethomepage.dev/icon: gatus.png
+          gethomepage.dev/widget.type: gatus
+          gethomepage.dev/widget.url: http://gatus.observability
         hostnames:
           - "{{ .Release.Name }}.${SECRET_DOMAIN}"
           - status.${SECRET_DOMAIN}
