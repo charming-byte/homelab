@@ -8,7 +8,6 @@ machine:
     modules:
       - name: nbd
       - name: iscsi_tcp
-      - name: iscsi_generic
       - name: configfs
   sysctls:
     fs.inotify.max_user_watches: "1048576"     # Watchdog
