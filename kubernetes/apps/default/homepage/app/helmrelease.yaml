@@ -29,6 +29,7 @@ spec:
               tag: v1.8.0
             env:
               TZ: Europe/Berlin
+              LOG_TARGETS: stdout
               HOMEPAGE_ALLOWED_HOSTS: "{{ .Release.Name }}.${SECRET_DOMAIN}"
             envFrom:
               - secretRef:
