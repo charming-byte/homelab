@@ -3,35 +3,41 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: prowlarr
+  name: radarr
 spec:
   chartRef:
     kind: OCIRepository
-    name: prowlarr
+    name: radarr
   interval: 1h
   values:
     controllers:
-      prowlarr:
+      radarr:
         annotations:
           reloader.stakater.com/auto: "true"
+        initContainers:
+          init-db:
+            image:
+              repository: ghcr.io/home-operations/postgres-init
+              tag: 18.1.0@sha256:866f15038ed5185a2b8118821f470bb7ca0df8c4231b8e277446e681ebb1ed84
+            envFrom: &envFrom
+              - secretRef:
+                  name: "{{ .Release.Name }}-secret"
         containers:
           app:
             image:
-              repository: ghcr.io/home-operations/prowlarr
-              tag: 2.3.1.5238@sha256:4394dff2311238bf5c31e006872122ed4e5f6bf042d33528d80acd44a09c57f7
+              repository: ghcr.io/home-operations/radarr
+              tag: 6.1.0.10309@sha256:10f94c85f605d42e5e78de928f24758b5750a4e99eee8d0ef9ff150f7a2df033
             env:
-              PROWLARR__APP__INSTANCENAME: Prowlarr
-              PROWLARR__APP__THEME: dark
-              PROWLARR__AUTH__METHOD: External
-              PROWLARR__AUTH__REQUIRED: DisabledForLocalAddresses
-              PROWLARR__LOG__DBENABLED: "False"
-              PROWLARR__LOG__LEVEL: info
-              PROWLARR__SERVER__PORT: &port 80
-              PROWLARR__UPDATE__BRANCH: develop
+              RADARR__APP__INSTANCENAME: Radarr
+              RADARR__APP__THEME: dark
+              RADARR__AUTH__METHOD: External
+              RADARR__AUTH__REQUIRED: DisabledForLocalAddresses
+              RADARR__LOG__DBENABLED: "False"
+              RADARR__LOG__LEVEL: info
+              RADARR__SERVER__PORT: &port 80
+              RADARR__UPDATE__BRANCH: develop
               TZ: Europe/Berlin
-            envFrom:
-              - secretRef:
-                  name: "{{ .Release.Name }}-secret"
+            envFrom: *envFrom
             probes:
               liveness: &probes
                 enabled: true
@@ -52,9 +58,9 @@ spec:
             resources:
               requests:
                 cpu: 100m
-                memory: 128M
+                memory: 256Mi
               limits:
-                memory: 1Gi
+                memory: 4Gi
     defaultPodOptions:
       securityContext:
         runAsNonRoot: true
@@ -71,12 +77,12 @@ spec:
       app:
         annotations:
           gethomepage.dev/enabled: "true"
-          gethomepage.dev/icon: prowlarr.png
-          gethomepage.dev/name: Prowlarr
-          gethomepage.dev/group: Download
-          gethomepage.dev/widget.type: prowlarr
-          gethomepage.dev/widget.url: http://prowlarr.default.svc.cluster.local
-          gethomepage.dev/widget.key: '{{ "{{HOMEPAGE_VAR_PROWLARR_API_KEY}}" }}'
+          gethomepage.dev/icon: radarr.png
+          gethomepage.dev/name: Radarr
+          gethomepage.dev/group: Downloads
+          gethomepage.dev/widget.type: radarr
+          gethomepage.dev/widget.url: http://radarr.default.svc.cluster.local
+          gethomepage.dev/widget.key: '{{ "{{HOMEPAGE_VAR_RADARR_API_KEY}}" }}'
         hostnames:
           - "{{ .Release.Name }}.${SECRET_DOMAIN}"
         parentRefs:
@@ -84,8 +90,16 @@ spec:
             namespace: network
     persistence:
       config:
+        suffix: config
         storageClass: local-hostpath
         accessMode: ReadWriteOnce
-        size: 1G
+        size: "3Gi"
+      media:
+        type: nfs
+        enabled: true
+        server: nas.internal
+        path: /media
+        globalMounts:
+          - path: /media
       tmp:
         type: emptyDir
