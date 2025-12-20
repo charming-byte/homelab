@@ -19,28 +19,32 @@ releases:
     values: ['./templates/values.yaml.gotmpl']
     needs: ['kube-system/cilium']
 
+  - name: spegel
+    namespace: kube-system
+    chart: oci://ghcr.io/spegel-org/helm-charts/spegel
+    version: 0.6.0
+    values: ['./templates/values.yaml.gotmpl']
+    needs: ['kube-system/coredns']
+
   - name: cert-manager
     namespace: cert-manager
     chart: oci://quay.io/jetstack/charts/cert-manager
     version: v1.19.2
     values: ['./templates/values.yaml.gotmpl']
-    needs: ['kube-system/coredns']
+    needs: ['kube-system/spegel']
 
   - name: external-secrets
     namespace: kube-system
     chart: oci://ghcr.io/external-secrets/charts/external-secrets
     version: 1.2.0
-    values:
-      - ./templates/values.yaml.gotmpl
-    needs:
-      - cert-manager/cert-manager
+    values: ['./templates/values.yaml.gotmpl']
+    needs: ['cert-manager/cert-manager']
 
   - name: onepassword
     namespace: kube-system
     chart: oci://ghcr.io/bjw-s-labs/helm/app-template
     version: 4.5.0
-    values:
-      - ./templates/values.yaml.gotmpl
+    values: ['./templates/values.yaml.gotmpl']
     hooks:
       - # Wait for ExternalSecrets CRDs to be available
         command: bash
@@ -60,8 +64,7 @@ releases:
         events:
           - postsync
         showlogs: true
-    needs:
-      - kube-system/external-secrets
+    needs: ['kube-system/external-secrets']
 
   - name: flux-operator
     namespace: flux-system
