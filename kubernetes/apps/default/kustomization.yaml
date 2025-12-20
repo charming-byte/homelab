@@ -16,3 +16,4 @@ resources:
   - ./sonarr/ks.yaml
   - ./calibre-web-automated/ks.yaml
   - ./homepage/ks.yaml
+  - ./prowlarr/ks.yaml
