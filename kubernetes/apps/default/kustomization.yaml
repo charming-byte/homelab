@@ -13,3 +13,4 @@ resources:
   - ./jellyfin/ks.yaml
   - ./open-webui/ks.yaml
   - ./jellyfin2/ks.yaml
+  - ./sonarr/ks.yaml
