@@ -29,7 +29,6 @@ spec:
       data:
         enabled: true
         storageClass: local-hostpath
-        type: pvc
         accessMode: ReadWriteOnce
         size: 5Gi
         mountPath: /data
