@@ -105,15 +105,15 @@ spec:
       ingest:
         enabled: true
         type: nfs
-        server: 192.168.178.54
-        path: /media/books/ingest
+        server: nas.internal
+        path: /books-ingest
         globalMounts:
           - path: /cwa-book-ingest
       library:
         enabled: true
         type: nfs
-        server: 192.168.178.54
-        path: /media/books/library
+        server: nas.internal
+        path: /books
         globalMounts:
           - path: /calibre-library
       tmpfs:
