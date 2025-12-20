@@ -15,6 +15,6 @@ resources:
   - ./external-secrets/ks.yaml
   - ./onepassword/ks.yaml
   - ./spegel/ks.yaml
-  - ./node-features-discovery/ks.yaml
+  - ./node-feature-discovery/ks.yaml
   - ./intel-device-plugins/ks.yaml
 
