@@ -49,9 +49,11 @@ spec:
               value: /cache/server
             - name: GITEA_RUNNER_JOB_CONTAINER_NETWORK
               value: host
-          envFrom:
-            - secretRef:
-              name: gitea-runner-secret
+            - name: GITEA_RUNNER_REGISTRATION_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: gitea-runner-secret
+                  key: GITEA_RUNNER_REGISTRATION_TOKEN
           securityContext:
             privileged: true
           volumeMounts:
