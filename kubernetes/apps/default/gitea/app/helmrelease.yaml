@@ -80,7 +80,6 @@ spec:
             resources:
               requests:
                 cpu: 500m
-                memory: 133Mi
               limits:
                 memory: 1Gi
     service:
