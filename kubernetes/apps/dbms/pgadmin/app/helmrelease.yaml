@@ -47,7 +47,8 @@ spec:
           gethomepage.dev/enabled: "true"
           gethomepage.dev/icon: pgadmin.png
           gethomepage.dev/name: PGAdmin
-          gethomepage.dev/group: Infrastructure
+          gethomepage.dev/group: Development
+          gethomepage.dev/description: PostgreSQL Tools
         hostnames: ["{{ .Release.Name }}.${SECRET_DOMAIN}"]
         parentRefs:
           - name: envoy-internal
