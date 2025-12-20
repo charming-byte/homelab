@@ -10,7 +10,7 @@ spec:
       app.kubernetes.io/name: *app
   dependsOn:
     - name: onepassword
-      namespace: external-secrets
+      namespace: kube-system
   interval: 30m
   path: ./kubernetes/apps/default/homepage/app
   postBuild:
