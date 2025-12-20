@@ -89,7 +89,7 @@ spec:
             namespace: network
         rules:
           - backendRefs:
-              - name: calibre-web
+              - name: calibre-web-automated
                 port: 8083
 
     persistence:

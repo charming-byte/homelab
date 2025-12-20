@@ -118,7 +118,7 @@ data:
               key: {{HOMEPAGE_VAR_CLOUDFLARE_API_TOKEN}}
     - Storage:
         - NAS:
-            href: {{NAS_URL}}
+            href: nas.internal
             icon: si-openmediavault
     - Calendar:
         - Calendar:
