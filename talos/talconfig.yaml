@@ -21,6 +21,18 @@ nodes:
   - hostname: "t-node"
     ipAddress: "192.168.178.55"
     installDisk: "/dev/sda"
+    patches:
+      - |-
+        machine:
+          kubelet:
+            extraMounts:
+              - destination: /var/openebs/local
+                type: bind
+                source:  /var/openebs/local
+                options:
+                  - bind
+                  - rshared
+                  - rw
     machineSpec:
       secureboot: false
     talosImageURL: factory.talos.dev/installer/36cd6536eaec8ba802be2d38974108359069cedba8857302f69792b26b87c010
