@@ -79,8 +79,8 @@ spec:
           - 44
           - 105
           - 10000
-      nodeSelector:
-        intel.feature.node.kubernetes.io/gpu: "true"
+      #nodeSelector:
+      #  intel.feature.node.kubernetes.io/gpu: "true"
 
     service:
       app:
