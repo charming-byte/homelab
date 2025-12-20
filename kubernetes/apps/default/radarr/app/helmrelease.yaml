@@ -93,7 +93,7 @@ spec:
         suffix: config
         storageClass: local-hostpath
         accessMode: ReadWriteOnce
-        size: "3Gi"
+        size: "2Gi"
       media:
         type: nfs
         enabled: true
