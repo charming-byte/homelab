@@ -95,6 +95,7 @@ spec:
     persistence:
       config:
         enabled: true
+        type: persistentVolumeClaim
         storageClass: local-hostpath
         accessMode: ReadWriteOnce
         size: 5Gi
