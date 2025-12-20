@@ -46,8 +46,3 @@ spec:
     envFrom:
       - secretRef:
         name: gitea-runner-secret
-  valuesFrom:
-    - targetPath: env.GITEA_RUNNER_REGISTRATION_TOKEN
-      kind: Secret
-      name: gitea-actions-secrets
-      valuesKey: token
