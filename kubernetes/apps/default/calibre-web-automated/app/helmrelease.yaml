@@ -106,7 +106,7 @@ spec:
         enabled: true
         type: nfs
         server: nas.internal
-        path: /books-ingest
+        path: /books_ingest
         globalMounts:
           - path: /cwa-book-ingest
       library:
