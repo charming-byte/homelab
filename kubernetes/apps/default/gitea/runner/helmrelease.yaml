@@ -31,7 +31,6 @@ spec:
         storageClass: local-hostpath
         accessMode: ReadWriteOnce
         size: 5Gi
-        mountPath: /data
     service:
       main:
         enabled: false
