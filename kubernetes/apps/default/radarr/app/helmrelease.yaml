@@ -90,16 +90,22 @@ spec:
             namespace: network
     persistence:
       config:
-        suffix: config
+        type: persistentVolumeClaim
         storageClass: local-hostpath
         accessMode: ReadWriteOnce
-        size: "2Gi"
+        size: 2Gi
+        advancedMounts:
+          radarr:
+            app:
+              - path: /config
       media:
         type: nfs
         enabled: true
         server: nas.internal
         path: /media
-        globalMounts:
-          - path: /media
+        advancedMounts:
+          radarr:
+            app:
+              - path: /media
       tmp:
         type: emptyDir
