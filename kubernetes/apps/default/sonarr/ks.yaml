@@ -18,7 +18,11 @@ spec:
       namespace: kube-system
   interval: 1h
   path: ./kubernetes/apps/default/sonarr/app
+  components:
+    - ../../../../components/nfs-scaler
   postBuild:
+    substitute:
+      APP: sonarr
     substituteFrom:
       - name: cluster-secrets
         kind: Secret

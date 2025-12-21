@@ -7,7 +7,11 @@ metadata:
 spec:
   interval: 1h
   path: ./kubernetes/apps/default/calibre-web-automated/app
+  components:
+    - ../../../../components/nfs-scaler
   postBuild:
+    substitute:
+      APP: calibre-web-automated
     substituteFrom:
       - name: cluster-secrets
         kind: Secret

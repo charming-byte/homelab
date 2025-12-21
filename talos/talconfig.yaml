@@ -24,6 +24,8 @@ nodes:
     patches:
       - |-
         machine:
+          nodeLabels:
+            node.kubernetes.io/gpu: "true"
           kubelet:
             extraMounts:
               - destination: /var/openebs/local
@@ -35,7 +37,7 @@ nodes:
                   - rw
     machineSpec:
       secureboot: false
-    talosImageURL: factory.talos.dev/installer/36cd6536eaec8ba802be2d38974108359069cedba8857302f69792b26b87c010
+    talosImageURL: factory.talos.dev/installer/249d9135de54962744e917cfe654117000cba369f9152fbab9d055a00aa3664f
     schematic:
       customization:
         systemExtensions:
@@ -43,6 +45,7 @@ nodes:
             - siderolabs/intel-ucode
             - siderolabs/iscsi-tools
             - siderolabs/util-linux-tools
+            - siderolabs/i915
     controlPlane: true
     networkInterfaces:
       - deviceSelector:

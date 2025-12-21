@@ -10,6 +10,8 @@ spec:
       namespace: openebs-system
   interval: 1h
   path: ./kubernetes/apps/default/lidarr/app
+  components:
+    - ../../../../components/nfs-scaler
   postBuild:
     substitute:
       APP: lidarr

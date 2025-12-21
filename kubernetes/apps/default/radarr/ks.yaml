@@ -10,6 +10,8 @@ spec:
       namespace: openebs-system
   interval: 1h
   path: ./kubernetes/apps/default/radarr/app
+  components:
+    - ../../../../components/nfs-scaler
   postBuild:
     substitute:
       APP: radarr
