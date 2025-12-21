@@ -10,9 +10,7 @@ resources:
   - ./copilot-api/ks.yaml
   - ./gitea/ks.yaml
   - ./smtp-relay/ks.yaml
-  - ./jellyfin/ks.yaml
   - ./open-webui/ks.yaml
-  - ./jellyfin2/ks.yaml
   - ./sonarr/ks.yaml
   - ./calibre-web-automated/ks.yaml
   - ./homepage/ks.yaml
