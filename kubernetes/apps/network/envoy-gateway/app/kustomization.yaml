@@ -6,4 +6,4 @@ resources:
   - ./envoy.yaml
   - ./helmrelease.yaml
   - ./ocirepository.yaml
-  - ./podmonitor.yaml
+  - ./observability.yaml
