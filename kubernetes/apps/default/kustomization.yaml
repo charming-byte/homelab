@@ -7,7 +7,6 @@ components:
 resources:
   - ./namespace.yaml
   - ./echo/ks.yaml
-  - ./copilot-api/ks.yaml
   - ./gitea/ks.yaml
   - ./smtp-relay/ks.yaml
   - ./open-webui/ks.yaml
