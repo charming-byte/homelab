@@ -93,10 +93,6 @@ spec:
     route:
       app:
         hostnames: ["jellyfin.${SECRET_DOMAIN}"]
-        annotations:
-          gatus.home-operations.com/endpoint: |
-            conditions:
-              - "[STATUS] == 200"
         parentRefs:
           - name: envoy-internal
             namespace: network
