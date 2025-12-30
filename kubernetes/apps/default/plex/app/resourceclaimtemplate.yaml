@@ -9,4 +9,4 @@ spec:
       requests:
         - name: gpu
           exactly:
-            deviceClassName: gpu.intel.com
+            deviceClassName: gpu.intel.com/i915
