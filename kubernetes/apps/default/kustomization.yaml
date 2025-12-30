@@ -11,7 +11,7 @@ resources:
   - ./smtp-relay/ks.yaml
   - ./open-webui/ks.yaml
   - ./sonarr/ks.yaml
-  - ./jellyfin2/ks.yaml
+#  - ./jellyfin2/ks.yaml
   - ./calibre-web-automated/ks.yaml
   - ./homepage/ks.yaml
   - ./prowlarr/ks.yaml

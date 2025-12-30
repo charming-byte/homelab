@@ -37,11 +37,11 @@ spec:
               TZ: Europe/Berlin
             resources:
               requests:
-                gpu.intel.com/i915: 1
+                #gpu.intel.com/i915: 1
                 cpu: 100m
                 memory: 128Mi
               limits:
-                gpu.intel.com/i915: 1
+                #gpu.intel.com/i915: 1
                 memory: 4000Mi
             probes:
               liveness: &probe
