@@ -46,7 +46,7 @@ spec:
               readOnlyRootFilesystem: true
               capabilities: {drop: ["ALL"]}
             resources:
-              #claims:
+                # claims:
                 #- name: gpu
               requests:
                 gpu.intel.com/i915: 1
