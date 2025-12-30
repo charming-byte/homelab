@@ -8,7 +8,7 @@ spec:
   components:
     - ../../../../components/nfs-scaler
   dependsOn:
-    - name: intel-gpu-resource-driver
+    - name: intel-device-plugin
       namespace: kube-system
     - name: openebs
       namespace: openebs-system
