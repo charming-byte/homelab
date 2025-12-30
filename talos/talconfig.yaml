@@ -37,7 +37,7 @@ nodes:
                   - rw
     machineSpec:
       secureboot: false
-    talosImageURL: factory.talos.dev/installer/249d9135de54962744e917cfe654117000cba369f9152fbab9d055a00aa3664f
+    talosImageURL: factory.talos.dev/installer/8d37fcc01bb9173406853e7fd97ad9eda40732043f88e09dafe55e53fcf4b510
     schematic:
       customization:
         systemExtensions:
@@ -45,6 +45,7 @@ nodes:
             - siderolabs/intel-ucode
             - siderolabs/iscsi-tools
             - siderolabs/util-linux-tools
+            - siderolabs/mei
             - siderolabs/i915
     controlPlane: true
     networkInterfaces:
