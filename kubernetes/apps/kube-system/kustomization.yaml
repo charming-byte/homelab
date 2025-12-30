@@ -15,6 +15,7 @@ resources:
   - ./external-secrets/ks.yaml
   - ./onepassword/ks.yaml
   - ./spegel/ks.yaml
-  - ./node-feature-discovery/ks.yaml
-  - ./intel-device-plugin/ks.yaml
+  - ./intel-gpu-resource-driver/ks.yaml
+# - ./node-feature-discovery/ks.yaml
+# - ./intel-device-plugin/ks.yaml
 
