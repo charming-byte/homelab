@@ -120,13 +120,13 @@ spec:
         type: emptyDir
       data:
         type: nfs
-        server: 192.168.178.54
+        server: nas.internal
         path: /media
         globalMounts:
           - path: /data
       data2:
         type: nfs
-        server: 192.168.178.54
+        server: nas.internal
         path: /collection
         globalMounts:
           - path: /data2

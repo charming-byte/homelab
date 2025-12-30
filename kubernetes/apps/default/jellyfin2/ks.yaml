@@ -7,7 +7,14 @@ metadata:
 spec:
   interval: 1h
   path: ./kubernetes/apps/default/jellyfin2/app
+  dependsOn:
+    - name: intel-device-plugin
+      namespace: kube-system
+    - name: openebs
+      namespace: openebs-system
   postBuild:
+    substitute:
+      APP: jellyfin2
     substituteFrom:
       - name: cluster-secrets
         kind: Secret
