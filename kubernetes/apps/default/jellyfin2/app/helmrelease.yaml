@@ -36,8 +36,6 @@ spec:
               JELLYFIN_PublishedServerUrl: https://jellyfin.${SECRET_DOMAIN}
               TZ: Europe/Berlin
             resources:
-              #claims:
-              #  - name: gpu
               requests:
                 gpu.intel.com/i915: 1
                 cpu: 100m
@@ -71,9 +69,6 @@ spec:
                   failureThreshold: 30
 
     defaultPodOptions:
-      #resourceClaims:
-      #  - name: gpu
-      #    resourceClaimTemplateName: jellyfin2
       securityContext:
         runAsUser: 1000
         runAsGroup: 1000
@@ -84,8 +79,6 @@ spec:
           - 44
           - 105
           - 10000
-      #nodeSelector:
-      #  intel.feature.node.kubernetes.io/gpu: "true"
 
     service:
       app:
