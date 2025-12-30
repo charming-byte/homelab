@@ -36,14 +36,14 @@ spec:
               JELLYFIN_PublishedServerUrl: https://jellyfin.${SECRET_DOMAIN}
               TZ: Europe/Berlin
             resources:
-              claims:
-                - name: gpu
+              #claims:
+              #  - name: gpu
               requests:
-               # gpu.intel.com/i915: 1
+                gpu.intel.com/i915: 1
                 cpu: 100m
                 memory: 128Mi
               limits:
-                #gpu.intel.com/i915: 1
+                gpu.intel.com/i915: 1
                 memory: 4000Mi
             probes:
               liveness: &probe
@@ -71,9 +71,9 @@ spec:
                   failureThreshold: 30
 
     defaultPodOptions:
-      resourceClaims:
-        - name: gpu
-          resourceClaimTemplateName: jellyfin2
+      #resourceClaims:
+      #  - name: gpu
+      #    resourceClaimTemplateName: jellyfin2
       securityContext:
         runAsUser: 1000
         runAsGroup: 1000
