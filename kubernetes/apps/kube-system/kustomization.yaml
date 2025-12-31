@@ -17,5 +17,5 @@ resources:
   - ./spegel/ks.yaml
   - ./intel-gpu-resource-driver/ks.yaml
 #  - ./node-feature-discovery/ks.yaml
-#  - ./intel-device-plugin/ks.yaml
+
 
