@@ -1,0 +1,172 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: slskd
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: slskd
+  interval: 1h
+  values:
+    controllers:
+      slskd:
+        type: statefulset
+        annotations:
+          reloader.stakater.com/auto: "true"
+        initContainers:
+          gluetun:
+            image:
+              repository: ghcr.io/qdm12/gluetun
+              tag: v3.41@sha256:6b54856716d0de56e5bb00a77029b0adea57284cf5a466f23aad5979257d3045
+            securityContext:
+              capabilities:
+                add: ["NET_ADMIN"]
+            ports:
+              - name: http
+                containerPort: 80
+                protocol: TCP
+            env:
+              TZ: Europe/Berlin
+              DNS_KEEP_NAMESERVER: "off"
+              DOT: "on"
+              UPDATER_PERIOD: 24h
+            envFrom:
+               - secretRef:
+                  name: "{{ .Release.Name }}-secret"
+            restartPolicy: Always
+            probes:
+              liveness:
+                enabled: true
+                custom: true
+                spec:
+                  exec:
+                    command:
+                      - sh
+                      - -c
+                      - "ping -c 1 $(echo $WIREGUARD_ADDRESSES | cut -d'/' -f1)"
+                  initialDelaySeconds: 10
+                  periodSeconds: 15
+                  timeoutSeconds: 2
+                  failureThreshold: 3
+              readiness:
+                enabled: true
+                custom: true
+                spec:
+                  exec:
+                    command:
+                      - sh
+                      - -c
+                      - "ping -c 1 $(echo $WIREGUARD_ADDRESSES | cut -d'/' -f1)"
+                  initialDelaySeconds: 5
+                  periodSeconds: 3
+                  timeoutSeconds: 2
+                  failureThreshold: 3
+        containers:
+          app:
+            image:
+              repository: ghcr.io/slskd/slskd
+              tag: 0.24.1@sha256:e3635858d9614a2fb811601afca706dbf97a6838b849905c27294cbce71be268
+            env:
+              DOTNET_BUNDLE_EXTRACT_BASE_DIR: /tmp/.net
+              TZ: Europe/Berlin
+              SLSKD_APP_DIR: /config
+              SLSKD_HTTP_PORT: &port 80
+              SLSKD_NO_AUTH: true
+              SLSKD_NO_HTTPS: true
+              SLSKD_NO_VERSION_CHECK: true
+              SLSKD_SLSK_LISTEN_PORT: 50429
+            envFrom:
+              - secretRef:
+                  name: "{{ .Release.Name }}-secret"
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /health
+                    port: *port
+                  initialDelaySeconds: 0
+                  periodSeconds: 10
+                  timeoutSeconds: 1
+                  failureThreshold: 3
+              readiness: *probes
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: {drop: ["ALL"]}
+            resources:
+              requests:
+                cpu: 10m
+                memory: 64Mi
+              limits:
+                memory: 1Gi
+        statefulset:
+          volumeClaimTemplates:
+            - name: config
+              storageClass: local-hostpath
+              accessMode: ReadWriteOnce
+              size: 5Gi
+    defaultPodOptions:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+    service:
+      app:
+        ports:
+          http:
+            port: *port
+    route:
+      app:
+        hostnames:
+          - "{{ .Release.Name }}.${SECRET_DOMAIN}"
+        parentRefs:
+          - name: envoy-internal
+            namespace: network
+        rules:
+          - backendRefs:
+              - identifier: app
+                port: *port
+    configMaps:
+      config:
+        data:
+          slskd.yml: |-
+            global:
+              upload:
+                slots: 10
+                speed_limit: 1500
+              download:
+                slots: 500
+            directories:
+              downloads: /media/downloads/soulseek/complete
+              incomplete: /media/downloads/soulseek/incomplete
+            permissions:
+              file:
+                mode: 750
+            shares:
+              directories:
+                - /media/media/music
+              filters:
+                - \.ini$
+                - Thumbs.db$
+                - \.DS_Store$
+    persistence:
+      config-file:
+        type: configMap
+        identifier: config
+        globalMounts:
+          - path: /config/slskd.yml
+            subPath: slskd.yml
+      media:
+        type: nfs
+        server: nas.internal
+        path: /media-root
+        globalMounts:
+          - path: /media
+      tmp:
+        type: emptyDir
