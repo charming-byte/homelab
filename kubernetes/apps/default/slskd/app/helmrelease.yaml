@@ -21,6 +21,10 @@ spec:
               repository: ghcr.io/qdm12/gluetun
               tag: v3.41@sha256:6b54856716d0de56e5bb00a77029b0adea57284cf5a466f23aad5979257d3045
             securityContext:
+              runAsNonRoot: false
+              allowPrivilegeEscalation: true
+              runAsUser: 0
+              runAsGroup: 0
               capabilities:
                 add: ["NET_ADMIN"]
             ports:
