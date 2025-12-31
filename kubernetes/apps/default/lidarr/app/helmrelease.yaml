@@ -102,7 +102,7 @@ spec:
         type: nfs
         enabled: true
         server: nas.internal
-        path: /media
+        path: /media-root
         advancedMounts:
           lidarr:
             app:
