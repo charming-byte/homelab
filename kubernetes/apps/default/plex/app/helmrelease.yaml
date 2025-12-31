@@ -76,6 +76,7 @@ spec:
       app:
         annotations:
           gethomepage.dev/enabled: "true"
+          gethomepage.dev/href: "https://plex.${SECRET_DOMAIN}"
           gethomepage.dev/description: Media Server
           gethomepage.dev/group: Media
           gethomepage.dev/icon: plex.png
