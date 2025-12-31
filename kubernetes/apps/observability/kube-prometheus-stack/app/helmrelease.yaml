@@ -90,6 +90,17 @@ spec:
         folder: observability
         matchLabels:
           grafana.internal/instance: grafana
+    kubePrometheusStack:
+      prometheusRules:
+        kubernetesApps:
+          KubeHpaMaxedOut:
+            enabled: true
+            expr: |
+              (kube_horizontalpodautoscaler_status_current_replicas
+              ==
+              kube_horizontalpodautoscaler_spec_max_replicas)
+              and
+              kube_horizontalpodautoscaler_spec_max_replicas > 1
     additionalPrometheusRulesMap:
       dockerhub-rules:
         groups:
