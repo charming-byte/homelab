@@ -11,6 +11,6 @@ spec:
     kind: OCIRepository
     name: intel-device-plugin-gpu
   values:
-    name: intel-gpu-plugin
-    sharedDevNum: 1
-    nodeFeatureRule: true
+    name: i915
+    sharedDevNum: 5
+    nodeFeatureRule: false
