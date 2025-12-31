@@ -127,6 +127,14 @@ spec:
             port: *port
     route:
       app:
+        annotations:
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/group: Downloads
+          gethomepage.dev/icon: slskd.png
+          gethomepage.dev/name: Slskd
+          gethomepage.dev/widget.type: slskd
+          gethomepage.dev/widget.url: http://slskd.default
+          gethomepage.dev/widget.key: "{{`{{HOMEPAGE_VAR_SLSKD_API_KEY}}`}}"
         hostnames:
           - "{{ .Release.Name }}.${SECRET_DOMAIN}"
         parentRefs:
@@ -140,6 +148,13 @@ spec:
       config:
         data:
           slskd.yml: |-
+            web:
+              authentication:
+                api_keys:
+                  homepage_widget:
+                    key: ${SLSKD_API_KEY_HOMEPAGE}
+                    role: readonly
+                    cidr: 10.42.0.0/16
             global:
               upload:
                 slots: 10
