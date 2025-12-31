@@ -70,5 +70,5 @@ spec:
       data:
         type: emptyDir
         globalMounts:
-         - path: /root/.local/
+         - path: /.local/
            readOnly: false
