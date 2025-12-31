@@ -25,8 +25,8 @@ spec:
         containers:
           app:
             image:
-              repository: ghcr.io/hotio/lidarr
-              tag: pr-plugins-3.1.1.4901@sha256:f78f0488f9ccf2aa4370fbe46645057017c56bed9e06562beb8ae7526042ce66
+              repository: ghcr.io/home-operations/lidarr
+              tag: 3.1.1@sha256:0982783dcc1ede8d45458ffc1d0d96607503035d743f6d18f9c2676a765d5dfe
             env:
               LIDARR__APP__INSTANCENAME: Lidarr
               LIDARR__APP__THEME: dark
@@ -35,6 +35,7 @@ spec:
               LIDARR__LOG__DBENABLED: "False"
               LIDARR__LOG__LEVEL: info
               LIDARR__SERVER__PORT: &port 80
+              LIDARR__UPDATE__BRANCH: plugins
               TZ: Europe/Berlin
             envFrom: *envFrom
             probes:
