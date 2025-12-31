@@ -83,5 +83,5 @@ spec:
         type: configMap
         identifier: config
         globalMounts:
-          - path: /etc/maddy/maddy.conf
+          - path: /data/maddy.conf
             subPath: maddy.conf
