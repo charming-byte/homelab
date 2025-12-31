@@ -88,7 +88,7 @@ spec:
       media:
         type: nfs
         server: nas.internal
-        path: /media
+        path: /media-root
         globalMounts:
           - path: /mnt/data/media
       tmpfs:
