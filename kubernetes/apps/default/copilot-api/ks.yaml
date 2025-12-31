@@ -7,6 +7,9 @@ metadata:
 spec:
   interval: 1h
   path: ./kubernetes/apps/default/copilot-api/app
+  dependsOn:
+    - name: openebs
+      namespace: openebs-system
   postBuild:
     substituteFrom:
       - name: cluster-secrets
