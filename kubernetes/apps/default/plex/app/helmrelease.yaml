@@ -118,5 +118,12 @@ spec:
         globalMounts:
           - path: /media
             readOnly: true
+      media2:
+        type: nfs
+        server: nas.internal
+        path: /collection
+        globalMounts:
+          - path: /data2
+            readOnly: true
       tmp:
         type: emptyDir
