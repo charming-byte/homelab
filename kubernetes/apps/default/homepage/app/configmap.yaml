@@ -96,7 +96,7 @@ data:
             - icon: healthchecks.png
               href: https://healthcheck.io/
     - Git:
-        - home-cluster:
+        - homelab:
             - icon: github.png
               description: Renovate Dashboard
               href: https://github.com/charming-byte/homelab/issues/1
