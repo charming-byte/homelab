@@ -39,8 +39,9 @@ spec:
             resources:
               requests:
                 cpu: 10m
-             # limits:
-             #   memory: 1024M
+                memory: 64Mi
+              limits:
+                memory: 512Mi
     defaultPodOptions:
       securityContext:
         runAsNonRoot: true
@@ -51,10 +52,6 @@ spec:
         ports:
           http:
             port: 4141
-    serviceMonitor:
-      app:
-        endpoints:
-          - port: http
     route:
       app:
         hostnames: ["api.ai.${SECRET_DOMAIN}"]
