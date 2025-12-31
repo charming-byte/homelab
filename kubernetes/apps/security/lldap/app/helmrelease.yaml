@@ -29,7 +29,7 @@ spec:
               repository: ghcr.io/lldap/lldap
               tag: 2025-12-12-alpine-rootless@sha256:6ca0e292556af7722676b1ddad86d79e6c40421286f667011587624e01a2226d
             env:
-              TZ: ${TIMEZONE:=Europe/Berlin}
+              TZ: Europe/Berlin
               LLDAP_HTTP_PORT: &port 80
               LLDAP_HTTP_URL: https://lldap.${SECRET_DOMAIN}
               LLDAP_LDAP_PORT: &ldapPort 389
