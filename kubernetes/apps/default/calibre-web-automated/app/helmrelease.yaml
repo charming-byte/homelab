@@ -80,6 +80,7 @@ spec:
           gethomepage.dev/group: Media
           gethomepage.dev/name: Calibre
           gethomepage.dev/icon: calibre.png
+          gethomepage.dev/description: eBook Management
           gethomepage.dev/widget.type: calibreweb
           gethomepage.dev/widget.url: http://calibre-web-automated.default:8083
           gethomepage.dev/widget.username: "{{`{{HOMEPAGE_VAR_CALIBRE_USERNAME}}`}}"
