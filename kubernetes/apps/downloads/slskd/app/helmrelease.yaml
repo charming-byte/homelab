@@ -3,11 +3,11 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: slskd
+  name: &app slskd
 spec:
   chartRef:
     kind: OCIRepository
-    name: slskd
+    name: *app
   interval: 1h
   values:
     controllers:
@@ -142,7 +142,7 @@ spec:
             namespace: network
         rules:
           - backendRefs:
-              - identifier: app
+              - identifier: *app
                 port: *port
     configMaps:
       config:
