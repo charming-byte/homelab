@@ -3,11 +3,11 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: prowlarr
+  name: &app prowlarr
 spec:
   chartRef:
     kind: OCIRepository
-    name: prowlarr
+    name: *app
   interval: 1h
   values:
     controllers:
@@ -82,6 +82,10 @@ spec:
         parentRefs:
           - name: envoy-internal
             namespace: network
+        rules:
+          - backendRefs:
+              - name: *app
+                port: 80
     persistence:
       config:
         storageClass: local-hostpath
