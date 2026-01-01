@@ -14,7 +14,7 @@ spec:
         - name: authentik-outpost-proxy
           namespace: security
           port: 9000
-      path: /
+      path: /outpost.goauthentik.io/auth/envoy
       headersToBackend:
         - set-cookie
         - x-authentik-*
