@@ -3,15 +3,16 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: calibre-web-automated
+  name: &app calibre-web-automated
+  namespace: &namespace self-hosted
 spec:
   interval: 1h
-  path: ./kubernetes/apps/default/calibre-web-automated/app
+  path: ./kubernetes/apps/self-hosted/calibre-web-automated/app
   components:
     - ../../../../components/nfs-scaler
   postBuild:
     substitute:
-      APP: calibre-web-automated
+      APP: *app
     substituteFrom:
       - name: cluster-secrets
         kind: Secret
@@ -20,5 +21,5 @@ spec:
     kind: GitRepository
     name: flux-system
     namespace: flux-system
-  targetNamespace: default
+  targetNamespace: *namespace
   wait: false

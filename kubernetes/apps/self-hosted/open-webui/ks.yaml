@@ -2,20 +2,23 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: &app sabnzbd
+  name: &app open-webui
+  namespace: &namespace self-hosted
 spec:
-  targetNamespace: default
+  targetNamespace: *namespace
   commonMetadata:
     labels:
       app.kubernetes.io/name: *app
   dependsOn:
+    - name: cloudnative-pg-cluster
+      namespace: dbms
+    - name: dragonfly-cluster
+      namespace: dbms
     - name: onepassword-connect
       namespace: kube-system
     - name: openebs
       namespace: openebs-system
-  components:
-    - ../../../../components/nfs-scaler
-  path: ./kubernetes/apps/default/sabnzbd/app
+  path: ./kubernetes/apps/self-hosted/open-webui/app
   prune: true
   sourceRef:
     kind: GitRepository

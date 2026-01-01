@@ -3,18 +3,23 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: radarr
+  name: &app radarr
+  namespace: &namespace downloads
 spec:
   dependsOn:
     - name: openebs
       namespace: openebs-system
+    - name: cloudnative-pg-cluster
+      namespace: dbms
+    - name: onepassword-connect
+      namespace: kube-system
   interval: 1h
-  path: ./kubernetes/apps/default/radarr/app
+  path: ./kubernetes/apps/downloads/radarr/app
   components:
     - ../../../../components/nfs-scaler
   postBuild:
     substitute:
-      APP: radarr
+      APP: *app
     substituteFrom:
       - name: cluster-secrets
         kind: Secret
@@ -23,5 +28,5 @@ spec:
     kind: GitRepository
     name: flux-system
     namespace: flux-system
-  targetNamespace: default
+  targetNamespace: *namespace
   wait: false
