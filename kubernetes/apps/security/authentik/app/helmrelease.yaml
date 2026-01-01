@@ -79,6 +79,10 @@ spec:
               name: envoy-internal
               namespace: network
               sectionName: https
+          rules:
+            - backendRefs:
+              - name: authentik-server
+                port: 80
     worker:
       replicas: 1
       resources:
