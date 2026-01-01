@@ -4,6 +4,11 @@ apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
   name: grafana
+  annotations:
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/icon: grafana.svg
+    gethomepage.dev/name: Grafana
+    gethomepage.dev/group: Infrastructure
 spec:
   hostnames:
     - grafana.${SECRET_DOMAIN}

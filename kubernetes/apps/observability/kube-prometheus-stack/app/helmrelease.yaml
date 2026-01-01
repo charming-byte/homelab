@@ -15,6 +15,12 @@ spec:
       route:
         main:
           enabled: true
+          annotations:
+            gethomepage.dev/enabled: "true"
+            gethomepage.dev/icon: prometheus.svg
+            gethomepage.dev/name: Alertmanager
+            gethomepage.dev/group: Infrastructure
+            gethomepage.dev/href: https://alertmanager.${SECRET_DOMAIN}
           hostnames:
             - alertmanager.${SECRET_DOMAIN}
           parentRefs:
@@ -40,6 +46,12 @@ spec:
     prometheus:
       route:
         main:
+          annotations:
+            gethomepage.dev/enabled: "true"
+            gethomepage.dev/icon: prometheus.svg
+            gethomepage.dev/name: Prometheus
+            gethomepage.dev/group: Infrastructure
+            gethomepage.dev/href: https://prometheus.${SECRET_DOMAIN}
           enabled: true
           hostnames:
             - prometheus.${SECRET_DOMAIN}
