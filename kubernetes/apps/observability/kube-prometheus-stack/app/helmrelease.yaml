@@ -55,6 +55,9 @@ spec:
             gethomepage.dev/name: Prometheus
             gethomepage.dev/group: Infrastructure
             gethomepage.dev/href: https://prometheus.${SECRET_DOMAIN}
+            gethomepage.dev/app: prometheus
+            gethomepage.dev/widget.type: prometheus
+            gethomepage.dev/widget.url: https://prometheus.${SECRET_DOMAIN}
           enabled: true
           hostnames:
             - prometheus.${SECRET_DOMAIN}
@@ -62,6 +65,8 @@ spec:
             - name: envoy-internal
               namespace: network
       prometheusSpec:
+        podMetadata:
+          app.kubernetes.io/name: prometheus
         externalUrl: https://prometheus.${SECRET_DOMAIN}
         version: v2.55.1 # override 'unsupported Prometheus version' error
         image:
