@@ -88,6 +88,15 @@ spec:
         parentRefs:
           - name: envoy-internal
             namespace: network
+        rules:
+          - filters:
+            - type: RequestHeaderModifier
+              requestHeaderModifier:
+                set:
+                  - name: X-Forwarded-Proto
+                    value: https
+                  - name: X-Forwarded-Host
+                    value: sonarr.${SECRET_DOMAIN}
     persistence:
       config:
         suffix: config
