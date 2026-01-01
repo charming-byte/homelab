@@ -97,6 +97,9 @@ spec:
                     value: https
                   - name: X-Forwarded-Host
                     value: sonarr.${SECRET_DOMAIN}
+            backendRefs:
+              - name: sonarr
+                port: 80
     persistence:
       config:
         suffix: config
