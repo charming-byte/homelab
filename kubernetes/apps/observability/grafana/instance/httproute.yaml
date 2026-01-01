@@ -8,7 +8,9 @@ metadata:
     gethomepage.dev/enabled: "true"
     gethomepage.dev/icon: grafana.svg
     gethomepage.dev/name: Grafana
+    gethomepage.dev/description: Visualization and exploration of metrics, logs, and traces.
     gethomepage.dev/group: Infrastructure
+    gethomepage.dev/app: grafana
 spec:
   hostnames:
     - grafana.${SECRET_DOMAIN}
