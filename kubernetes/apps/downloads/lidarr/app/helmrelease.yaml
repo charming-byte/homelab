@@ -3,11 +3,11 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: lidarr
+  name: &app lidarr
 spec:
   chartRef:
     kind: OCIRepository
-    name: lidarr
+    name: *app
   interval: 1h
   values:
     controllers:
@@ -88,6 +88,10 @@ spec:
         parentRefs:
           - name: envoy-internal
             namespace: network
+        rules:
+          - backendRefs:
+              - name: *app
+                port: 80
     persistence:
       config:
         type: persistentVolumeClaim
