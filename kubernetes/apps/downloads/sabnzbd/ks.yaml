@@ -16,6 +16,7 @@ spec:
       namespace: openebs-system
   components:
     - ../../../../components/nfs-scaler
+    - ../../../../components/ext-auth
   path: ./kubernetes/apps/downloads/sabnzbd/app
   prune: true
   sourceRef:
@@ -29,6 +30,8 @@ spec:
   postBuild:
     substitute:
       APP: *app
+      EXT_AUTH_APP: *app
+      EXT_AUTH_TARGET_NAME: *app
     substituteFrom:
       - name: cluster-secrets
         kind: Secret

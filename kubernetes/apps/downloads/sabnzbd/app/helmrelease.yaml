@@ -75,7 +75,7 @@ spec:
             namespace: network
         rules:
           - backendRefs:
-              - name: sabnzbd
+              - name: *app
                 port: *port
     persistence:
       config:
