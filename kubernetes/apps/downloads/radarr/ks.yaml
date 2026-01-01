@@ -17,9 +17,12 @@ spec:
   path: ./kubernetes/apps/downloads/radarr/app
   components:
     - ../../../../components/nfs-scaler
+    - ../../../../components/ext-auth
   postBuild:
     substitute:
       APP: *app
+      EXT_AUTH_APP: *app
+      EXT_AUTH_TARGET_NAME: *app
     substituteFrom:
       - name: cluster-secrets
         kind: Secret
