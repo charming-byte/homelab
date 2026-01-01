@@ -89,14 +89,6 @@ spec:
           - name: envoy-internal
             namespace: network
         rules:
-          - filters:
-            - type: RequestHeaderModifier
-              requestHeaderModifier:
-                set:
-                  - name: X-Forwarded-Proto
-                    value: https
-                  - name: X-Forwarded-Host
-                    value: sonarr.${SECRET_DOMAIN}
           - backendRefs:
               - name: sonarr
                 port: 80
