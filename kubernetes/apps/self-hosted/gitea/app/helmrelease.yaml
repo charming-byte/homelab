@@ -121,7 +121,7 @@ spec:
            gethomepage.dev/widget.key: '{{ "{{HOMEPAGE_VAR_GITEA_API_KEY}}" }}'
         hostnames: ["git.${SECRET_DOMAIN}"]
         parentRefs:
-          - name: envoy-internal
+          - name: envoy-external
             namespace: network
             sectionName: https
         rules:
