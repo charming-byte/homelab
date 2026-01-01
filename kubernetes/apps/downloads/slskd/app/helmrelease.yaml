@@ -133,7 +133,7 @@ spec:
           gethomepage.dev/icon: slskd.png
           gethomepage.dev/name: Slskd
           gethomepage.dev/widget.type: slskd
-          gethomepage.dev/widget.url: http://slskd.default
+          gethomepage.dev/widget.url: http://slskd.downloads
           gethomepage.dev/widget.key: "{{`{{HOMEPAGE_VAR_SLSKD_API_KEY}}`}}"
         hostnames:
           - "{{ .Release.Name }}.${SECRET_DOMAIN}"
