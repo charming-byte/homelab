@@ -57,6 +57,7 @@ spec:
             gethomepage.dev/enabled: "true"
             gethomepage.dev/group: Infrastructure
             gethomepage.dev/name: Authentik
+            gethomepage.dev/description: Centralized authentication and identity management.
             gethomepage.dev/icon: authentik.svg
             gethomepage.dev/pod-selector: app.kubernetes.io/name=authentik
             gethomepage.dev/widget.type: authentik
