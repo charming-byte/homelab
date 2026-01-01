@@ -21,12 +21,15 @@ spec:
             gethomepage.dev/name: Alertmanager
             gethomepage.dev/group: Infrastructure
             gethomepage.dev/href: https://alertmanager.${SECRET_DOMAIN}
+            gethomepage.dev/app: alertmanager
           hostnames:
             - alertmanager.${SECRET_DOMAIN}
           parentRefs:
             - name: envoy-internal
               namespace: network
       alertmanagerSpec:
+        podMetadata:
+          app.kubernetes.io/name: alertmanager
         alertmanagerConfiguration:
           name: alertmanager
         externalUrl: https://alertmanager.${SECRET_DOMAIN}
