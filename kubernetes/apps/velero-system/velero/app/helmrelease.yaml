@@ -4,101 +4,182 @@ kind: HelmRelease
 metadata:
   name: &app velero
 spec:
-  chartRef:
-    kind: OCIRepository
-    name: velero
-   # spec:
-   #   chart: velero
-   #   version: '11.1.0'
-   #   reconcileStrategy: ChartVersion
-   #   sourceRef:
-   #     kind: OCIRepository
-   #     name: velero
+  interval: 1h
+  chart:
+    spec:
+      chart: velero
+      version: 11.3.1
+      sourceRef:
+        kind: HelmRepository
+        name: velero
+        namespace: velero-system
   install:
-    crds: Skip
+    crds: CreateReplace
+    remediation:
+      retries: -1
   upgrade:
-    crds: Skip
+    cleanupOnFail: true
+    crds: CreateReplace
+    remediation:
+      retries: 3
   values:
     image:
       repository: velero/velero
-      tag: v1.17.0 # downgrade due to missing CRDs in helm chart
+      tag: v1.17.1 # downgrade due to missing CRDs in helm chart
+    #kubectl:
+    #  image:
+    #    repository: bitnamilegacy/kubectl
+    #    tag:  1.33.4
+
+    upgradeJobResources:
+      requests:
+        cpu: 100m
+        memory: 64Mi
+      limits:
+        memory: 512Mi
+
+    deployNodeAgent: true
+
     initContainers:
       - name: velero-plugin-for-aws
-        image: velero/velero-plugin-for-aws:latest
+        image: velero/velero-plugin-for-aws:v1.13.1
+        imagePullPolicy: IfNotPresent
         volumeMounts:
           - mountPath: /target
             name: plugins
-    upgradeCRDs: false
+
+    metrics:
+      enabled: true
+      serviceMonitor:
+        enabled: true
+      nodeAgentPodMonitor:
+        enabled: true
+
     configuration:
-      backupStorageLocation:
+     backupStorageLocation:
         - name: default
           provider: aws
           bucket: velero-infrastructure
           config:
             s3Url: https://${S3_BACKUP_ENDPOINT}
             s3ForcePathStyle: true
-      uploaderType: restic
-      logLevel: warning
-      extraEnvVars:
-        TZ: Europe/Berlin
-      defaultVolumesToFsBackup: true
-    extraObjects:
-      - apiVersion: external-secrets.io/v1
-        kind: ExternalSecret
-        metadata:
-          name: *app
-        spec:
-          secretStoreRef:
-            kind: ClusterSecretStore
-            name: onepassword
-          target:
-            name: velero-secrets-store
-            template:
-              data:
-                aws_access_key_id: "{{ .S3_ACCESS_KEY }}"
-                aws_secret_access_key: "{{ .S3_SECRET_KEY }}"
+    uploaderType: restic
+    logLevel: warning
+    extraEnvVars:
+      TZ: Europe/Berlin
+    defaultVolumesToFsBackup: true
 
-          dataFrom:
-            - extract:
-                key: s3-storage
-
-  #   kind: SecretProviderClass
-  #   metadata:
-  #     name: velero-secrets-store
-  #   spec:
-  #     provider: aws
-  #     parameters:
-  #       objects: |
-  #         - objectName: "velero"
-  #           objectType: "secretsmanager"
-  #           jmesPath:
-  #               - path: "access_key"
-  #                 objectAlias: "access_key"
-  #               - path: "secret_key"
-  #                 objectAlias: "secret_key"
-  #     secretObjects:
-  #       - data:
-  #         - key: access_key
-  #           objectName: client-id
-  #         - key: client-secret
-  #           objectName: client-secret
-  #         secretName: velero-secrets-store
-  #         type: Opaque
     credentials:
-      useSecret: true
-      existingSecret: velero-secrets-store
-      #secretContents:
-      #  cloud: |
-      #    [default]
-      #    aws_access_key_id=${VELERO_ACCESS_KEY}
-      #    aws_secret_access_key=${VELERO_SECRET_KEY}
+      existingSecret: velero-secret
+
+    resources:
+      requests:
+        cpu: 100m
+        memory: 64Mi
+      limits:
+        memory: 512Mi
+
+    nodeAgent:
+      resources:
+        requests:
+          cpu: 100m
+          memory: 64Mi
+        limits:
+          memory: 1Gi
+
+      privileged: true
+
+      tolerations:
+        - key: node-role.kubernetes.io/control-plane
+          operator: Exists
+          effect: NoSchedule
+
     backupsEnabled: true
     snapshotsEnabled: false
-    deployNodeAgent: true
+
+    securityContext:
+      fsGroup: 65534
+      runAsGroup: 65534
+      runAsNonRoot: true
+      runAsUser: 65534
     schedules:
       weekly:
         schedule: '0 3 * * 0' # every sunday at 3am
         template:
           includedNamespaces:
             - '*'
-  interval: 10m0s
+  #   initContainers:
+  #     - name: velero-plugin-for-aws
+  #       image: velero/velero-plugin-for-aws:latest
+  #       volumeMounts:
+  #         - mountPath: /target
+  #           name: plugins
+  #   upgradeCRDs: false
+  #   configuration:
+  #     backupStorageLocation:
+  #       - name: default
+  #         provider: aws
+  #         bucket: velero-infrastructure
+  #         config:
+  #           s3Url: https://${S3_BACKUP_ENDPOINT}
+  #           s3ForcePathStyle: true
+  #     uploaderType: restic
+  #     logLevel: warning
+  #     extraEnvVars:
+  #       TZ: Europe/Berlin
+  #     defaultVolumesToFsBackup: true
+  #   extraObjects:
+  #     - apiVersion: external-secrets.io/v1
+  #       kind: ExternalSecret
+  #       metadata:
+  #         name: *app
+  #       spec:
+  #         secretStoreRef:
+  #           kind: ClusterSecretStore
+  #           name: onepassword
+  #         target:
+  #           name: velero-secrets-store
+  #           template:
+  #             data:
+  #               aws_access_key_id: "{{ .S3_ACCESS_KEY }}"
+  #               aws_secret_access_key: "{{ .S3_SECRET_KEY }}"
+
+  #         dataFrom:
+  #           - extract:
+  #               key: s3-storage
+
+  # #   kind: SecretProviderClass
+  # #   metadata:
+  # #     name: velero-secrets-store
+  # #   spec:
+  # #     provider: aws
+  # #     parameters:
+  # #       objects: |
+  # #         - objectName: "velero"
+  # #           objectType: "secretsmanager"
+  # #           jmesPath:
+  # #               - path: "access_key"
+  # #                 objectAlias: "access_key"
+  # #               - path: "secret_key"
+  # #                 objectAlias: "secret_key"
+  # #     secretObjects:
+  # #       - data:
+  # #         - key: access_key
+  # #           objectName: client-id
+  # #         - key: client-secret
+  # #           objectName: client-secret
+  # #         secretName: velero-secrets-store
+  # #         type: Opaque
+  #   credentials:
+  #     useSecret: true
+  #     existingSecret: velero-secrets-store
+  #     #secretContents:
+  #     #  cloud: |
+  #     #    [default]
+  #     #    aws_access_key_id=${VELERO_ACCESS_KEY}
+  #     #    aws_secret_access_key=${VELERO_SECRET_KEY}
+  #   backupsEnabled: true
+  #   snapshotsEnabled: false
+  #   deployNodeAgent: true
+
+  # interval: 10m0s
