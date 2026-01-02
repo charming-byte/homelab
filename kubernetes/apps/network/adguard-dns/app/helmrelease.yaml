@@ -1,0 +1,59 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/helm.toolkit.fluxcd.io/helmrelease_v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app adguard-dns
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: adguard-dns
+  interval: 1h
+  values:
+    fullnameOverride: *app
+provider:
+  name: webhook
+  webhook:
+    image:
+      repository: ghcr.io/zekker6/external-dns-provider-adguard
+      tag: v1.5.0@sha256:ac9c766371f8c2eddc477d526aaa23af7f3ed0ae59bf66e8c3e313085a5e9a04
+      pullPolicy: IfNotPresent
+    env:
+      - name: ADGUARD_HOME_URL
+        valueFrom:
+          secretKeyRef:
+            name: &secret adguard-dns-secret
+            key: ADGUARD_HOME_URL
+      - name: ADGUARD_HOME_USER
+        valueFrom:
+          secretKeyRef:
+            name: *secret
+            key: ADGUARD_HOME_USER
+      - name: ADGUARD_HOME_PASS
+        valueFrom:
+          secretKeyRef:
+            name: *secret
+            key: ADGUARD_HOME_PASS
+    livenessProbe:
+      httpGet:
+        path: /healthz
+        port: 8888
+    readinessProbe:
+      httpGet:
+        path: /healthz
+        port: 8888
+    triggerLoopOnEvent: true
+    policy: sync
+    sources:
+      - gateway-httproute
+      - service
+    txtOwnerId: main
+    txtPrefix: k8s.main.
+    domainFilters:
+      - ${SECRET_DOMAIN}
+    extraArgs:
+      - --webhook-provider-url=http://localhost:8888
+    serviceMonitor:
+      enabled: true
+    podAnnotations:
+      secret.reloader.stakater.com/reload: *secret
