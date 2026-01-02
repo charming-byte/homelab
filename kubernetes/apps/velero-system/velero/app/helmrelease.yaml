@@ -4,14 +4,16 @@ kind: HelmRelease
 metadata:
   name: &app velero
 spec:
-  chart:
-    spec:
-      chart: velero
-      version: '11.1.0'
-      reconcileStrategy: ChartVersion
-      sourceRef:
-        kind: OCIRepository
-        name: velero
+  chartRef:
+    kind: OCIRepository
+    name: velero
+   # spec:
+   #   chart: velero
+   #   version: '11.1.0'
+   #   reconcileStrategy: ChartVersion
+   #   sourceRef:
+   #     kind: OCIRepository
+   #     name: velero
   install:
     crds: Skip
   upgrade:
