@@ -84,7 +84,7 @@ spec:
           gethomepage.dev/icon: calibre-web-automated-book-downloader.png
           gethomepage.dev/description: eBook Management
           gethomepage.dev/widget.type: calibreweb
-          gethomepage.dev/widget.url: http://calibre-web-automated.default:8083
+          gethomepage.dev/widget.url: http://calibre-web-automated.self-hosted:8083
           gethomepage.dev/widget.username: "{{`{{HOMEPAGE_VAR_CALIBRE_USERNAME}}`}}"
           gethomepage.dev/widget.password: "{{`{{HOMEPAGE_VAR_CALIBRE_PASSWORD}}`}}"
         hostnames: ["books.${SECRET_DOMAIN}"]
