@@ -48,6 +48,12 @@ spec:
             port: http-webhook
     triggerLoopOnEvent: true
     policy: sync
+    rbac:
+      create: true
+      additionalPermissions: []
+    serviceAccount:
+      create: true
+      name: external-dns
     sources:
       - gateway-httproute
       - service
