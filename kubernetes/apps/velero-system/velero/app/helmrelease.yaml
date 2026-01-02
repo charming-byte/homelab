@@ -54,6 +54,46 @@ spec:
         enabled: true
       nodeAgentPodMonitor:
         enabled: true
+      prometheusRule:
+        enabled: true
+        spec:
+          - alert: VeleroBackupFailed
+            annotations:
+            message: Velero backup {{ $labels.schedule }} has failed
+            expr: |-
+              velero_backup_last_status{schedule!=""} != 1
+            for: 15m
+            labels:
+              severity: warning
+          - alert: VeleroBackupFailing
+            annotations:
+            message: Velero backup {{ $labels.schedule }} has been failing for the last 12h
+            expr: |-
+              velero_backup_last_status{schedule!=""} != 1
+            for: 12h
+            labels:
+            severity: critical
+          - alert: VeleroNoNewBackup
+            annotations:
+            message: Velero backup {{ $labels.schedule }} has not run successfully in the last 169h
+            expr: |-
+              (
+              (time() - velero_backup_last_successful_timestamp{schedule!=""}) >bool (169 * 3600)
+              or
+              absent(velero_backup_last_successful_timestamp{schedule!=""})
+              ) == 1
+            for: 1h
+            labels:
+              severity: critical
+          - alert: VeleroBackupPartialFailures
+            annotations:
+              message: Velero backup {{ $labels.schedule }} has {{ $value | humanizePercentage }} partialy failed backups
+            expr: |-
+              rate(velero_backup_partial_failure_total{schedule!=""}[25m])
+                / rate(velero_backup_attempt_total{schedule!=""}[25m]) > 0.5
+            for: 15m
+            labels:
+              severity: warning
 
     configuration:
      backupStorageLocation:
@@ -108,78 +148,3 @@ spec:
         template:
           includedNamespaces:
             - '*'
-  #   initContainers:
-  #     - name: velero-plugin-for-aws
-  #       image: velero/velero-plugin-for-aws:latest
-  #       volumeMounts:
-  #         - mountPath: /target
-  #           name: plugins
-  #   upgradeCRDs: false
-  #   configuration:
-  #     backupStorageLocation:
-  #       - name: default
-  #         provider: aws
-  #         bucket: velero-infrastructure
-  #         config:
-  #           s3Url: https://${S3_BACKUP_ENDPOINT}
-  #           s3ForcePathStyle: true
-  #     uploaderType: restic
-  #     logLevel: warning
-  #     extraEnvVars:
-  #       TZ: Europe/Berlin
-  #     defaultVolumesToFsBackup: true
-  #   extraObjects:
-  #     - apiVersion: external-secrets.io/v1
-  #       kind: ExternalSecret
-  #       metadata:
-  #         name: *app
-  #       spec:
-  #         secretStoreRef:
-  #           kind: ClusterSecretStore
-  #           name: onepassword
-  #         target:
-  #           name: velero-secrets-store
-  #           template:
-  #             data:
-  #               aws_access_key_id: "{{ .S3_ACCESS_KEY }}"
-  #               aws_secret_access_key: "{{ .S3_SECRET_KEY }}"
-
-  #         dataFrom:
-  #           - extract:
-  #               key: s3-storage
-
-  # #   kind: SecretProviderClass
-  # #   metadata:
-  # #     name: velero-secrets-store
-  # #   spec:
-  # #     provider: aws
-  # #     parameters:
-  # #       objects: |
-  # #         - objectName: "velero"
-  # #           objectType: "secretsmanager"
-  # #           jmesPath:
-  # #               - path: "access_key"
-  # #                 objectAlias: "access_key"
-  # #               - path: "secret_key"
-  # #                 objectAlias: "secret_key"
-  # #     secretObjects:
-  # #       - data:
-  # #         - key: access_key
-  # #           objectName: client-id
-  # #         - key: client-secret
-  # #           objectName: client-secret
-  # #         secretName: velero-secrets-store
-  # #         type: Opaque
-  #   credentials:
-  #     useSecret: true
-  #     existingSecret: velero-secrets-store
-  #     #secretContents:
-  #     #  cloud: |
-  #     #    [default]
-  #     #    aws_access_key_id=${VELERO_ACCESS_KEY}
-  #     #    aws_secret_access_key=${VELERO_SECRET_KEY}
-  #   backupsEnabled: true
-  #   snapshotsEnabled: false
-  #   deployNodeAgent: true
-
-  # interval: 10m0s
