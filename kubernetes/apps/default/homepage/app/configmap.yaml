@@ -55,7 +55,8 @@ data:
         style: column
         icon: mdi-monitor-eye
       Infrastructure:
-        style: column
+        style: row
+        columns: 3
         icon: mdi-server-network
       Storage:
         style: column
