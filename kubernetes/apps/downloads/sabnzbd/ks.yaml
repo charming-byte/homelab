@@ -14,6 +14,8 @@ spec:
       namespace: kube-system
     - name: openebs
       namespace: openebs-system
+    - name: authentik
+      namespace: security
   components:
     - ../../../../components/nfs-scaler
     - ../../../../components/ext-auth

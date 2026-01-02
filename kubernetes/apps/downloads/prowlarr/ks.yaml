@@ -11,6 +11,8 @@ spec:
       namespace: openebs-system
     - name: onepassword-connect
       namespace: kube-system
+    - name: authentik
+      namespace: security
   interval: 1h
   path: ./kubernetes/apps/downloads/prowlarr/app
   components:

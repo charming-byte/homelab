@@ -13,6 +13,8 @@ spec:
       namespace: dbms
     - name: onepassword-connect
       namespace: kube-system
+    - name: authentik
+      namespace: security
   interval: 1h
   path: ./kubernetes/apps/downloads/lidarr/app
   components:
