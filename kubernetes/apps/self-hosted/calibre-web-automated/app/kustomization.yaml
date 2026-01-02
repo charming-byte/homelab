@@ -6,3 +6,4 @@ resources:
   - ./helmrelease.yaml
   - ./storage/pvc.yaml
   - ./storage/replicationsource.yaml
+  - ./storage/replicationdestination.yaml
