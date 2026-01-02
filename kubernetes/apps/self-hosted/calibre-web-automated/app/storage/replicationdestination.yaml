@@ -11,5 +11,8 @@ spec:
     manual: restore-once
   restic:
     repository: calibre-web-automated-secret
-    destinationPVC: calibre-web-automated
+    accessModes:
+      - ReadWriteOnce
+    capacity: 5Gi
+    storageClassName: local-hostpath
     copyMethod: Direct

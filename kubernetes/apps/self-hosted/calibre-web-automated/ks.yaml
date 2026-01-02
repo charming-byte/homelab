@@ -10,6 +10,11 @@ spec:
   path: ./kubernetes/apps/self-hosted/calibre-web-automated/app
   components:
     - ../../../../components/nfs-scaler
+  dependsOn:
+    - name: openebs
+      namespace: openebs-system
+    - name: onepassword-connect
+      namespace: kube-system
   postBuild:
     substitute:
       APP: *app
