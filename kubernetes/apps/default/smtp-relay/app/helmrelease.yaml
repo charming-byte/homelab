@@ -23,6 +23,7 @@ spec:
               tag: 0.8.1@sha256:55636d8a29588eea62d81d51acdafe38e0f694fb91801ab12dc1ed8c47b6439d
             env:
               SMTP_RELAY_SMTP_PORT: &port 25
+              TZ: Europe/Berlin
             envFrom:
               - secretRef:
                   name: "{{ .Release.Name }}-secret"

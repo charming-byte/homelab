@@ -20,6 +20,8 @@ spec:
             image:
               repository: docker.io/dpage/pgadmin4
               tag: 9.11@sha256:50700ac17936d0227f9e3e4bb086a91efb67064debc4b4737c35545bf1564088
+            env:
+              TZ: Europe/Berlin
             envFrom:
               - secretRef:
                   name: pgadmin-secret

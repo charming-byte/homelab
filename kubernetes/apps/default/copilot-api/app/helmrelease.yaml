@@ -20,6 +20,8 @@ spec:
             image:
               repository: ghcr.io/ericc-ch/copilot-api
               tag: v0.7@sha256:528117aa62e0393f90dbdb8f33ab0c8383335690c06eeee9c2abc7f81b6d974f
+            env:
+              TZ: Europe/Berlin
             envFrom:
               - secretRef:
                   name: copilot-api-secret
