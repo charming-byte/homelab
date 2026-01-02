@@ -4,6 +4,3 @@ kind: Kustomization
 resources:
   - ./ocirepository.yaml
   - ./helmrelease.yaml
-  - ./storage/pvc.yaml
-  - ./storage/replicationsource.yaml
-  #- ./storage/replicationdestination.yaml
