@@ -6,3 +6,4 @@ resources:
   - ./cluster18.yaml
   - ./scheduledbackup.yaml
   - ./prometheusrule.yaml
+  - ./service.yaml
