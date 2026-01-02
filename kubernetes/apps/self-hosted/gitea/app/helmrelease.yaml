@@ -118,7 +118,7 @@ spec:
            gethomepage.dev/name: Git
            gethomepage.dev/group: Development
            gethomepage.dev/widget.type: gitea
-           gethomepage.dev/widget.url: http://gitea.default.svc.cluster.local
+           gethomepage.dev/widget.url: http://gitea.self-hosted.svc.cluster.local
            gethomepage.dev/widget.key: '{{ "{{HOMEPAGE_VAR_GITEA_API_KEY}}" }}'
         hostnames: ["git.${SECRET_DOMAIN}"]
         parentRefs:
