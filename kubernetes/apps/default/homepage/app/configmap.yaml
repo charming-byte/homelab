@@ -116,6 +116,7 @@ data:
         - AdGuard Home:
             href: http://nas.internal:3000
             icon: adguard-home.svg
+            description: Network-wide ads & trackers blocking DNS server.
             widget:
               type: adguard
               url: http://nas.internal:3000
