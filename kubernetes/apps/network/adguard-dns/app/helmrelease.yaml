@@ -35,9 +35,9 @@ spec:
                 name: *secret
                 key: ADGUARD_HOME_PASS
         securityContext:
-          runAsUser: 0
-          runAsNonRoot: false
-          allowPrivilegeEscalation: true
+          runAsUser: 1000
+          runAsNonRoot: true
+          allowPrivilegeEscalation: false
         livenessProbe:
           httpGet:
             path: /healthz
