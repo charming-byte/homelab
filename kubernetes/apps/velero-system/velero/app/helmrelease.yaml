@@ -26,10 +26,10 @@ spec:
     image:
       repository: velero/velero
       tag: v1.17.1 # downgrade due to missing CRDs in helm chart
-    #kubectl:
-    #  image:
-    #    repository: bitnamilegacy/kubectl
-    #    tag:  1.33.4
+    kubectl:
+      image:
+        repository: bitnamilegacy/kubectl
+        tag:  1.33.4
 
     upgradeJobResources:
       requests:
