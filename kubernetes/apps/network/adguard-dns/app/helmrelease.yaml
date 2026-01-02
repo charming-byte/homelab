@@ -21,17 +21,17 @@ spec:
         service:
           port: 8888
         env:
-          - name: ADGUARD_HOME_URL
+          - name: ADGUARD_URL
             valueFrom:
               secretKeyRef:
                 name: &secret adguard-dns-secret
                 key: ADGUARD_HOME_URL
-          - name: ADGUARD_HOME_USER
+          - name: ADGUARD_USER
             valueFrom:
               secretKeyRef:
                 name: *secret
                 key: ADGUARD_HOME_USER
-          - name: ADGUARD_HOME_PASS
+          - name: ADGUARD_PASSWORD
             valueFrom:
               secretKeyRef:
                 name: *secret
