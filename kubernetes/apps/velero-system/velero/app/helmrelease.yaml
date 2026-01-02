@@ -10,9 +10,8 @@ spec:
       version: '11.1.0'
       reconcileStrategy: ChartVersion
       sourceRef:
-        kind: HelmRepository
-        name: vmware-tanzu
-        namespace: flux-system
+        kind: OCIRepository
+        name: velero
   install:
     crds: Skip
   upgrade:
