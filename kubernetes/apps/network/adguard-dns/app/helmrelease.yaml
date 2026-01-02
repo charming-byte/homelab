@@ -15,9 +15,11 @@ spec:
       name: webhook
       webhook:
         image:
-          repository: ghcr.io/zekker6/external-dns-provider-adguard
-          tag: v1.5.0@sha256:ac9c766371f8c2eddc477d526aaa23af7f3ed0ae59bf66e8c3e313085a5e9a04
+          repository: ghcr.io/muhlba91/external-dns-provider-adguard
+          tag: v11.0.1@sha256:632b994809f0f906ab4414b337b15ac4d0f5515f7a5de8bfbb5da29ccb6526ee
           pullPolicy: IfNotPresent
+        service:
+          port: 8888
         env:
           - name: ADGUARD_HOME_URL
             valueFrom:
@@ -34,6 +36,8 @@ spec:
               secretKeyRef:
                 name: *secret
                 key: ADGUARD_HOME_PASS
+          - name: LOG_LEVEL
+            value: debug
         securityContext:
           runAsUser: 1000
           runAsNonRoot: true
@@ -41,11 +45,15 @@ spec:
         livenessProbe:
           httpGet:
             path: /healthz
-            port: http-webhook
+            port: 8080
+          initialDelaySeconds: 10
+          timeoutSeconds: 5
         readinessProbe:
           httpGet:
             path: /healthz
-            port: http-webhook
+            port: 8080
+          initialDelaySeconds: 10
+          timeoutSeconds: 5
     triggerLoopOnEvent: true
     policy: sync
     rbac:
@@ -57,8 +65,8 @@ spec:
     sources:
       - gateway-httproute
       - service
-    txtOwnerId: main
-    txtPrefix: k8s.main.
+    #txtOwnerId: main
+    #txtPrefix: k8s.main.
     domainFilters:
       - ${SECRET_DOMAIN}
     serviceMonitor:
