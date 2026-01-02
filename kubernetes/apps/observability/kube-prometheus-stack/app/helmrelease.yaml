@@ -20,7 +20,6 @@ spec:
             gethomepage.dev/icon: prometheus.svg
             gethomepage.dev/name: Alertmanager
             gethomepage.dev/group: Infrastructure
-            gethomepage.dev/description: Manages and routes Prometheus alerts.
             gethomepage.dev/href: https://alertmanager.${SECRET_DOMAIN}
             gethomepage.dev/app: alertmanager
           hostnames:
