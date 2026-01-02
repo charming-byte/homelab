@@ -1,0 +1,63 @@
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: &current postgres18
+spec:
+  affinity:
+    nodeSelector:
+      kubernetes.io/arch: amd64
+  instances: 3
+  imageName: ghcr.io/cloudnative-pg/postgresql:18.1@sha256:765687b22589dd52a2de969c245d7e2b0667f8ab1aa29a9f70d6254f4a7208e0
+  primaryUpdateStrategy: unsupervised
+  storage:
+    size: 50Gi
+    storageClass: local-hostpath
+  superuserSecret:
+    name: cloudnative-pg-secret
+  enableSuperuserAccess: true
+  postgresql:
+    parameters:
+      max_connections: "300"
+      shared_buffers: "512MB"
+  resources:
+    requests:
+      cpu: 500m
+      memory: 756M
+    limits:
+      memory: 1Gi
+  monitoring:
+    enablePodMonitor: true
+
+  backup:
+    retentionPolicy: 30d
+    barmanObjectStore: &barmanObjectStore
+      data:
+        compression: bzip2
+      wal:
+        compression: bzip2
+        maxParallel: 8
+      destinationPath: s3://cloudnative-pg/
+      endpointURL: https://${S3_BACKUP_ENDPOINT}
+      # Note: serverName version needs to be incremented
+      # when recovering from an existing cnpg cluster
+      serverName: &currentCluster postgres18-v1
+      s3Credentials:
+        accessKeyId:
+          name: cloudnative-pg-secret
+          key: access-key-id
+        secretAccessKey:
+          name: cloudnative-pg-secret
+          key: secret-access-key
+
+  # Note: previousCluster needs to be set to the name of the previous
+  # cluster when recovering from an existing cnpg cluster
+  # bootstrap:
+  #   recovery:
+  #     source: &previousCluster postgres18-v1
+  # Note: externalClusters is needed when recovering from an existing cnpg cluster
+  # externalClusters:
+  #   - name: *previousCluster
+  #     barmanObjectStore:
+  #       <<: *barmanObjectStore
+  #       serverName: *previousCluster

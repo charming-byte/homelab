@@ -26,6 +26,10 @@ kind: Kustomization
 metadata:
   name: &app cloudnative-pg-cluster
 spec:
+  postBuild:
+    substituteFrom:
+      - name: cluster-secrets
+        kind: Secret
   dependsOn:
     - name: cloudnative-pg
     - name: openebs
