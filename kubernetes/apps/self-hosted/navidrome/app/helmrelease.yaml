@@ -119,4 +119,5 @@ spec:
           navidrome:
             app:
               - path: /music
+                subPath: audio
                 readOnly: true
