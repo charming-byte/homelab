@@ -96,10 +96,15 @@ spec:
               severity: warning
 
     configuration:
-     backupStorageLocation:
+      backupStorageLocation:
         - name: default
           provider: aws
-          bucket: velero-infrastructure
+          config:
+            s3Url: https://${S3_BACKUP_ENDPOINT}
+            s3ForcePathStyle: true
+      volumeSnapshotLocation:
+        - name: default
+          provider: aws
           config:
             s3Url: https://${S3_BACKUP_ENDPOINT}
             s3ForcePathStyle: true
