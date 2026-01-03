@@ -127,7 +127,7 @@ spec:
           http:
             port: *port
     route:
-      app:
+      slskd:
         annotations:
           gethomepage.dev/enabled: "true"
           gethomepage.dev/group: Downloads
