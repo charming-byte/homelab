@@ -101,7 +101,7 @@ spec:
           provider: aws
           bucket: velero-infrastructure
           config:
-            s3Url: https://${S3_BACKUP_ENDPOINT}
+            s3Url: https://${S3_BACKUP_ENDPOINT}/velero
             s3ForcePathStyle: true
     uploaderType: restic
     logLevel: warning
