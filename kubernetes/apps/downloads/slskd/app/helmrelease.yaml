@@ -122,6 +122,7 @@ spec:
         fsGroupChangePolicy: OnRootMismatch
     service:
       app:
+        enabled: true
         ports:
           http:
             port: *port
