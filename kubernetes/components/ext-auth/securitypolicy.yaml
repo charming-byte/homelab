@@ -18,6 +18,7 @@ spec:
       headersToBackend:
         - set-cookie
         - x-authentik-*
+        - x-authentik-username
         - authorization
   targetRefs:
     - group: ${EXT_AUTH_TARGET_GROUP:-gateway.networking.k8s.io}

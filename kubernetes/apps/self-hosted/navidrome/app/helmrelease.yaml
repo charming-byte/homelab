@@ -42,7 +42,7 @@ spec:
               ND_ENABLETRANSCODINGCONFIG: "false"
               ND_LOGLEVEL: info
               ND_EXTAUTH_TRUSTEDSOURCES: "0.0.0.0/0"
-              ND_EXTAUTH_USERHEADER: "X-authentik-username"
+              ND_EXTAUTH_USERHEADER: "X-Authentik-Username"
               ND_AUTHREQUESTLIMIT: 0
               ND_ENABLEINSIGHTSCOLLECTOR: "false"
             probes:
