@@ -34,6 +34,8 @@ spec:
             command:
               - /home/runner/run.sh
             env:
+              - name: TZ
+                value: Europe/Berlin
               - name: ACTIONS_RUNNER_REQUIRE_JOB_CONTAINER
                 value: "false"
               - name: NODE
