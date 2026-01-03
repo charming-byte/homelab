@@ -1,0 +1,119 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/app-template-4.5.0/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app navidrome
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: navidrome
+  interval: 30m
+  values:
+    controllers:
+      navidrome:
+        pod:
+          securityContext:
+            runAsUser: 1000
+            runAsGroup: &gid 1000
+            fsGroup: *gid
+            fsGroupChangePolicy: OnRootMismatch
+            runAsNonRoot: true
+            seccompProfile:
+              type: RuntimeDefault
+        containers:
+          app:
+            image:
+              repository: ghcr.io/navidrome/navidrome
+              tag: 0.59.0
+            env:
+              TZ: Europe/Berlin
+              ND_DATAFOLDER: /config
+              ND_MUSICFOLDER: /music
+              ND_CACHEFOLDER: /cache
+              ND_PORT: &port 8080
+              ND_TRANSCODINGCACHESIZE: "8GB"
+              ND_ENABLETRANSCODINGCANCELLATION: "true"
+              ND_SCANNER_SCHEDULE: 0 * * * *
+              ND_SCANNER_PURGEMISSING: always
+              ND_ENABLEDOWNLOADS: "true"
+              ND_ENABLEEXTERNALSERVICES: "true"
+              ND_ENABLESHARING: "false"
+              ND_ENABLETRANSCODINGCONFIG: "false"
+              ND_LOGLEVEL: info
+              ND_EXTAUTH_TRUSTEDSOURCES: "10.42.0.0/16,10.43.0.0/16"
+              ND_EXTAUTH_USERHEADER: "X-authentik-username"
+              #ND_REVERSEPROXYUSERHEADER: "X-authentik-username"
+              #ND_REVERSEPROXYWHITELIST: "10.43.0.0/16,10.42.0.0/16"
+              ND_AUTHREQUESTLIMIT: 0
+              ND_ENABLEINSIGHTSCOLLECTOR: "false"
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /ping
+                    port: *port
+              readiness: *probes
+            resources:
+              requests:
+                cpu: 25m
+                memory: 50Mi
+              limits:
+                memory: 300Mi
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: { drop: ["ALL"] }
+    service:
+      app:
+        controller: *app
+        ports:
+          http:
+            port: *port
+    route:
+      app:
+        annotations:
+          gatus.home-operations.com/enabled: "true"
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/group: Media
+          gethomepage.dev/name: Navidrome
+          gethomepage.dev/icon: navidrome.svg
+          gethomepage.dev/widget.type: navidrome
+          gethomepage.dev/widget.url: http://navidrome.self-hosted:8080
+          gethomepage.dev/widget.user: "{{`{{HOMEPAGE_VAR_NAVIDROME_USER}}`}}"
+          gethomepage.dev/widget.token: "{{`{{HOMEPAGE_VAR_NAVIDROME_TOKEN}}`}}"
+          gethomepage.dev/widget.salt: "{{`{{HOMEPAGE_VAR_NAVIDROME_SALT}}`}}"
+        hostnames: ["music.${SECRET_DOMAIN}"]
+        parentRefs:
+          - name: envoy-internal
+            namespace: network
+            sectionName: https
+        rules:
+          - backendRefs:
+              - name: *app
+                port: 8080
+    persistence:
+      cache:
+        suffix: cache
+        type: persistentVolumeClaim
+        storageClass: local-hostpath
+        accessMode: ReadWriteOnce
+        size: 10Gi
+      config:
+        type: persistentVolumeClaim
+        storageClass: local-hostpath
+        accessMode: ReadWriteOnce
+        size: 5Gi
+      music:
+        type: nfs
+        enabled: true
+        server: nas.internal
+        path: /media
+        advancedMounts:
+          navidrome:
+            app:
+              - path: /media
+                subPath: /audio
+                readOnly: true
