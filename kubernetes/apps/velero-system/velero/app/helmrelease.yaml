@@ -99,12 +99,14 @@ spec:
       backupStorageLocation:
         - name: default
           provider: aws
+          bucket: velero-backup-storage
           config:
             s3Url: https://${S3_BACKUP_ENDPOINT}
             s3ForcePathStyle: true
       volumeSnapshotLocation:
         - name: default
           provider: aws
+          bucket: velero-volume-snapshot
           config:
             s3Url: https://${S3_BACKUP_ENDPOINT}
             s3ForcePathStyle: true
