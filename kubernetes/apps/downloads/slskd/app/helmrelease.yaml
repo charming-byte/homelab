@@ -121,8 +121,8 @@ spec:
         fsGroup: 1000
         fsGroupChangePolicy: OnRootMismatch
     service:
-      app:
-        enabled: true
+      slskd:
+        controller: *app
         ports:
           http:
             port: *port
@@ -143,7 +143,7 @@ spec:
             namespace: network
         rules:
           - backendRefs:
-              - identifier: app
+              - identifier: *app
                 port: *port
     configMaps:
       config:
