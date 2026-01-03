@@ -116,5 +116,5 @@ spec:
           navidrome:
             app:
               - path: /media
-                subPath: /audio
+                subPath: /media/audio
                 readOnly: true
