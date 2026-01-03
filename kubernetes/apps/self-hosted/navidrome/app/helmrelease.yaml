@@ -64,7 +64,7 @@ spec:
                 memory: 300Mi
             securityContext:
               allowPrivilegeEscalation: false
-              readOnlyRootFilesystem: true
+              readOnlyRootFilesystem: false
               capabilities: { drop: ["ALL"] }
     service:
       app:
@@ -107,6 +107,11 @@ spec:
         storageClass: local-hostpath
         accessMode: ReadWriteOnce
         size: 5Gi
+        advancedMounts:
+          navidrome:
+            app:
+              - path: /config
+                readOnly: false
       music:
         type: nfs
         enabled: true
