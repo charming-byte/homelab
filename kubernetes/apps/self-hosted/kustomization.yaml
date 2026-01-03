@@ -6,6 +6,6 @@ components:
   - ../../components/common
 resources:
   - ./namespace.yaml
-  - ./gitea/ks.yaml
+  #- ./gitea/ks.yaml
   - ./open-webui/ks.yaml
   #- ./calibre-web-automated/ks.yaml

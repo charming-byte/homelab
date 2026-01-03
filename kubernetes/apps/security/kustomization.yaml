@@ -8,5 +8,3 @@ components:
 resources:
   - ./namespace.yaml
   - ./authentik/ks.yaml
-  #- ./keycloak/ks.yaml
-# - ./lldap/ks.yaml
