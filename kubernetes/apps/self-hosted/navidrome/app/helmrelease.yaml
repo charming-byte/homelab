@@ -114,9 +114,9 @@ spec:
         type: nfs
         enabled: true
         server: nas.internal
-        path: /media/audio
+        path: /media
         advancedMounts:
           navidrome:
             app:
-              - path: /media/audio
+              - path: /music
                 readOnly: true
