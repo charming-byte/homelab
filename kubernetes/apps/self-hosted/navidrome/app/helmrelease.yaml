@@ -28,23 +28,28 @@ spec:
               tag: 0.59.0
             env:
               TZ: Europe/Berlin
+              ND_AUTHREQUESTLIMIT: 0
+              ND_AUTOIMPORTPLAYLISTS: "false"
               ND_DATAFOLDER: /config
-              ND_MUSICFOLDER: /music
               ND_CACHEFOLDER: /cache
-              ND_PORT: &port 8080
-              ND_TRANSCODINGCACHESIZE: "8GB"
-              ND_ENABLETRANSCODINGCANCELLATION: "true"
-              ND_SCANNER_SCHEDULE: 0 * * * *
-              ND_SCANNER_PURGEMISSING: always
               ND_ENABLEDOWNLOADS: "true"
               ND_ENABLEEXTERNALSERVICES: "true"
+              ND_ENABLEINSIGHTSCOLLECTOR: "false"
               ND_ENABLESHARING: "false"
               ND_ENABLETRANSCODINGCONFIG: "false"
+              ND_ENABLETRANSCODINGCANCELLATION: "true"
+              ND_EXTAUTH_TRUSTEDSOURCES: "10.42.0.0/16"
+              ND_EXTAUTH_USERHEADER: "x-authentik-username"
+              ND_LASTFM_LANGUAGE: de-DE
               ND_LOGLEVEL: info
-              ND_EXTAUTH_TRUSTEDSOURCES: "0.0.0.0/0"
-              ND_EXTAUTH_USERHEADER: "X-Authentik-Username"
-              ND_AUTHREQUESTLIMIT: 0
-              ND_ENABLEINSIGHTSCOLLECTOR: "false"
+              ND_MUSICFOLDER: /music
+              ND_PORT: &port 8080
+              ND_SCANNER_PURGEMISSING: always
+              ND_SCANNER_SCHEDULE: 0 * * * *
+              ND_TRANSCODINGCACHESIZE: "8GB"
+            envFrom:
+              - secretRef:
+                  name: navidrome-secret
             probes:
               liveness: &probes
                 enabled: true
