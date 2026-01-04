@@ -12,10 +12,10 @@ spec:
     s3Credentials:
       accessKeyId:
         name: postgres18-secret
-        key: S3_ACCESS_KEY
+        key: AWS_ACCESS_KEY_ID
       secretAccessKey:
         name: postgres18-secret
-        key: S3_SECRET_KEY
+        key: AWS_SECRET_ACCESS_KEY
     wal:
       compression: bzip2
       maxParallel: 4
