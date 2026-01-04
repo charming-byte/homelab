@@ -22,47 +22,6 @@ spec:
     remediation:
       retries: 3
   values:
-    configMaps:
-      config:
-        data:
-          config.ini: |-
-            [Lidarr]
-            api_key = ${LIDARR_API_KEY}
-            host_url = http://lidarr.downloads.svc.cluster.local:80
-            download_dir = /media/downloads/soulseek
-
-            [Slskd]
-            api_key = ${SLSKD_API_KEY}
-            host_url = http://slskd.downloads.svc.cluster.local:80
-            url_base = /
-            download_dir = /media/downloads/soulseek
-            delete_searches = False
-            stalled_timeout = 3600
-
-            [Release Settings]
-            use_most_common_tracknum = True
-            allow_multi_disc = True
-            accepted_countries = Europe,Japan,United Kingdom,United States,[Worldwide],Australia,Canada
-            accepted_formats = CD,Digital Media,Vinyl
-
-            [Search Settings]
-            search_timeout = 5000
-            maximum_peer_queue = 50
-            minimum_peer_upload_speed = 0
-            minimum_filename_match_ratio = 0.5
-            allowed_filetypes = flac 24/192,flac 16/44.1,flac,mp3 320,mp3
-            search_for_tracks = True
-            album_prepend_artist = False
-            track_prepend_artist = True
-            search_type = incrementing_page
-            number_of_albums_to_grab = 10
-            remove_wanted_on_failure = False
-            search_source = missing
-
-            [Logging]
-            level = INFO
-            format = [%(levelname)s|%(module)s|L%(lineno)d] %(asctime)s: %(message)s
-            datefmt = %Y-%m-%dT%H:%M:%S%z
     controllers:
       soularr:
         annotations:
@@ -74,7 +33,7 @@ spec:
               TZ: Europe/Berlin
             image:
               repository: mrusse08/soularr
-              tag: latest
+              tag: latest@sha256:15bcdf0bcbce937f39c1c93ba8384fc1508e849bff943b56e4bc79a076af9ea2
             resources:
               limits:
                 memory: 512Mi
@@ -86,20 +45,6 @@ spec:
               capabilities:
                 drop: ["ALL"]
               readOnlyRootFilesystem: true
-        initContainers:
-          config-setup:
-            command:
-              - "/usr/local/bin/bash"
-              - -c
-              - |
-                envsubst < /tmp/config.ini > /data/config.ini
-                exit 0
-            envFrom:
-              - secretRef:
-                  name: soularr-secret
-            image:
-              repository: ghcr.io/dmfrey/bash
-              tag: 5.2.26-alpine3.20
         type: statefulset
     defaultPodOptions:
       labels:
@@ -111,16 +56,13 @@ spec:
         runAsNonRoot: true
         runAsUser: 1000
     persistence:
-      config-file:
-        advancedMounts:
-          soularr:
-            config-setup:
-              - path: /tmp/config.ini
-                readOnly: true
-                subPath: config.ini
-        defaultMode: 0775
-        name: soularr
-        type: configMap
+      config-secret:
+        type: secret
+        name: "{{ .Release.Name }}-secret"
+        globalMounts:
+          - path: /data/config.ini
+            subPath: config.ini
+            readOnly: true
       data:
         existingClaim: soularr
       media:
@@ -131,7 +73,6 @@ spec:
         server: nas.internal
         type: nfs
       tmp:
-        medium: Memory
         type: emptyDir
     service:
       soularr:
