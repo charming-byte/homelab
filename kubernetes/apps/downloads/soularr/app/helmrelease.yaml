@@ -24,6 +24,7 @@ spec:
   values:
     configMaps:
       config:
+        name: soularr-config
         data:
           config.ini: |-
             [Lidarr]
@@ -119,7 +120,7 @@ spec:
                 readOnly: true
                 subPath: config.ini
         defaultMode: 0775
-        name: config
+        name: soularr-config
         type: configMap
       data:
         existingClaim: soularr
