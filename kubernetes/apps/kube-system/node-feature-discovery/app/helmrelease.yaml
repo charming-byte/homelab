@@ -5,7 +5,6 @@ kind: HelmRelease
 metadata:
   name: node-feature-discovery
 spec:
-  interval: 30m
   chartRef:
     kind: OCIRepository
     name: node-feature-discovery
@@ -13,16 +12,17 @@ spec:
     crds: CreateReplace
     remediation:
       retries: 3
+  interval: 30m
   upgrade:
     cleanupOnFail: true
     crds: CreateReplace
     remediation:
-      strategy: rollback
       retries: 3
+      strategy: rollback
   values:
+    prometheus:
+      enable: true
     worker:
       config:
         core:
           sources: ["pci", "system", "usb"]
-    prometheus:
-      enable: true

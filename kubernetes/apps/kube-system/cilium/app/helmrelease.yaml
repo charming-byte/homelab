@@ -11,18 +11,15 @@ spec:
   values:
     autoDirectNodeRoutes: true
     bpf:
-      masquerade: true
       # Ref: https://github.com/siderolabs/talos/issues/10002
       hostLegacyRouting: true
-    cni:
-      # Required for pairing with Multus CNI
-      exclusive: false
+      masquerade: true
     cgroup:
       automount:
         enabled: false
       hostRoot: /sys/fs/cgroup
-    # NOTE: devices might need to be set if you have more than one active NIC on your hosts
-    # devices: eno+ eth+
+    cni:
+      exclusive: false
     dashboards:
       enabled: true
     endpointRoutes:
@@ -35,7 +32,7 @@ spec:
       enabled: false
     ipam:
       mode: kubernetes
-    ipv4NativeRoutingCIDR: "10.42.0.0/16"
+    ipv4NativeRoutingCIDR: 10.42.0.0/16
     k8sServiceHost: 127.0.0.1
     k8sServicePort: 7445
     kubeProxyReplacement: true
@@ -44,7 +41,7 @@ spec:
       enabled: true
     loadBalancer:
       algorithm: maglev
-      mode: "dsr"
+      mode: dsr
     localRedirectPolicy: true
     operator:
       dashboards:
@@ -65,19 +62,19 @@ spec:
     securityContext:
       capabilities:
         ciliumAgent:
+          - BPF
           - CHOWN
+          - DAC_OVERRIDE
+          - FOWNER
+          - IPC_LOCK
           - KILL
           - NET_ADMIN
           - NET_RAW
-          - IPC_LOCK
-          - SYS_ADMIN
-          - SYS_RESOURCE
           - PERFMON
-          - BPF
-          - DAC_OVERRIDE
-          - FOWNER
           - SETGID
           - SETUID
+          - SYS_ADMIN
+          - SYS_RESOURCE
         cleanCiliumState:
           - NET_ADMIN
           - SYS_ADMIN

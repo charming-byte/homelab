@@ -4,9 +4,10 @@ kind: CiliumLoadBalancerIPPool
 metadata:
   name: pool
 spec:
-  allowFirstLastIPs: "No"
+  allowFirstLastIPs: No
   blocks:
-    - cidr: "192.168.178.0/24"
+    - cidr: 192.168.178.0/24
+
 ---
 apiVersion: cilium.io/v2alpha1
 kind: CiliumL2AnnouncementPolicy
