@@ -38,7 +38,7 @@ spec:
                 mode: 750
             shares:
               directories:
-                - /media/media/music
+                - /media/media/audio
               filters:
                 - \.ini$
                 - Thumbs.db$
