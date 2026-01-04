@@ -3,12 +3,12 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: &app slskd
-  namespace: &namespace downloads
+  name: slskd
+  namespace: downloads
 spec:
   components:
-    - ../../../../components/nfs-scaler
     - ../../../../components/ext-auth
+    - ../../../../components/nfs-scaler
   dependsOn:
     - name: openebs
       namespace: openebs-system
@@ -20,16 +20,16 @@ spec:
   path: ./kubernetes/apps/downloads/slskd/app
   postBuild:
     substitute:
-      APP: *app
-      EXT_AUTH_APP: *app
-      EXT_AUTH_TARGET_NAME: *app
+      APP: slskd
+      EXT_AUTH_APP: slskd
+      EXT_AUTH_TARGET_NAME: slskd
     substituteFrom:
-      - name: cluster-secrets
-        kind: Secret
+      - kind: Secret
+        name: cluster-secrets
   prune: true
   sourceRef:
     kind: GitRepository
     name: flux-system
     namespace: flux-system
-  targetNamespace: *namespace
+  targetNamespace: downloads
   wait: false

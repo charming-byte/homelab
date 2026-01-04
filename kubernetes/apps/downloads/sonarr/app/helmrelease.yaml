@@ -3,30 +3,19 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: &app sonarr
+  name: sonarr
 spec:
   chartRef:
     kind: OCIRepository
-    name: *app
+    name: sonarr
   interval: 1h
   values:
     controllers:
       sonarr:
         annotations:
           reloader.stakater.com/auto: "true"
-        initContainers:
-          init-db:
-            image:
-              repository: ghcr.io/home-operations/postgres-init
-              tag: 18.1.0@sha256:866f15038ed5185a2b8118821f470bb7ca0df8c4231b8e277446e681ebb1ed84
-            envFrom: &envFrom
-              - secretRef:
-                  name: "{{ .Release.Name }}-secret"
         containers:
           app:
-            image:
-              repository: ghcr.io/home-operations/sonarr
-              tag: 4.0.16.2946@sha256:3597fd572f4599c67abbeb8afd3cb85bce8a9e389f0779b7ea1273781544d15c
             env:
               SONARR__APP__INSTANCENAME: Sonarr
               SONARR__APP__THEME: dark
@@ -34,82 +23,93 @@ spec:
               SONARR__AUTH__REQUIRED: DisabledForLocalAddresses
               SONARR__LOG__DBENABLED: "False"
               SONARR__LOG__LEVEL: info
-              SONARR__SERVER__PORT: &port 80
+              SONARR__SERVER__PORT: 80
               SONARR__UPDATE__BRANCH: develop
               TZ: Europe/Berlin
-            envFrom: *envFrom
+            envFrom: &envFrom
+              - secretRef:
+                  name: "{{ .Release.Name }}-secret"
+            image:
+              repository: ghcr.io/home-operations/sonarr
+              tag: 4.0.16.2946@sha256:3597fd572f4599c67abbeb8afd3cb85bce8a9e389f0779b7ea1273781544d15c
             probes:
               liveness: &probes
-                enabled: true
                 custom: true
+                enabled: true
                 spec:
+                  failureThreshold: 3
                   httpGet:
                     path: /ping
-                    port: *port
+                    port: 80
                   initialDelaySeconds: 0
                   periodSeconds: 10
                   timeoutSeconds: 1
-                  failureThreshold: 3
               readiness: *probes
-            securityContext:
-              allowPrivilegeEscalation: false
-              readOnlyRootFilesystem: true
-              capabilities: {drop: ["ALL"]}
             resources:
+              limits:
+                memory: 4Gi
               requests:
                 cpu: 100m
                 memory: 64Mi
-              limits:
-                memory: 4Gi
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop: ["ALL"]
+              readOnlyRootFilesystem: true
+        initContainers:
+          init-db:
+            envFrom: *envFrom
+            image:
+              repository: ghcr.io/home-operations/postgres-init
+              tag: 18.1.0@sha256:866f15038ed5185a2b8118821f470bb7ca0df8c4231b8e277446e681ebb1ed84
     defaultPodOptions:
       securityContext:
-        runAsNonRoot: true
-        runAsUser: 1000
-        runAsGroup: 1000
         fsGroup: 1000
         fsGroupChangePolicy: OnRootMismatch
-    service:
-      app:
-        ports:
-          http:
-            port: *port
+        runAsGroup: 1000
+        runAsNonRoot: true
+        runAsUser: 1000
+    persistence:
+      config:
+        accessMode: ReadWriteOnce
+        advancedMounts:
+          sonarr:
+            app:
+              - path: /config
+        size: 2Gi
+        storageClass: local-hostpath
+        suffix: config
+      media:
+        advancedMounts:
+          sonarr:
+            app:
+              - path: /media
+        enabled: true
+        path: /media-root
+        server: nas.internal
+        type: nfs
+      tmp:
+        type: emptyDir
     route:
       app:
         annotations:
           gethomepage.dev/enabled: "true"
+          gethomepage.dev/group: Downloads
           gethomepage.dev/icon: sonarr.png
           gethomepage.dev/name: Sonarr
-          gethomepage.dev/group: Downloads
+          gethomepage.dev/widget.key: "{{`{{HOMEPAGE_VAR_SONARR_API_KEY}}`}}"
           gethomepage.dev/widget.type: sonarr
           gethomepage.dev/widget.url: http://sonarr.downloads.svc.cluster.local
-          gethomepage.dev/widget.key: '{{ "{{HOMEPAGE_VAR_SONARR_API_KEY}}" }}'
-        hostnames:
-          - "{{ .Release.Name }}.${SECRET_DOMAIN}"
+        hostnames: ["{{ .Release.Name }}.${SECRET_DOMAIN}"]
         parentRefs:
           - name: envoy-internal
             namespace: network
         rules:
           - backendRefs:
-              - name: *app
+              - name: sonarr
                 port: 80
-    persistence:
-      config:
-        suffix: config
-        storageClass: local-hostpath
-        accessMode: ReadWriteOnce
-        size: "2Gi"
-        advancedMounts:
-          sonarr:
-            app:
-              - path: /config
-      media:
-        type: nfs
-        enabled: true
-        server: nas.internal
-        path: /media-root
-        advancedMounts:
-          sonarr:
-            app:
-              - path: /media
-      tmp:
-        type: emptyDir
+    service:
+      app:
+        ports:
+          http:
+            port: 80

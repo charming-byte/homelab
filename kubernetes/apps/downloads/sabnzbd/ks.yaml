@@ -2,13 +2,15 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: &app sabnzbd
-  namespace: &namespace downloads
+  name: sabnzbd
+  namespace: downloads
 spec:
-  targetNamespace: *namespace
   commonMetadata:
     labels:
-      app.kubernetes.io/name: *app
+      app.kubernetes.io/name: sabnzbd
+  components:
+    - ../../../../components/ext-auth
+    - ../../../../components/nfs-scaler
   dependsOn:
     - name: onepassword-connect
       namespace: kube-system
@@ -16,24 +18,22 @@ spec:
       namespace: openebs-system
     - name: authentik
       namespace: security
-  components:
-    - ../../../../components/nfs-scaler
-    - ../../../../components/ext-auth
+  interval: 1h
   path: ./kubernetes/apps/downloads/sabnzbd/app
+  postBuild:
+    substitute:
+      APP: sabnzbd
+      EXT_AUTH_APP: sabnzbd
+      EXT_AUTH_TARGET_NAME: sabnzbd
+    substituteFrom:
+      - kind: Secret
+        name: cluster-secrets
   prune: true
+  retryInterval: 2m
   sourceRef:
     kind: GitRepository
     name: flux-system
     namespace: flux-system
-  wait: false
-  interval: 1h
-  retryInterval: 2m
+  targetNamespace: downloads
   timeout: 5m
-  postBuild:
-    substitute:
-      APP: *app
-      EXT_AUTH_APP: *app
-      EXT_AUTH_TARGET_NAME: *app
-    substituteFrom:
-      - name: cluster-secrets
-        kind: Secret
+  wait: false

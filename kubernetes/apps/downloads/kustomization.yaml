@@ -1,14 +1,14 @@
 ---
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-namespace: downloads
 components:
   - ../../components/common
+namespace: downloads
 resources:
+  - ./lidarr/ks.yaml
   - ./namespace.yaml
-  - ./sonarr/ks.yaml
   - ./prowlarr/ks.yaml
   - ./radarr/ks.yaml
-  - ./lidarr/ks.yaml
   - ./sabnzbd/ks.yaml
   - ./slskd/ks.yaml
+  - ./sonarr/ks.yaml
