@@ -10,6 +10,9 @@ spec:
   dependsOn:
     - name: openebs
       namespace: openebs-system
+  postBuild:
+    substitute:
+      APP: soularr
   interval: 1h
   path: ./kubernetes/apps/downloads/soularr/app
   prune: true
