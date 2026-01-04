@@ -3,7 +3,7 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: kube-state-metrics1
+  name: kube-state-metrics
 spec:
   chartRef:
     kind: OCIRepository
