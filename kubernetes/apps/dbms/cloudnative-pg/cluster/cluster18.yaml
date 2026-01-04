@@ -9,7 +9,7 @@ spec:
       kubernetes.io/arch: amd64
   enableSuperuserAccess: true
   imageName: ghcr.io/cloudnative-pg/postgresql:18.1@sha256:765687b22589dd52a2de969c245d7e2b0667f8ab1aa29a9f70d6254f4a7208e0
-  instances: 3
+  instances: 1
   monitoring:
     enablePodMonitor: true
   plugins:
@@ -29,7 +29,7 @@ spec:
       memory: 1Gi
     requests:
       cpu: 500m
-      memory: 756M
+      memory: 512Mi
   storage:
     size: 50Gi
     storageClass: local-hostpath
