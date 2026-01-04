@@ -26,10 +26,10 @@ spec:
               tag: 9.11@sha256:50700ac17936d0227f9e3e4bb086a91efb67064debc4b4737c35545bf1564088
             resources:
               limits:
-                memory: 300M
+                memory: 320Mi
               requests:
                 cpu: 15m
-                memory: 150M
+                memory: 150Mi
         pod:
           securityContext:
             fsGroup: 5050
