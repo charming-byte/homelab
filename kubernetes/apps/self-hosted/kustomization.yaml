@@ -8,3 +8,4 @@ resources:
   - ./namespace.yaml
   - ./navidrome/ks.yaml
   - ./open-webui/ks.yaml
+  - ./atuin/ks.yaml
