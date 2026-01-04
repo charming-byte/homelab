@@ -27,7 +27,7 @@ spec:
         - x-authentik-meta-provider
         - x-authentik-meta-app
         - x-authentik-meta-version
-        - x-Forwarded-Host
+        - x-forwarded-host
         - authorization
   targetRefs:
     - group: ${EXT_AUTH_TARGET_GROUP:-gateway.networking.k8s.io}

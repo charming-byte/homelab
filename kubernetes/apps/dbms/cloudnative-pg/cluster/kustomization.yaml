@@ -5,5 +5,7 @@ kind: Kustomization
 resources:
   - ./cluster18.yaml
   - ./scheduledbackup.yaml
+  - ./objectstore.yaml
+  - ./externalsecret.yaml
   - ./prometheusrule.yaml
   - ./service.yaml

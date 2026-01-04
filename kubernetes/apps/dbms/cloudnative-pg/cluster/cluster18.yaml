@@ -29,26 +29,34 @@ spec:
   monitoring:
     enablePodMonitor: true
 
-  backup:
-    retentionPolicy: 30d
-    barmanObjectStore: &barmanObjectStore
-      data:
-        compression: bzip2
-      wal:
-        compression: bzip2
-        maxParallel: 8
-      destinationPath: s3://cloudnative-pg/
-      endpointURL: https://${S3_BACKUP_ENDPOINT}
-      # Note: serverName version needs to be incremented
-      # when recovering from an existing cnpg cluster
-      serverName: &currentCluster postgres18-v1
-      s3Credentials:
-        accessKeyId:
-          name: cloudnative-pg-secret
-          key: access-key-id
-        secretAccessKey:
-          name: cloudnative-pg-secret
-          key: secret-access-key
+  plugins:
+    - enabled: true
+      isWALArchiver: true
+      name: barman-cloud.cloudnative-pg.io
+      parameters: &barmanParameters
+        barmanObjectName: homelab-backup-store
+        serverName: postgres18-v1
+
+  # backup:
+  #   retentionPolicy: 30d
+  #   barmanObjectStore: &barmanObjectStore
+  #     data:
+  #       compression: bzip2
+  #     wal:
+  #       compression: bzip2
+  #       maxParallel: 8
+  #     destinationPath: s3://cloudnative-pg/
+  #     endpointURL: https://${S3_BACKUP_ENDPOINT}
+  #     # Note: serverName version needs to be incremented
+  #     # when recovering from an existing cnpg cluster
+  #     serverName: &currentCluster postgres18-v1
+  #     s3Credentials:
+  #       accessKeyId:
+  #         name: cloudnative-pg-secret
+  #         key: access-key-id
+  #       secretAccessKey:
+  #         name: cloudnative-pg-secret
+  #         key: secret-access-key
 
   # Note: previousCluster needs to be set to the name of the previous
   # cluster when recovering from an existing cnpg cluster
@@ -58,6 +66,8 @@ spec:
   # Note: externalClusters is needed when recovering from an existing cnpg cluster
   # externalClusters:
   #   - name: *previousCluster
-  #     barmanObjectStore:
-  #       <<: *barmanObjectStore
-  #       serverName: *previousCluster
+  #     plugin:
+  #       name: barman-cloud.cloudnative-pg.io
+  #       parameters:
+  #         <<: *barmanParamaters
+  #         serverName: *previousCluster

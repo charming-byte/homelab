@@ -1,0 +1,22 @@
+apiVersion: barmancloud.cnpg.io/v1
+kind: ObjectStore
+metadata:
+  name: homelab-backup-store
+  namespace: dbms
+spec:
+  configuration:
+    data:
+      compression: bzip2
+    destinationPath: s3://postgres18/
+    endpointURL: https://${S3_BACKUP_ENDPOINT}
+    s3Credentials:
+      accessKeyId:
+        name: postgres18-secret
+        key: S3_ACCESS_KEY
+      secretAccessKey:
+        name: postgres18-secret
+        key: S3_SECRET_KEY
+    wal:
+      compression: bzip2
+      maxParallel: 4
+  retentionPolicy: 30d
