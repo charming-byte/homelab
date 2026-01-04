@@ -79,10 +79,10 @@ spec:
               readiness: *probes
             resources:
               limits:
-                memory: 1Gi
+                memory: 765Mi
               requests:
                 cpu: 10m
-                memory: 64Mi
+                memory: 256Mi
             securityContext:
               allowPrivilegeEscalation: false
               capabilities: { drop: ["ALL"] }
