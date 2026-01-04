@@ -48,16 +48,15 @@ spec:
                     path: /health
                     port: 8080
                   initialDelaySeconds: 15
-            resources: &ref_1
+            resources: &resources
               limits:
-                memory: 256M
+                memory: 64M
               requests:
                 cpu: 10m
-            securityContext: &ref_0
+            securityContext: &securityContext
               allowPrivilegeEscalation: false
               capabilities:
-                drop:
-                  - ALL
+                drop: ["ALL"]
               readOnlyRootFilesystem: true
           sync:
             env:
@@ -92,8 +91,8 @@ spec:
                     path: /health
                     port: 8081
                   initialDelaySeconds: 15
-            resources: *ref_1
-            securityContext: *ref_0
+            resources: *resources
+            securityContext: *securityContext
         strategy: RollingUpdate
     defaultPodOptions:
       securityContext:

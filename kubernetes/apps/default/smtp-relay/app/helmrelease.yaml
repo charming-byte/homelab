@@ -53,7 +53,7 @@ spec:
                 enabled: true
             resources:
               limits:
-                memory: 64Mi
+                memory: 32Mi
               requests:
                 cpu: 10m
             securityContext:
