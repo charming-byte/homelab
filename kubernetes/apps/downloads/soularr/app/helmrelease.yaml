@@ -65,6 +65,8 @@ spec:
             readOnly: true
       data:
         existingClaim: soularr
+        globalMounts:
+          - path: /data
       media:
         globalMounts:
           - path: /media/downloads/soulseek
