@@ -12,23 +12,25 @@ alerting:
     resolved-priority: 0
     title: Gatus
     user-key: ${BUDDY_PUSHOVER_USER_KEY}
+
 endpoints:
-  - alerts:
-      - type: pushover
+  - name: Status Page
+    group: buddy
+    url: https://${BUDDY_STATUS_HOSTNAME}
+    interval: 1m
+    ui:
+      hide-url: true
+      hide-hostname: true
     conditions:
       - "[STATUS] == 200"
-    group: buddy
-    interval: 1m
-    name: Status Page
-    ui:
-      hide-hostname: true
-      hide-url: true
-    url: https://${BUDDY_STATUS_HOSTNAME}
-external-endpoints:
-  - alerts:
+    alerts:
       - type: pushover
+
+external-endpoints:
+  - name: Heartbeat
     group: buddy
+    token: ${BUDDY_HEARTBEAT_TOKEN}
     heartbeat:
       interval: 5m
-    name: Heartbeat
-    token: ${BUDDY_HEARTBEAT_TOKEN}
+    alerts:
+      - type: pushover
