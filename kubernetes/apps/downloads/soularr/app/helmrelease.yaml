@@ -48,8 +48,8 @@ spec:
         initContainers:
           config-setup:
             command:
-              - "-c"
-              - /usr/local/bin/bash
+              - "/usr/local/bin/bash"
+              - -c
               - |
                 envsubst < /tmp/config.ini > /data/config.ini
                 exit 0
