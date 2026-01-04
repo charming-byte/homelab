@@ -10,52 +10,6 @@ spec:
     name: smtp-relay
   interval: 1h
   values:
-    controllers:
-      smtp-relay:
-        replicas: 2
-        strategy: RollingUpdate
-        annotations:
-          reloader.stakater.com/auto: "true"
-        containers:
-          app:
-            image:
-              repository: ghcr.io/foxcpp/maddy
-              tag: 0.8.1@sha256:55636d8a29588eea62d81d51acdafe38e0f694fb91801ab12dc1ed8c47b6439d
-            env:
-              SMTP_RELAY_SMTP_PORT: &port 25
-              TZ: Europe/Berlin
-            envFrom:
-              - secretRef:
-                  name: "{{ .Release.Name }}-secret"
-            probes:
-              liveness:
-                enabled: true
-              readiness:
-                enabled: true
-            securityContext:
-              allowPrivilegeEscalation: false
-              readOnlyRootFilesystem: true
-              capabilities: {drop: ["ALL"]}
-            resources:
-              requests:
-                cpu: 10m
-              limits:
-                memory: 64Mi
-    defaultPodOptions:
-      securityContext:
-        runAsNonRoot: true
-        runAsUser: 1000
-        runAsGroup: 1000
-    service:
-      app:
-        type: LoadBalancer
-        annotations:
-          external-dns.alpha.kubernetes.io/hostname: smtp.${SECRET_DOMAIN}
-          lbipam.cilium.io/ips: 192.168.178.129
-        externalTrafficPolicy: Local
-        ports:
-          smtp:
-            port: *port
     configMaps:
       config:
         data:
@@ -77,12 +31,59 @@ spec:
                 auth plain {env:SMTP_RELAY_USERNAME} {env:SMTP_RELAY_PASSWORD}
                 targets tcp://{env:SMTP_RELAY_SERVER}:587
             }
+    controllers:
+      smtp-relay:
+        annotations:
+          reloader.stakater.com/auto: "true"
+        containers:
+          app:
+            env:
+              SMTP_RELAY_SMTP_PORT: 25
+              TZ: Europe/Berlin
+            envFrom:
+              - secretRef:
+                  name: "{{ .Release.Name }}-secret"
+            image:
+              repository: ghcr.io/foxcpp/maddy
+              tag: 0.8.1@sha256:55636d8a29588eea62d81d51acdafe38e0f694fb91801ab12dc1ed8c47b6439d
+            probes:
+              liveness:
+                enabled: true
+              readiness:
+                enabled: true
+            resources:
+              limits:
+                memory: 64Mi
+              requests:
+                cpu: 10m
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop: ["ALL"]
+              readOnlyRootFilesystem: true
+        replicas: 2
+        strategy: RollingUpdate
+    defaultPodOptions:
+      securityContext:
+        runAsGroup: 1000
+        runAsNonRoot: true
+        runAsUser: 1000
     persistence:
       cache:
         type: emptyDir
       config-file:
-        type: configMap
-        identifier: config
         globalMounts:
           - path: /data/maddy.conf
             subPath: maddy.conf
+        identifier: config
+        type: configMap
+    service:
+      app:
+        annotations:
+          external-dns.alpha.kubernetes.io/hostname: smtp.${SECRET_DOMAIN}
+          lbipam.cilium.io/ips: 192.168.178.129
+        externalTrafficPolicy: Local
+        ports:
+          smtp:
+            port: 25
+        type: LoadBalancer

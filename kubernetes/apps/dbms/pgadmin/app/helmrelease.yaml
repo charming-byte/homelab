@@ -12,52 +12,52 @@ spec:
   values:
     controllers:
       pgadmin:
-        strategy: Recreate
         annotations:
           reloader.stakater.com/auto: "true"
         containers:
           app:
-            image:
-              repository: docker.io/dpage/pgadmin4
-              tag: 9.11@sha256:50700ac17936d0227f9e3e4bb086a91efb67064debc4b4737c35545bf1564088
             env:
               TZ: Europe/Berlin
             envFrom:
               - secretRef:
                   name: pgadmin-secret
+            image:
+              repository: docker.io/dpage/pgadmin4
+              tag: 9.11@sha256:50700ac17936d0227f9e3e4bb086a91efb67064debc4b4737c35545bf1564088
             resources:
+              limits:
+                memory: 300M
               requests:
                 cpu: 15m
                 memory: 150M
-              limits:
-                memory: 300M
         pod:
           securityContext:
-            runAsUser: 5050
-            runAsGroup: 5050
             fsGroup: 5050
             fsGroupChangePolicy: OnRootMismatch
+            runAsGroup: 5050
+            runAsUser: 5050
+        strategy: Recreate
+    persistence:
+      config:
+        enabled: true
+        existingClaim: pgadmin
+        type: persistentVolumeClaim
+    route:
+      app:
+        annotations:
+          gethomepage.dev/description: PostgreSQL Tools
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/group: Development
+          gethomepage.dev/icon: pgadmin.png
+          gethomepage.dev/name: PGAdmin
+        hostnames: ["{{ .Release.Name }}.${SECRET_DOMAIN}"]
+        parentRefs:
+          - name: envoy-internal
+            namespace: network
+            sectionName: https
     service:
       app:
         controller: pgadmin
         ports:
           http:
             port: 80
-    route:
-      app:
-        annotations:
-          gethomepage.dev/enabled: "true"
-          gethomepage.dev/icon: pgadmin.png
-          gethomepage.dev/name: PGAdmin
-          gethomepage.dev/group: Development
-          gethomepage.dev/description: PostgreSQL Tools
-        hostnames: ["{{ .Release.Name }}.${SECRET_DOMAIN}"]
-        parentRefs:
-          - name: envoy-internal
-            namespace: network
-            sectionName: https
-    persistence:
-      config:
-        enabled: true
-        type: persistentVolumeClaim
-        existingClaim: pgadmin

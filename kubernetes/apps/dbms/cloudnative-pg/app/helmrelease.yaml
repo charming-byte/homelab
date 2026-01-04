@@ -4,21 +4,21 @@ kind: HelmRelease
 metadata:
   name: cloudnative-pg
 spec:
-  interval: 15m
   chart:
     spec:
       chart: cloudnative-pg
-      version: 0.26.1
+      interval: 15m
       sourceRef:
         kind: HelmRepository
         name: cloudnative-pg
         namespace: dbms
-      interval: 15m
-  maxHistory: 2
+      version: 0.26.1
   install:
     createNamespace: true
     remediation:
       retries: 3
+  interval: 15m
+  maxHistory: 2
   upgrade:
     cleanupOnFail: true
     remediation:

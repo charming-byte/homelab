@@ -11,53 +11,45 @@ spec:
   values:
     controllers:
       echo:
-        strategy: RollingUpdate
         containers:
           app:
+            env:
+              HTTP_PORT: 80
+              LOG_IGNORE_PATH: /healthz
+              LOG_WITHOUT_NEWLINE: true
+              PROMETHEUS_ENABLED: true
             image:
               repository: ghcr.io/mendhak/http-https-echo
               tag: 38
-            env:
-              HTTP_PORT: &port 80
-              LOG_WITHOUT_NEWLINE: true
-              LOG_IGNORE_PATH: /healthz
-              PROMETHEUS_ENABLED: true
             probes:
-              liveness: &probes
-                enabled: true
+              liveness: &ref_0
                 custom: true
+                enabled: true
                 spec:
+                  failureThreshold: 3
                   httpGet:
                     path: /healthz
-                    port: *port
+                    port: 80
                   initialDelaySeconds: 0
                   periodSeconds: 10
                   timeoutSeconds: 1
-                  failureThreshold: 3
-              readiness: *probes
-            securityContext:
-              allowPrivilegeEscalation: false
-              readOnlyRootFilesystem: true
-              capabilities: { drop: ["ALL"] }
+              readiness: *ref_0
             resources:
-              requests:
-                cpu: 10m
               limits:
                 memory: 64Mi
+              requests:
+                cpu: 10m
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop: ["ALL"]
+              readOnlyRootFilesystem: true
+        strategy: RollingUpdate
     defaultPodOptions:
       securityContext:
+        runAsGroup: 65534
         runAsNonRoot: true
         runAsUser: 65534
-        runAsGroup: 65534
-    service:
-      app:
-        ports:
-          http:
-            port: *port
-    serviceMonitor:
-      app:
-        endpoints:
-          - port: http
     route:
       app:
         hostnames: ["{{ .Release.Name }}.${SECRET_DOMAIN}"]
@@ -68,4 +60,13 @@ spec:
         rules:
           - backendRefs:
               - identifier: app
-                port: *port
+                port: 80
+    service:
+      app:
+        ports:
+          http:
+            port: 80
+    serviceMonitor:
+      app:
+        endpoints:
+          - port: http

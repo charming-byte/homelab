@@ -1,3 +1,4 @@
+---
 apiVersion: barmancloud.cnpg.io/v1
 kind: ObjectStore
 metadata:
@@ -11,11 +12,11 @@ spec:
     endpointURL: https://${S3_BACKUP_ENDPOINT}
     s3Credentials:
       accessKeyId:
-        name: postgres18-secret
         key: AWS_ACCESS_KEY_ID
-      secretAccessKey:
         name: postgres18-secret
+      secretAccessKey:
         key: AWS_SECRET_ACCESS_KEY
+        name: postgres18-secret
     wal:
       compression: bzip2
       maxParallel: 4

@@ -2,61 +2,39 @@
 apiVersion: postgresql.cnpg.io/v1
 kind: Cluster
 metadata:
-  name: &current postgres18
+  name: postgres18
 spec:
   affinity:
     nodeSelector:
       kubernetes.io/arch: amd64
-  instances: 3
+  enableSuperuserAccess: true
   imageName: ghcr.io/cloudnative-pg/postgresql:18.1@sha256:765687b22589dd52a2de969c245d7e2b0667f8ab1aa29a9f70d6254f4a7208e0
+  instances: 3
+  monitoring:
+    enablePodMonitor: true
+  plugins:
+    - enabled: true
+      isWALArchiver: true
+      name: barman-cloud.cloudnative-pg.io
+      parameters:
+        barmanObjectName: homelab-backup-store
+        serverName: postgres18-v1
+  postgresql:
+    parameters:
+      max_connections: "300"
+      shared_buffers: 512MB
   primaryUpdateStrategy: unsupervised
+  resources:
+    limits:
+      memory: 1Gi
+    requests:
+      cpu: 500m
+      memory: 756M
   storage:
     size: 50Gi
     storageClass: local-hostpath
   superuserSecret:
     name: cloudnative-pg-secret
-  enableSuperuserAccess: true
-  postgresql:
-    parameters:
-      max_connections: "300"
-      shared_buffers: "512MB"
-  resources:
-    requests:
-      cpu: 500m
-      memory: 756M
-    limits:
-      memory: 1Gi
-  monitoring:
-    enablePodMonitor: true
-
-  plugins:
-    - enabled: true
-      isWALArchiver: true
-      name: barman-cloud.cloudnative-pg.io
-      parameters: &barmanParameters
-        barmanObjectName: homelab-backup-store
-        serverName: postgres18-v1
-
-  # backup:
-  #   retentionPolicy: 30d
-  #   barmanObjectStore: &barmanObjectStore
-  #     data:
-  #       compression: bzip2
-  #     wal:
-  #       compression: bzip2
-  #       maxParallel: 8
-  #     destinationPath: s3://cloudnative-pg/
-  #     endpointURL: https://${S3_BACKUP_ENDPOINT}
-  #     # Note: serverName version needs to be incremented
-  #     # when recovering from an existing cnpg cluster
-  #     serverName: &currentCluster postgres18-v1
-  #     s3Credentials:
-  #       accessKeyId:
-  #         name: cloudnative-pg-secret
-  #         key: access-key-id
-  #       secretAccessKey:
-  #         name: cloudnative-pg-secret
-  #         key: secret-access-key
 
   # Note: previousCluster needs to be set to the name of the previous
   # cluster when recovering from an existing cnpg cluster
@@ -69,5 +47,25 @@ spec:
   #     plugin:
   #       name: barman-cloud.cloudnative-pg.io
   #       parameters:
-  #         <<: *barmanParamaters
+  #         <<: *barmanParamaters  #         name: cloudnative-pg-secret
+  #         key: access-key-id
+  #       secretAccessKey:
+  #       compression: bzip2
+  #     wal:
+  # backup:
+  #   retentionPolicy: 30d
+  #   barmanObjectStore: &barmanObjectStore
+  #     data:
+  #       compression: bzip2
+  #       maxParallel: 8
+  #     destinationPath: s3://cloudnative-pg/
+  #     endpointURL: https://${S3_BACKUP_ENDPOINT}
+  #     # Note: serverName version needs to be incremented
+  #     # when recovering from an existing cnpg cluster
+  #     serverName: &currentCluster postgres18-v1
+  #     s3Credentials:
+  #       accessKeyId:
+  #         name: cloudnative-pg-secret
+  #         key: secret-access-key
+
   #         serverName: *previousCluster

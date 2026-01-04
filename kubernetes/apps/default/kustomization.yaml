@@ -5,8 +5,8 @@ namespace: default
 components:
   - ../../components/common
 resources:
-  - ./namespace.yaml
-  - ./echo/ks.yaml
-  - ./smtp-relay/ks.yaml
   - ./copilot-api/ks.yaml
+  - ./echo/ks.yaml
   - ./homepage/ks.yaml
+  - ./namespace.yaml
+  - ./smtp-relay/ks.yaml

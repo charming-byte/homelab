@@ -3,94 +3,95 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: &app dragonfly-operator
+  name: dragonfly-operator
 spec:
-  interval: 1h
   chartRef:
     kind: OCIRepository
     name: dragonfly
   install:
     remediation:
       retries: 3
+  interval: 1h
   upgrade:
     cleanupOnFail: true
     remediation:
-      strategy: rollback
       retries: 3
+      strategy: rollback
   values:
     controllers:
       dragonfly-operator:
-        replicas: 1
-        strategy: RollingUpdate
         containers:
           app:
+            args:
+              - "--health-probe-bind-address=:8081"
+              - "--metrics-bind-address=:8080"
+            command: [/manager]
             image:
               repository: ghcr.io/dragonflydb/operator
               tag: v1.3.1@sha256:7410dc31c05bca2c0648fca232f2300b897f8d77f001c19d75c9647f830d768b
-            command: [/manager]
-            args:
-              - --health-probe-bind-address=:8081
-              - --metrics-bind-address=:8080
             probes:
               liveness:
-                enabled: true
                 custom: true
+                enabled: true
                 spec:
+                  failureThreshold: 3
                   httpGet:
                     path: /healthz
-                    port: &port 8081
+                    port: 8081
                   initialDelaySeconds: 15
                   periodSeconds: 20
                   timeoutSeconds: 1
-                  failureThreshold: 3
               readiness:
-                enabled: true
                 custom: true
+                enabled: true
                 spec:
+                  failureThreshold: 3
                   httpGet:
                     path: /readyz
-                    port: *port
+                    port: 8081
                   initialDelaySeconds: 5
                   periodSeconds: 10
                   timeoutSeconds: 1
-                  failureThreshold: 3
             resources:
-              requests:
-                cpu: 10m
               limits:
                 memory: 128Mi
+              requests:
+                cpu: 10m
             securityContext:
               allowPrivilegeEscalation: false
+              capabilities:
+                drop: [ALL]
               readOnlyRootFilesystem: true
-              capabilities: { drop: [ALL] }
         pod:
           securityContext:
-            runAsUser: 65534
             runAsGroup: 65534
             runAsNonRoot: true
+            runAsUser: 65534
           topologySpreadConstraints:
-            - maxSkew: 1
+            - labelSelector:
+                matchLabels:
+                  app.kubernetes.io/name: dragonfly-operator
+              maxSkew: 1
               topologyKey: kubernetes.io/hostname
               whenUnsatisfiable: DoNotSchedule
-              labelSelector:
-                matchLabels:
-                  app.kubernetes.io/name: *app
+        replicas: 1
+        strategy: RollingUpdate
     service:
       app:
-        controller: *app
+        controller: dragonfly-operator
         ports:
           http:
-            port: *port
+            port: 8081
           metrics:
             port: 8080
-    serviceMonitor:
-      app:
-        serviceName: *app
-        endpoints:
-          - port: metrics
-            scheme: http
-            path: /metrics
-            interval: 1m
-            scrapeTimeout: 10s
     serviceAccount:
       dragonfly-operator: {}
+    serviceMonitor:
+      app:
+        endpoints:
+          - interval: 1m
+            path: /metrics
+            port: metrics
+            scheme: http
+            scrapeTimeout: 10s
+        serviceName: dragonfly-operator

@@ -11,49 +11,53 @@ spec:
   values:
     controllers:
       copilot-api:
-        replicas: 1
-        strategy: RollingUpdate
         annotations:
           reloader.stakater.com/auto: "true"
         containers:
           app:
-            image:
-              repository: ghcr.io/ericc-ch/copilot-api
-              tag: v0.7@sha256:528117aa62e0393f90dbdb8f33ab0c8383335690c06eeee9c2abc7f81b6d974f
             env:
               TZ: Europe/Berlin
             envFrom:
               - secretRef:
                   name: copilot-api-secret
+            image:
+              repository: ghcr.io/ericc-ch/copilot-api
+              tag: v0.7@sha256:528117aa62e0393f90dbdb8f33ab0c8383335690c06eeee9c2abc7f81b6d974f
             probes:
-              liveness: &probes
-                enabled: true
+              liveness: &ref_0
                 custom: true
+                enabled: true
                 spec:
+                  failureThreshold: 3
                   httpGet:
                     path: /
                     port: 4141
                   initialDelaySeconds: 0
                   periodSeconds: 10
                   timeoutSeconds: 1
-                  failureThreshold: 3
-              readiness: *probes
+              readiness: *ref_0
             resources:
+              limits:
+                memory: 512Mi
               requests:
                 cpu: 10m
                 memory: 64Mi
-              limits:
-                memory: 512Mi
+        replicas: 1
+        strategy: RollingUpdate
     defaultPodOptions:
       securityContext:
+        runAsGroup: 65534
         runAsNonRoot: true
         runAsUser: 65534
-        runAsGroup: 65534
-    service:
-      app:
-        ports:
-          http:
-            port: 4141
+    persistence:
+      config:
+        accessMode: ReadWriteOnce
+        enabled: true
+        globalMounts:
+          - path: /.local
+        size: 3Gi
+        storageClass: local-hostpath
+        type: persistentVolumeClaim
     route:
       app:
         hostnames: ["api.ai.${SECRET_DOMAIN}"]
@@ -65,12 +69,8 @@ spec:
           - backendRefs:
               - identifier: app
                 port: 4141
-    persistence:
-      config:
-        enabled: true
-        type: persistentVolumeClaim
-        storageClass: local-hostpath
-        accessMode: ReadWriteOnce
-        size: 3Gi
-        globalMounts:
-         - path: /.local
+    service:
+      app:
+        ports:
+          http:
+            port: 4141

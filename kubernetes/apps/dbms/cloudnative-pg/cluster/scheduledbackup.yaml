@@ -1,13 +1,14 @@
+---
 # yaml-language-server: $schema=https://crd.movishell.pl/postgresql.cnpg.io/scheduledbackup_v1.json
 apiVersion: postgresql.cnpg.io/v1
 kind: ScheduledBackup
 metadata:
-  name: &cluster postgres18
+  name: postgres18
   namespace: dbms
 spec:
   backupOwnerReference: self
   cluster:
-    name: *cluster
+    name: postgres18
   immediate: true
   method: plugin
   pluginConfiguration:

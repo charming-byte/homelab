@@ -1,13 +1,14 @@
 ---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/kustomize.toolkit.fluxcd.io/kustomization_v1.json
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: &app homepage
-  namespace: &namespace default
+  name: homepage
+  namespace: default
 spec:
   commonMetadata:
     labels:
-      app.kubernetes.io/name: *app
+      app.kubernetes.io/name: homepage
   dependsOn:
     - name: onepassword-connect
       namespace: kube-system
@@ -15,16 +16,16 @@ spec:
   path: ./kubernetes/apps/default/homepage/app
   postBuild:
     substitute:
-      APP: *app
+      APP: homepage
     substituteFrom:
-      - name: cluster-secrets
-        kind: Secret
+      - kind: Secret
+        name: cluster-secrets
   prune: true
   retryInterval: 1m
   sourceRef:
     kind: GitRepository
     name: flux-system
     namespace: flux-system
-  targetNamespace: *namespace
+  targetNamespace: default
   timeout: 5m
   wait: false

@@ -2,25 +2,25 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: &app homepage
   labels:
-    app.kubernetes.io/instance: *app
-    app.kubernetes.io/name: *app
+    app.kubernetes.io/instance: homepage
+    app.kubernetes.io/name: homepage
+  name: homepage
 rules:
   - apiGroups:
       - ""
     resources:
       - namespaces
-      - pods
       - nodes
+      - pods
     verbs:
       - get
       - list
   - apiGroups:
       - gateway.networking.k8s.io
     resources:
-      - httproutes
       - gateways
+      - httproutes
     verbs:
       - get
       - list
@@ -42,15 +42,15 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: &app homepage
   labels:
-    app.kubernetes.io/instance: *app
-    app.kubernetes.io/name: *app
+    app.kubernetes.io/instance: homepage
+    app.kubernetes.io/name: homepage
+  name: homepage
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
   name: homepage
 subjects:
   - kind: ServiceAccount
-    name: *app
+    name: homepage
     namespace: default

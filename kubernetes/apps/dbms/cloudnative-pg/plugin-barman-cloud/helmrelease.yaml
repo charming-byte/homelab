@@ -5,25 +5,25 @@ kind: HelmRelease
 metadata:
   name: plugin-barman-cloud
 spec:
-  interval: 1h
-  maxHistory: 1
   chartRef:
     kind: OCIRepository
     name: plugin-barman-cloud
   install:
-    timeout: 2m
     remediation:
       retries: 1
+    timeout: 2m
+  interval: 1h
+  maxHistory: 1
   upgrade:
-    timeout: 2m
     remediation:
       retries: 1
+    timeout: 2m
   values:
-    namespaceOverride: dbms
     image:
       registry: ghcr.io
       repository: cloudnative-pg/plugin-barman-cloud
       tag: v0.10.0@sha256:79103130df436ff08bc10a1d1117bed3acf3d3e4d8a15ca322d7079e71ac4412
+    namespaceOverride: dbms
     sidecarImage:
       registry: ghcr.io
       repository: cloudnative-pg/plugin-barman-cloud-sidecar

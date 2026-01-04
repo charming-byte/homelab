@@ -33,7 +33,7 @@ spec:
               repository: ghcr.io/home-operations/lidarr
               tag: 3.1.1@sha256:0982783dcc1ede8d45458ffc1d0d96607503035d743f6d18f9c2676a765d5dfe
             probes:
-              liveness: &liveness
+              liveness: &probes
                 custom: true
                 enabled: true
                 spec:
@@ -44,7 +44,7 @@ spec:
                   initialDelaySeconds: 0
                   periodSeconds: 10
                   timeoutSeconds: 1
-              readiness: *liveness
+              readiness: *probes
             resources:
               limits:
                 memory: 4Gi
