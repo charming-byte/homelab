@@ -3,7 +3,7 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: &app navidrome
+  name: navidrome
 spec:
   chartRef:
     kind: OCIRepository
@@ -12,83 +12,106 @@ spec:
   values:
     controllers:
       navidrome:
-        pod:
-          securityContext:
-            runAsUser: 1000
-            runAsGroup: &gid 1000
-            fsGroup: *gid
-            fsGroupChangePolicy: OnRootMismatch
-            runAsNonRoot: true
-            seccompProfile:
-              type: RuntimeDefault
         containers:
           app:
-            image:
-              repository: ghcr.io/navidrome/navidrome
-              tag: 0.59.0
             env:
-              TZ: Europe/Berlin
               ND_AUTHREQUESTLIMIT: 0
               ND_AUTOIMPORTPLAYLISTS: "false"
-              ND_DATAFOLDER: /config
               ND_CACHEFOLDER: /cache
+              ND_DATAFOLDER: /config
               ND_ENABLEDOWNLOADS: "true"
               ND_ENABLEEXTERNALSERVICES: "true"
               ND_ENABLEINSIGHTSCOLLECTOR: "false"
               ND_ENABLESHARING: "false"
-              ND_ENABLETRANSCODINGCONFIG: "false"
               ND_ENABLETRANSCODINGCANCELLATION: "true"
-              ND_EXTAUTH_TRUSTEDSOURCES: "10.42.0.0/16"
-              ND_EXTAUTH_USERHEADER: "x-authentik-username"
+              ND_ENABLETRANSCODINGCONFIG: "false"
+              ND_EXTAUTH_TRUSTEDSOURCES: 10.42.0.0/16
+              ND_EXTAUTH_USERHEADER: x-authentik-username
               ND_LASTFM_LANGUAGE: de-DE
               ND_LOGLEVEL: info
               ND_MUSICFOLDER: /music
-              ND_PORT: &port 8080
+              ND_PORT: 8080
               ND_SCANNER_PURGEMISSING: always
               ND_SCANNER_SCHEDULE: 0 * * * *
-              ND_TRANSCODINGCACHESIZE: "8GB"
+              ND_TRANSCODINGCACHESIZE: 8GB
+              TZ: Europe/Berlin
             envFrom:
               - secretRef:
                   name: navidrome-secret
+            image:
+              repository: ghcr.io/navidrome/navidrome
+              tag: 0.59.0
             probes:
-              liveness: &probes
-                enabled: true
+              liveness: &ref_0
                 custom: true
+                enabled: true
                 spec:
                   httpGet:
                     path: /ping
-                    port: *port
-              readiness: *probes
+                    port: 8080
+              readiness: *ref_0
             resources:
+              limits:
+                memory: 300Mi
               requests:
                 cpu: 25m
                 memory: 50Mi
-              limits:
-                memory: 300Mi
             securityContext:
               allowPrivilegeEscalation: false
+              capabilities:
+                drop: ["ALL"]
               readOnlyRootFilesystem: false
-              capabilities: { drop: ["ALL"] }
-    service:
-      app:
-        controller: *app
-        ports:
-          http:
-            port: *port
+        pod:
+          securityContext:
+            fsGroup: 1000
+            fsGroupChangePolicy: OnRootMismatch
+            runAsGroup: 1000
+            runAsNonRoot: true
+            runAsUser: 1000
+            seccompProfile:
+              type: RuntimeDefault
+    persistence:
+      cache:
+        accessMode: ReadWriteOnce
+        size: 10Gi
+        storageClass: local-hostpath
+        suffix: cache
+        type: persistentVolumeClaim
+      config:
+        accessMode: ReadWriteOnce
+        advancedMounts:
+          navidrome:
+            app:
+              - path: /config
+                readOnly: false
+        size: 5Gi
+        storageClass: local-hostpath
+        type: persistentVolumeClaim
+      music:
+        advancedMounts:
+          navidrome:
+            app:
+              - path: /music
+                readOnly: true
+                subPath: audio
+        enabled: true
+        path: /media
+        server: nas.internal
+        type: nfs
     route:
       app:
         annotations:
           gatus.home-operations.com/enabled: "true"
+          gethomepage.dev/description: Music Streaming Service
           gethomepage.dev/enabled: "true"
           gethomepage.dev/group: Media
-          gethomepage.dev/name: Navidrome
-          gethomepage.dev/description: Music Streaming Service
           gethomepage.dev/icon: navidrome.svg
+          gethomepage.dev/name: Navidrome
+          gethomepage.dev/widget.salt: "{{`{{HOMEPAGE_VAR_NAVIDROME_SALT}}`}}"
+          gethomepage.dev/widget.token: "{{`{{HOMEPAGE_VAR_NAVIDROME_TOKEN}}`}}"
           gethomepage.dev/widget.type: navidrome
           gethomepage.dev/widget.url: http://navidrome.self-hosted:8080
           gethomepage.dev/widget.user: "{{`{{HOMEPAGE_VAR_NAVIDROME_USER}}`}}"
-          gethomepage.dev/widget.token: "{{`{{HOMEPAGE_VAR_NAVIDROME_TOKEN}}`}}"
-          gethomepage.dev/widget.salt: "{{`{{HOMEPAGE_VAR_NAVIDROME_SALT}}`}}"
         hostnames: ["music.${SECRET_DOMAIN}"]
         parentRefs:
           - name: envoy-internal
@@ -96,33 +119,11 @@ spec:
             sectionName: https
         rules:
           - backendRefs:
-              - name: *app
+              - name: navidrome
                 port: 8080
-    persistence:
-      cache:
-        suffix: cache
-        type: persistentVolumeClaim
-        storageClass: local-hostpath
-        accessMode: ReadWriteOnce
-        size: 10Gi
-      config:
-        type: persistentVolumeClaim
-        storageClass: local-hostpath
-        accessMode: ReadWriteOnce
-        size: 5Gi
-        advancedMounts:
-          navidrome:
-            app:
-              - path: /config
-                readOnly: false
-      music:
-        type: nfs
-        enabled: true
-        server: nas.internal
-        path: /media
-        advancedMounts:
-          navidrome:
-            app:
-              - path: /music
-                subPath: audio
-                readOnly: true
+    service:
+      app:
+        controller: navidrome
+        ports:
+          http:
+            port: 8080

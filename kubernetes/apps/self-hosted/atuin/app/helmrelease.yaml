@@ -14,64 +14,64 @@ spec:
       atuin:
         containers:
           app:
-            image:
-              repository: ghcr.io/atuinsh/atuin
-              tag: v18.10.0@sha256:4a29feda6f352581ece849807445fe1f50f2074b4643b7bfe62b27e23705b068
-            env:
-              ATUIN_HOST: "0.0.0.0"
-              ATUIN_PORT: &port 80
-              ATUIN_OPEN_REGISTRATION: "true"
-              ATUIN_DB_URI: sqlite:///config/atuin.db
-              TZ: Europe/Berlin
             command:
               - atuin
               - server
               - start
+            env:
+              ATUIN_DB_URI: sqlite:///config/atuin.db
+              ATUIN_HOST: 0.0.0.0
+              ATUIN_OPEN_REGISTRATION: "true"
+              ATUIN_PORT: 80
+              TZ: Europe/Berlin
+            image:
+              repository: ghcr.io/atuinsh/atuin
+              tag: v18.10.0@sha256:4a29feda6f352581ece849807445fe1f50f2074b4643b7bfe62b27e23705b068
             probes:
-              liveness: &probes
-                enabled: true
+              liveness: &ref_0
                 custom: true
+                enabled: true
                 spec:
+                  failureThreshold: 3
                   httpGet:
                     path: /healthz
-                    port: *port
+                    port: 80
                   initialDelaySeconds: 0
                   periodSeconds: 10
                   timeoutSeconds: 1
-                  failureThreshold: 3
-              readiness: *probes
-            securityContext:
-              allowPrivilegeEscalation: false
-              readOnlyRootFilesystem: true
-              capabilities: {drop: ["ALL"]}
+              readiness: *ref_0
             resources:
+              limits:
+                memory: 256Mi
               requests:
                 cpu: 10m
                 memory: 64Mi
-              limits:
-                memory: 256Mi
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop: ["ALL"]
+              readOnlyRootFilesystem: true
     defaultPodOptions:
       securityContext:
-        runAsNonRoot: true
-        runAsUser: 1000
-        runAsGroup: 1000
         fsGroup: 1000
         fsGroupChangePolicy: OnRootMismatch
+        runAsGroup: 1000
+        runAsNonRoot: true
+        runAsUser: 1000
+    persistence:
+      config:
+        accessMode: ReadWriteOnce
+        size: 5Gi
+        storageClass: local-hostpath
+        type: persistentVolumeClaim
+    route:
+      app:
+        hostnames: ["{{ .Release.Name }}.${SECRET_DOMAIN}"]
+        parentRefs:
+          - name: envoy-internal
+            namespace: network
     service:
       app:
         ports:
           http:
-            port: *port
-    route:
-      app:
-        hostnames:
-          - "{{ .Release.Name }}.${SECRET_DOMAIN}"
-        parentRefs:
-          - name: envoy-internal
-            namespace: network
-    persistence:
-      config:
-        type: persistentVolumeClaim
-        storageClass: local-hostpath
-        accessMode: ReadWriteOnce
-        size: 5Gi
+            port: 80

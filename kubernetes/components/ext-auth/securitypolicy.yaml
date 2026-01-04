@@ -1,5 +1,4 @@
 ---
-# yaml-language-server: $schema=https://kubernetes-schemas.18b.haus/gateway.envoyproxy.io/securitypolicy_v1alpha1.json
 apiVersion: gateway.envoyproxy.io/v1alpha1
 kind: SecurityPolicy
 metadata:
@@ -14,21 +13,21 @@ spec:
         - name: authentik-outpost-proxy
           namespace: security
           port: 9000
-      path: /outpost.goauthentik.io/auth/envoy
       headersToBackend:
+        - authorization
         - set-cookie
-        - x-authentik-groups
-        - x-authentik-username
-        - x-authentik-entitlements
         - x-authentik-email
-        - x-authentik-name
-        - x-authentik-uid
+        - x-authentik-entitlements
+        - x-authentik-groups
+        - x-authentik-meta-app
         - x-authentik-meta-outpost
         - x-authentik-meta-provider
-        - x-authentik-meta-app
         - x-authentik-meta-version
+        - x-authentik-name
+        - x-authentik-uid
+        - x-authentik-username
         - x-forwarded-host
-        - authorization
+      path: /outpost.goauthentik.io/auth/envoy
   targetRefs:
     - group: ${EXT_AUTH_TARGET_GROUP:-gateway.networking.k8s.io}
       kind: ${EXT_AUTH_TARGET_KIND:-HTTPRoute}

@@ -10,6 +10,10 @@ spec:
       namespace: openebs-system
   interval: 1h
   path: ./kubernetes/apps/observability/kube-prometheus-stack/app
+  postBuild:
+    substituteFrom:
+      - kind: Secret
+        name: cluster-secrets
   prune: true
   sourceRef:
     kind: GitRepository
@@ -17,7 +21,3 @@ spec:
     namespace: flux-system
   targetNamespace: observability
   wait: false
-  postBuild:
-    substituteFrom:
-      - name: cluster-secrets
-        kind: Secret

@@ -12,122 +12,115 @@ spec:
   values:
     controllers:
       gatus:
-        type: statefulset
         annotations:
           reloader.stakater.com/auto: "true"
-        initContainers:
-          gatus-sidecar:
-            image:
-              repository: ghcr.io/home-operations/gatus-sidecar
-              tag: 0.0.12@sha256:83bf82d422e9b0529a8076cb584d557a12158d9d8a4c373b4d27afcb87a17569
-            args:
-              - --auto-httproute
-              - --enable-httproute
-              - --enable-service
-            resources:
-              requests:
-                cpu: 10m
-              limits:
-                memory: 64Mi
-            env:
-              FOLDER: /config
-              LABEL: gatus.io/enabled
-              NAMESPACE: ALL
-              RESOURCE: both
-              UNIQUE_FILENAMES: true
-              METHOD: WATCH
-            restartPolicy: Always
         containers:
           app:
-            image:
-              repository: ghcr.io/twin/gatus
-              tag: v5.34.0@sha256:3fff895e77d35ee62e898860f4613755bc2344127d93e3f326429d40270e2115
             env:
-              GATUS_DELAY_START_SECONDS: 5
               GATUS_CONFIG_PATH: /config
-              GATUS_WEB_PORT: &port 80
+              GATUS_DELAY_START_SECONDS: 5
+              GATUS_WEB_PORT: 80
               TZ: Europe/Berlin
             envFrom:
               - secretRef:
                   name: "{{ .Release.Name }}-secret"
+            image:
+              repository: ghcr.io/twin/gatus
+              tag: v5.34.0@sha256:3fff895e77d35ee62e898860f4613755bc2344127d93e3f326429d40270e2115
             probes:
-              liveness: &probes
-                enabled: true
+              liveness: &ref_0
                 custom: true
+                enabled: true
                 spec:
+                  failureThreshold: 3
                   httpGet:
                     path: /health
-                    port: *port
+                    port: 80
                   initialDelaySeconds: 0
                   periodSeconds: 10
                   timeoutSeconds: 1
-                  failureThreshold: 3
-              readiness: *probes
-            securityContext:
-              allowPrivilegeEscalation: false
-              readOnlyRootFilesystem: true
-              capabilities: {drop: ["ALL"]}
+              readiness: *ref_0
             resources:
+              limits:
+                memory: 256Mi
               requests:
                 cpu: 100m
                 memory: 128Mi
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop: ["ALL"]
+              readOnlyRootFilesystem: true
+        initContainers:
+          gatus-sidecar:
+            args:
+              - "--auto-httproute"
+              - "--enable-httproute"
+              - "--enable-service"
+            env:
+              FOLDER: /config
+              LABEL: gatus.io/enabled
+              METHOD: WATCH
+              NAMESPACE: ALL
+              RESOURCE: both
+              UNIQUE_FILENAMES: true
+            image:
+              repository: ghcr.io/home-operations/gatus-sidecar
+              tag: 0.0.12@sha256:83bf82d422e9b0529a8076cb584d557a12158d9d8a4c373b4d27afcb87a17569
+            resources:
               limits:
-                memory: 256Mi
+                memory: 64Mi
+              requests:
+                cpu: 10m
+            restartPolicy: Always
         serviceAccount:
           identifier: gatus
         statefulset:
           volumeClaimTemplates:
-            - name: config
-              storageClass: local-hostpath
-              accessMode: ReadWriteOnce
+            - accessMode: ReadWriteOnce
+              name: config
               size: 5Gi
+              storageClass: local-hostpath
+        type: statefulset
     defaultPodOptions:
       securityContext:
-        runAsNonRoot: true
-        runAsUser: 1000
-        runAsGroup: 1000
         fsGroup: 1000
         fsGroupChangePolicy: OnRootMismatch
-    service:
-      app:
-        ports:
-          http:
-            port: *port
-    serviceMonitor:
-      app:
-        endpoints:
-          - port: http
-    route:
-      app:
-        annotations:
-          gethomepage.dev/enabled: "true"
-          gethomepage.dev/group: Infrastructure
-          gethomepage.dev/description: Status Dashboard
-          gethomepage.dev/name: Gatus
-          gethomepage.dev/icon: gatus.png
-          gethomepage.dev/widget.type: gatus
-          gethomepage.dev/widget.url: http://gatus.observability
-        hostnames:
-          - "{{ .Release.Name }}.${SECRET_DOMAIN}"
-          - status.${SECRET_DOMAIN}
-        parentRefs:
-          - name: envoy-external
-            namespace: network
+        runAsGroup: 1000
+        runAsNonRoot: true
+        runAsUser: 1000
+    persistence:
+      config:
+        type: emptyDir
+      config-file:
+        globalMounts:
+          - path: /config/buddy.yaml
+            subPath: buddy.yaml
+          - path: /config/config.yaml
+            subPath: config.yaml
+        name: "{{ .Release.Name }}-configmap"
+        type: configMap
     rbac:
+      bindings:
+        gatus:
+          roleRef:
+            identifier: gatus
+          subjects:
+            - identifier: gatus
+          type: ClusterRoleBinding
       roles:
         gatus:
-          type: ClusterRole
           rules:
             - apiGroups:
                 - ""
               resources:
-                - services
                 - configmaps
                 - secrets
+                - services
               verbs:
                 - get
-                - watch
                 - list
+                - watch
             - apiGroups:
                 - gateway.networking.k8s.io
               resources:
@@ -135,25 +128,32 @@ spec:
                 - httproutes
               verbs:
                 - get
-                - watch
                 - list
-      bindings:
-        gatus:
-          type: ClusterRoleBinding
-          roleRef:
-            identifier: gatus
-          subjects:
-            - identifier: gatus
+                - watch
+          type: ClusterRole
+    route:
+      app:
+        annotations:
+          gethomepage.dev/description: Status Dashboard
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/group: Infrastructure
+          gethomepage.dev/icon: gatus.png
+          gethomepage.dev/name: Gatus
+          gethomepage.dev/widget.type: gatus
+          gethomepage.dev/widget.url: http://gatus.observability
+        hostnames:
+          ["status.${SECRET_DOMAIN}", "{{ .Release.Name }}.${SECRET_DOMAIN}"]
+        parentRefs:
+          - name: envoy-external
+            namespace: network
+    service:
+      app:
+        ports:
+          http:
+            port: 80
     serviceAccount:
       gatus: {}
-    persistence:
-      config:
-        type: emptyDir
-      config-file:
-        type: configMap
-        name: "{{ .Release.Name }}-configmap"
-        globalMounts:
-          - path: /config/buddy.yaml
-            subPath: buddy.yaml
-          - path: /config/config.yaml
-            subPath: config.yaml
+    serviceMonitor:
+      app:
+        endpoints:
+          - port: http

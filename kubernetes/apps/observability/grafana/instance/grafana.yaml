@@ -3,14 +3,14 @@
 apiVersion: grafana.integreatly.org/v1beta1
 kind: Grafana
 metadata:
-  name: grafana
   labels:
     grafana.internal/instance: grafana
+  name: grafana
 spec:
   config:
     analytics:
-      check_for_updates: "false"
       check_for_plugin_updates: "false"
+      check_for_updates: "false"
       feedback_links_enabled: "false"
       reporting_enabled: "false"
     auth:
@@ -40,27 +40,29 @@ spec:
             app.kubernetes.io/name: grafana
         spec:
           containers:
-            - name: grafana
-              env:
+            - env:
                 - name: GF_SECURITY_ADMIN_PASSWORD
                   valueFrom:
                     secretKeyRef:
-                      name: grafana-admin-password-secret
                       key: GF_SECURITY_ADMIN_PASSWORD
+                      name: grafana-admin-password-secret
+              name: grafana
               securityContext:
                 allowPrivilegeEscalation: false
+                capabilities:
+                  drop: ["ALL"]
                 readOnlyRootFilesystem: true
-                capabilities: {drop: ["ALL"]}
           securityContext:
-            runAsNonRoot: true
-            runAsUser: 1000
-            runAsGroup: 1000
             fsGroup: 1000
             fsGroupChangePolicy: OnRootMismatch
+            runAsGroup: 1000
+            runAsNonRoot: true
+            runAsUser: 1000
           volumes:
             - name: grafana-data
               persistentVolumeClaim:
                 claimName: grafana-pvc
+  disableDefaultSecurityContext: All
   persistentVolumeClaim:
     spec:
       accessModes:
@@ -69,4 +71,3 @@ spec:
         requests:
           storage: 10Gi
       storageClassName: local-hostpath
-  disableDefaultSecurityContext: All

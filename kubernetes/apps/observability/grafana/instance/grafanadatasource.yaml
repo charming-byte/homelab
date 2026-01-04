@@ -5,15 +5,15 @@ kind: GrafanaDatasource
 metadata:
   name: prometheus
 spec:
+  datasource:
+    access: proxy
+    isDefault: true
+    name: prometheus
+    type: prometheus
+    url: http://prometheus-operated.observability.svc.cluster.local:9090
   instanceSelector:
     matchLabels:
       grafana.internal/instance: grafana
-  datasource:
-    type: prometheus
-    name: prometheus
-    access: proxy
-    isDefault: true
-    url: http://prometheus-operated.observability.svc.cluster.local:9090
 ---
 # yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/grafana.integreatly.org/grafanadatasource_v1beta1.json
 apiVersion: grafana.integreatly.org/v1beta1
@@ -21,13 +21,13 @@ kind: GrafanaDatasource
 metadata:
   name: alertmanager
 spec:
-  instanceSelector:
-    matchLabels:
-      grafana.internal/instance: grafana
   datasource:
-    type: alertmanager
-    name: alertmanager
     access: proxy
     jsonData:
       implementation: prometheus
+    name: alertmanager
+    type: alertmanager
     url: http://alertmanager-operated.observability.svc.cluster.local:9093
+  instanceSelector:
+    matchLabels:
+      grafana.internal/instance: grafana

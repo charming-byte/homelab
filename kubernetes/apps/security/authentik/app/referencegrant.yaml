@@ -7,9 +7,6 @@ metadata:
   namespace: security
 spec:
   from:
-    #- group: gateway.envoyproxy.io
-    #  kind: SecurityPolicy
-    #  namespace: default
     - group: gateway.envoyproxy.io
       kind: SecurityPolicy
       namespace: downloads

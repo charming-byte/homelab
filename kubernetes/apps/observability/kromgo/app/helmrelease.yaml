@@ -12,52 +12,53 @@ spec:
   values:
     controllers:
       kromgo:
-        strategy: RollingUpdate
         annotations:
           reloader.stakater.com/auto: "true"
         containers:
           app:
+            env:
+              HEALTH_PORT: 8080
+              PROMETHEUS_URL: http://prometheus-operated.observability.svc.cluster.local:9090
+              SERVER_PORT: 80
             image:
               repository: ghcr.io/kashalls/kromgo
               tag: v0.7.4@sha256:464dfa398fc0d032cffbd8396a1993f2690917b847f6628159c6d9fe3cba9055
-            env:
-              PROMETHEUS_URL: http://prometheus-operated.observability.svc.cluster.local:9090
-              SERVER_PORT: &port 80
-              HEALTH_PORT: &healthPort 8080
             probes:
-              liveness: &probes
-                enabled: true
+              liveness: &ref_0
                 custom: true
+                enabled: true
                 spec:
+                  failureThreshold: 3
                   httpGet:
                     path: /readyz
-                    port: *healthPort
+                    port: 8080
                   initialDelaySeconds: 0
                   periodSeconds: 10
                   timeoutSeconds: 1
-                  failureThreshold: 3
-              readiness: *probes
-            securityContext:
-              allowPrivilegeEscalation: false
-              readOnlyRootFilesystem: true
-              capabilities: {drop: ["ALL"]}
+              readiness: *ref_0
             resources:
-              requests:
-                cpu: 10m
               limits:
                 memory: 64Mi
+              requests:
+                cpu: 10m
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop: ["ALL"]
+              readOnlyRootFilesystem: true
+        strategy: RollingUpdate
     defaultPodOptions:
       securityContext:
+        runAsGroup: 1000
         runAsNonRoot: true
         runAsUser: 1000
-        runAsGroup: 1000
-    service:
-      app:
-        ports:
-          http:
-            port: *port
-          health:
-            port: *healthPort
+    persistence:
+      config-file:
+        globalMounts:
+          - path: /kromgo/config.yaml
+            subPath: config.yaml
+        name: kromgo-configmap
+        type: configMap
     route:
       app:
         annotations:
@@ -71,11 +72,11 @@ spec:
         rules:
           - backendRefs:
               - identifier: app
-                port: *port
-    persistence:
-      config-file:
-        type: configMap
-        name: kromgo-configmap
-        globalMounts:
-          - path: /kromgo/config.yaml
-            subPath: config.yaml
+                port: 80
+    service:
+      app:
+        ports:
+          health:
+            port: 8080
+          http:
+            port: 80

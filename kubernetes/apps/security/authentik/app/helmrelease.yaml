@@ -15,55 +15,53 @@ spec:
   values:
     global:
       deploymentAnnotations:
-        secret.reloader.stakater.com/reload: &secret authentik-secret
+        secret.reloader.stakater.com/reload: authentik-secret
       env:
         - name: TZ
           value: Europe/Berlin
-      envFrom:
+      envFrom: &envFrom
         - secretRef:
-            name: *secret
+            name: authentik-secret
+      volumeMounts:
+        - mountPath: /media
+          name: media
       volumes:
         - name: media
           persistentVolumeClaim:
             claimName: authentik-media
-      volumeMounts:
-        - name: media
-          mountPath: /media
+    prometheus:
+      rules:
+        enabled: true
     server:
-      replicas: 1
       initContainers:
-        - name: init-db
+        - envFrom: *envFrom
           image: ghcr.io/home-operations/postgres-init:18.1.0@sha256:866f15038ed5185a2b8118821f470bb7ca0df8c4231b8e277446e681ebb1ed84
-          envFrom:
-            - secretRef:
-                name: *secret
-      resources:
-        requests:
-          cpu: 50m
-          memory: 128Mi
-        limits:
-          memory: 800Mi
+          name: init-db
       metrics:
         enabled: true
         serviceMonitor:
           enabled: true
+      replicas: 1
+      resources:
+        limits:
+          memory: 800Mi
+        requests:
+          cpu: 50m
+          memory: 128Mi
       route:
         main:
-          enabled: true
           annotations:
-            gatus.home-operations.com/endpoint: |-
-              name: authentik
-              url: https://id.${SECRET_DOMAIN}/-/health/live/
+            gethomepage.dev/description: Centralized authentication and identity management.
             gethomepage.dev/enabled: "true"
             gethomepage.dev/group: Infrastructure
-            gethomepage.dev/name: Authentik
-            gethomepage.dev/description: Centralized authentication and identity management.
             gethomepage.dev/icon: authentik.svg
+            gethomepage.dev/name: Authentik
             gethomepage.dev/pod-selector: app.kubernetes.io/name=authentik
-            gethomepage.dev/widget.type: authentik
-            gethomepage.dev/widget.version: "2"
-            gethomepage.dev/widget.url: http://authentik-server.security
             gethomepage.dev/widget.key: "{{HOMEPAGE_VAR_AUTHENTIK_TOKEN}}"
+            gethomepage.dev/widget.type: authentik
+            gethomepage.dev/widget.url: http://authentik-server.security
+            gethomepage.dev/widget.version: "2"
+          enabled: true
           hostnames: ["id.${SECRET_DOMAIN}"]
           parentRefs:
             - group: gateway.networking.k8s.io
@@ -78,20 +76,13 @@ spec:
               sectionName: https
           rules:
             - backendRefs:
-              - name: authentik-server
-                port: 80
+                - name: authentik-server
+                  port: 80
     worker:
       replicas: 1
       resources:
+        limits:
+          memory: 1200Mi
         requests:
           cpu: 25m
           memory: 256Mi
-        limits:
-          memory: 1200Mi
-    # authentik:
-    #   # log_level: debug
-    #   redis:
-    #     host: dragonfly.database.svc.cluster.local
-    prometheus:
-      rules:
-        enabled: true

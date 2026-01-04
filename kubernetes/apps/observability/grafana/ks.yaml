@@ -7,6 +7,10 @@ metadata:
 spec:
   interval: 1h
   path: ./kubernetes/apps/observability/grafana/app
+  postBuild:
+    substituteFrom:
+      - kind: Secret
+        name: cluster-secrets
   prune: true
   sourceRef:
     kind: GitRepository
@@ -14,10 +18,6 @@ spec:
     namespace: flux-system
   targetNamespace: observability
   wait: true
-  postBuild:
-    substituteFrom:
-      - name: cluster-secrets
-        kind: Secret
 ---
 # yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/kustomize.toolkit.fluxcd.io/kustomization_v1.json
 apiVersion: kustomize.toolkit.fluxcd.io/v1
@@ -31,6 +31,10 @@ spec:
       namespace: openebs-system
   interval: 1h
   path: ./kubernetes/apps/observability/grafana/instance
+  postBuild:
+    substituteFrom:
+      - kind: Secret
+        name: cluster-secrets
   prune: true
   sourceRef:
     kind: GitRepository
@@ -38,7 +42,3 @@ spec:
     namespace: flux-system
   targetNamespace: observability
   wait: false
-  postBuild:
-    substituteFrom:
-      - name: cluster-secrets
-        kind: Secret

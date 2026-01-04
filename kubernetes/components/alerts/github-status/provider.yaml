@@ -5,7 +5,7 @@ kind: Provider
 metadata:
   name: github-status
 spec:
-  type: github
   address: https://github.com/charming-byte/homelab
   secretRef:
     name: github-status-token-secret
+  type: github

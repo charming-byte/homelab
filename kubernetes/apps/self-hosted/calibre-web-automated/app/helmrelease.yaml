@@ -3,90 +3,114 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: &app calibre-web-automated
+  name: calibre-web-automated
 spec:
-  interval: 1h
   chartRef:
     kind: OCIRepository
     name: calibre-web-automated
   install:
     remediation:
       retries: 3
+  interval: 1h
   upgrade:
     cleanupOnFail: true
     remediation:
-      strategy: rollback
       retries: 3
+      strategy: rollback
   values:
-    defaultPodOptions:
-      securityContext:
-        runAsUser: 0
-        runAsGroup: 0
-        runAsNonRoot: false
-        seccompProfile: { type: RuntimeDefault }
     controllers:
       calibre-web-automated:
         annotations:
           reloader.stakater.com/auto: "true"
         containers:
           app:
+            env:
+              CACHE_DIR: /cache
+              NETWORK_SHARE_MODE: true
+              S6_READ_ONLY_ROOT: 1
+              S6_YES_I_WANT_A_WORLD_WRITABLE_RUN_BECAUSE_KUBERNETES: 1
+              TZ: Europe/Berlin
             image:
               repository: ghcr.io/crocodilestick/calibre-web-automated
               tag: V3.1.4@sha256:577e846f104fd21453ef306eefb4a95dd95b3b9ddd2463a150944494284da0fd
-            env:
-              TZ: Europe/Berlin
-              CACHE_DIR: /cache
-              # Skips/soft fail on privileged actions that shouldn't exist anyways
-              NETWORK_SHARE_MODE: true
-              S6_YES_I_WANT_A_WORLD_WRITABLE_RUN_BECAUSE_KUBERNETES: 1
-              S6_READ_ONLY_ROOT: 1
-            securityContext:
-              allowPrivilegeEscalation: true
-              readOnlyRootFilesystem: false
-              capabilities:
-                drop:
-                  - ALL
-                add:
-                  # S6
-                  - CHOWN
-                  - SETUID
-                  - SETGID
-                  - FOWNER
-                  - DAC_OVERRIDE
             probes:
               liveness: &probes
-                enabled: true
                 custom: true
+                enabled: true
                 spec:
                   httpGet:
-                    port: &port 8083
                     path: /login
+                    port: 8083
               readiness: *probes
             resources:
+              limits:
+                memory: 600Mi
               requests:
                 cpu: 50m
                 memory: 64Mi
-              limits:
-                memory: 600Mi
-    service:
-      app:
-        controller: *app
-        ports:
-          http:
-            port: *port
+            securityContext:
+              allowPrivilegeEscalation: true
+              capabilities:
+                add:
+                  - CHOWN
+                  - DAC_OVERRIDE
+                  - FOWNER
+                  - SETGID
+                  - SETUID
+                drop:
+                  - ALL
+              readOnlyRootFilesystem: false
+    defaultPodOptions:
+      securityContext:
+        runAsGroup: 0
+        runAsNonRoot: false
+        runAsUser: 0
+        seccompProfile:
+          type: RuntimeDefault
+    persistence:
+      config:
+        advancedMounts:
+          calibre-web-automated:
+            app:
+              - path: /config
+        existingClaim: calibre-web-automated
+        type: persistentVolumeClaim
+      ingest:
+        enabled: true
+        globalMounts:
+          - path: /cwa-book-ingest
+        path: /books_ingest
+        server: nas.internal
+        type: nfs
+      library:
+        enabled: true
+        globalMounts:
+          - path: /calibre-library
+        path: /books
+        server: nas.internal
+        type: nfs
+      tmpfs:
+        globalMounts:
+          - path: /cache
+            subPath: cache
+          - path: /tmp
+            subPath: tmp
+          - path: /run
+            subPath: run
+        type: emptyDir
     route:
       app:
         annotations:
-          hajimari.io/icon: mdi:chart-bar
+          gethomepage.dev/description: eBook Management
           gethomepage.dev/enabled: "true"
           gethomepage.dev/group: Media
-          gethomepage.dev/name: Calibre
           gethomepage.dev/icon: calibre-web-automated-book-downloader.png
-          gethomepage.dev/description: eBook Management
+          gethomepage.dev/name: Calibre
+          gethomepage.dev/widget.password: "{{`{{HOMEPAGE_VAR_CALIBRE_PASSWORD}}`}}"
           gethomepage.dev/widget.type: calibreweb
           gethomepage.dev/widget.url: http://calibre-web-automated.self-hosted:8083
           gethomepage.dev/widget.username: "{{`{{HOMEPAGE_VAR_CALIBRE_USERNAME}}`}}"
-          gethomepage.dev/widget.password: "{{`{{HOMEPAGE_VAR_CALIBRE_PASSWORD}}`}}"
+          hajimari.io/icon: mdi:chart-bar
         hostnames: ["books.${SECRET_DOMAIN}"]
         parentRefs:
           - name: envoy-internal
@@ -95,35 +119,9 @@ spec:
           - backendRefs:
               - name: calibre-web-automated
                 port: 8083
-
-    persistence:
-      config:
-        existingClaim: *app
-        type: persistentVolumeClaim
-        advancedMounts:
-          calibre-web-automated:
-            app:
-              - path: /config
-      ingest:
-        enabled: true
-        type: nfs
-        server: nas.internal
-        path: /books_ingest
-        globalMounts:
-          - path: /cwa-book-ingest
-      library:
-        enabled: true
-        type: nfs
-        server: nas.internal
-        path: /books
-        globalMounts:
-          - path: /calibre-library
-      tmpfs:
-        type: emptyDir
-        globalMounts:
-          - path: /cache
-            subPath: cache
-          - path: /tmp
-            subPath: tmp
-          - path: /run
-            subPath: run
+    service:
+      app:
+        controller: calibre-web-automated
+        ports:
+          http:
+            port: 8083

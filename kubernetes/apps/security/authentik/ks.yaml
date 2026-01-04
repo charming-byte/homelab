@@ -3,12 +3,12 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: &app authentik
-  namespace: &namespace security
+  name: authentik
+  namespace: security
 spec:
   commonMetadata:
     labels:
-      app.kubernetes.io/name: *app
+      app.kubernetes.io/name: authentik
   dependsOn:
     - name: openebs
       namespace: openebs-system
@@ -19,15 +19,15 @@ spec:
   interval: 30m
   path: ./kubernetes/apps/security/authentik/app
   postBuild:
-    substituteFrom:
-      - name: cluster-secrets
-        kind: Secret
     substitute:
-      APP: *app
+      APP: authentik
+    substituteFrom:
+      - kind: Secret
+        name: cluster-secrets
   prune: true
   sourceRef:
     kind: GitRepository
     name: flux-system
     namespace: flux-system
-  targetNamespace: *namespace
+  targetNamespace: security
   wait: false

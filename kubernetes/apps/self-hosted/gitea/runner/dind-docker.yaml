@@ -1,6 +1,6 @@
 ---
-kind: PersistentVolumeClaim
 apiVersion: v1
+kind: PersistentVolumeClaim
 metadata:
   name: runner-vol
 spec:
@@ -10,6 +10,7 @@ spec:
     requests:
       storage: 5Gi
   storageClassName: local-hostpath
+
 ---
 apiVersion: apps/v1
 kind: StatefulSet
@@ -28,19 +29,8 @@ spec:
       labels:
         app: gitea-runner
     spec:
-      securityContext:
-        fsGroup: 2000
-      restartPolicy: Always
-      volumes:
-        - name: runner-data
-          emptyDir: {}
-        - name: runner-cache
-          emptyDir: {}
       containers:
-        - name: runner
-          image: vegardit/gitea-act-runner:dind-0.2.10
-          imagePullPolicy: Always
-          env:
+        - env:
             - name: GITEA_INSTANCE_URL
               value: http://gitea.default.svc.cluster.local
             - name: GITEA_RUNNER_ACTION_CACHE_DIR
@@ -52,12 +42,23 @@ spec:
             - name: GITEA_RUNNER_REGISTRATION_TOKEN
               valueFrom:
                 secretKeyRef:
-                  name: gitea-runner-secret
                   key: GITEA_RUNNER_REGISTRATION_TOKEN
+                  name: gitea-runner-secret
+          image: vegardit/gitea-act-runner:dind-0.2.10
+          imagePullPolicy: Always
+          name: runner
           securityContext:
             privileged: true
           volumeMounts:
-            - name: runner-data
-              mountPath: /data
-            - name: runner-cache
-              mountPath: /cache
+            - mountPath: /data
+              name: runner-data
+            - mountPath: /cache
+              name: runner-cache
+      restartPolicy: Always
+      securityContext:
+        fsGroup: 2000
+      volumes:
+        - emptyDir: {}
+          name: runner-data
+        - emptyDir: {}
+          name: runner-cache

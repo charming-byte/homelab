@@ -12,8 +12,8 @@ spec:
   path: ./kubernetes/apps/self-hosted/atuin/app
   postBuild:
     substituteFrom:
-      - name: cluster-secrets
-        kind: Secret
+      - kind: Secret
+        name: cluster-secrets
   prune: true
   sourceRef:
     kind: GitRepository

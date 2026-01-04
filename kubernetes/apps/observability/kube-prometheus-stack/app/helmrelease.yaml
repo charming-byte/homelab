@@ -10,117 +10,6 @@ spec:
     name: kube-prometheus-stack
   interval: 1h
   values:
-    cleanPrometheusOperatorObjectNames: true
-    alertmanager:
-      route:
-        main:
-          enabled: true
-          annotations:
-            gethomepage.dev/enabled: "true"
-            gethomepage.dev/icon: prometheus.svg
-            gethomepage.dev/name: Alertmanager
-            gethomepage.dev/group: Infrastructure
-            gethomepage.dev/description: Manages and routes Prometheus alerts.
-            gethomepage.dev/href: https://alertmanager.${SECRET_DOMAIN}
-            gethomepage.dev/app: alertmanager
-          hostnames:
-            - alertmanager.${SECRET_DOMAIN}
-          parentRefs:
-            - name: envoy-internal
-              namespace: network
-      alertmanagerSpec:
-        podMetadata:
-          app.kubernetes.io/name: alertmanager
-        alertmanagerConfiguration:
-          name: alertmanager
-        externalUrl: https://alertmanager.${SECRET_DOMAIN}
-        storage:
-          volumeClaimTemplate:
-            spec:
-              storageClassName: local-hostpath
-              resources:
-                requests:
-                  storage: 1Gi
-    kubeEtcd:
-      service:
-        selector:
-          component: kube-apiserver # etcd runs on control plane nodes
-    kubeProxy:
-      enabled: false
-    prometheus:
-      route:
-        main:
-          annotations:
-            gethomepage.dev/enabled: "true"
-            gethomepage.dev/icon: prometheus.svg
-            gethomepage.dev/name: Prometheus
-            gethomepage.dev/group: Infrastructure
-            gethomepage.dev/description: Monitoring system
-            gethomepage.dev/href: https://prometheus.${SECRET_DOMAIN}
-            gethomepage.dev/app: prometheus
-            gethomepage.dev/widget.type: prometheus
-            gethomepage.dev/widget.url: https://prometheus.${SECRET_DOMAIN}
-          enabled: true
-          hostnames:
-            - prometheus.${SECRET_DOMAIN}
-          parentRefs:
-            - name: envoy-internal
-              namespace: network
-      prometheusSpec:
-        podMetadata:
-          app.kubernetes.io/name: prometheus
-        externalUrl: https://prometheus.${SECRET_DOMAIN}
-        version: v2.55.1 # override 'unsupported Prometheus version' error
-        image:
-          registry: docker.io
-          repository: prompp/prompp
-          tag: 0.7.2@sha256:9916850fe9e0c590467e29790492da8cd5ed268f55622a1c60d357dd13db1753
-        securityContext:
-          runAsNonRoot: true
-          runAsUser: 64535
-          runAsGroup: 64535
-          fsGroup: 64535
-        podMonitorSelectorNilUsesHelmValues: false
-        probeSelectorNilUsesHelmValues: false
-        ruleSelectorNilUsesHelmValues: false
-        scrapeConfigSelectorNilUsesHelmValues: false
-        serviceMonitorSelectorNilUsesHelmValues: false
-        retention: 14d
-        retentionSize: 50GB
-        resources:
-          requests:
-            cpu: 100m
-            memory: 512Mi
-          limits:
-            memory: 2000Mi
-        storageSpec:
-          volumeClaimTemplate:
-            spec:
-              storageClassName: local-hostpath
-              resources:
-                requests:
-                  storage: 50Gi
-    prometheus-node-exporter:
-      fullnameOverride: node-exporter
-    grafana:
-      enabled: false
-      forceDeployDashboards: true
-      operator:
-        dashboardsConfigMapRefEnabled: true
-        folder: observability
-        matchLabels:
-          grafana.internal/instance: grafana
-    kubePrometheusStack:
-      prometheusRules:
-        kubernetesApps:
-          KubeHpaMaxedOut:
-            enabled: true
-            expr: |
-              (kube_horizontalpodautoscaler_status_current_replicas
-              ==
-              kube_horizontalpodautoscaler_spec_max_replicas)
-              and
-              kube_horizontalpodautoscaler_spec_max_replicas > 1
     additionalPrometheusRulesMap:
       dockerhub-rules:
         groups:
@@ -142,3 +31,113 @@ spec:
                 expr: (kube_pod_container_status_restarts_total - kube_pod_container_status_restarts_total offset 10m >= 1) and ignoring (reason) min_over_time(kube_pod_container_status_last_terminated_reason{reason="OOMKilled"}[10m]) == 1
                 labels:
                   severity: critical
+    alertmanager:
+      alertmanagerSpec:
+        alertmanagerConfiguration:
+          name: alertmanager
+        externalUrl: https://alertmanager.${SECRET_DOMAIN}
+        podMetadata:
+          app.kubernetes.io/name: alertmanager
+        storage:
+          volumeClaimTemplate:
+            spec:
+              resources:
+                requests:
+                  storage: 1Gi
+              storageClassName: local-hostpath
+      route:
+        main:
+          annotations:
+            gethomepage.dev/app: alertmanager
+            gethomepage.dev/description: Manages and routes Prometheus alerts.
+            gethomepage.dev/enabled: "true"
+            gethomepage.dev/group: Infrastructure
+            gethomepage.dev/href: https://alertmanager.${SECRET_DOMAIN}
+            gethomepage.dev/icon: prometheus.svg
+            gethomepage.dev/name: Alertmanager
+          enabled: true
+          hostnames:
+            - alertmanager.${SECRET_DOMAIN}
+          parentRefs:
+            - name: envoy-internal
+              namespace: network
+    cleanPrometheusOperatorObjectNames: true
+    grafana:
+      enabled: false
+      forceDeployDashboards: true
+      operator:
+        dashboardsConfigMapRefEnabled: true
+        folder: observability
+        matchLabels:
+          grafana.internal/instance: grafana
+    kubeEtcd:
+      service:
+        selector:
+          component: kube-apiserver
+    kubePrometheusStack:
+      prometheusRules:
+        kubernetesApps:
+          KubeHpaMaxedOut:
+            enabled: true
+            expr: |
+              (kube_horizontalpodautoscaler_status_current_replicas
+              ==
+              kube_horizontalpodautoscaler_spec_max_replicas)
+              and
+              kube_horizontalpodautoscaler_spec_max_replicas > 1
+    kubeProxy:
+      enabled: false
+    prometheus:
+      prometheusSpec:
+        externalUrl: https://prometheus.${SECRET_DOMAIN}
+        image:
+          registry: docker.io
+          repository: prompp/prompp
+          tag: 0.7.2@sha256:9916850fe9e0c590467e29790492da8cd5ed268f55622a1c60d357dd13db1753
+        podMetadata:
+          app.kubernetes.io/name: prometheus
+        podMonitorSelectorNilUsesHelmValues: false
+        probeSelectorNilUsesHelmValues: false
+        resources:
+          limits:
+            memory: 2000Mi
+          requests:
+            cpu: 100m
+            memory: 512Mi
+        retention: 14d
+        retentionSize: 50GB
+        ruleSelectorNilUsesHelmValues: false
+        scrapeConfigSelectorNilUsesHelmValues: false
+        securityContext:
+          fsGroup: 64535
+          runAsGroup: 64535
+          runAsNonRoot: true
+          runAsUser: 64535
+        serviceMonitorSelectorNilUsesHelmValues: false
+        storageSpec:
+          volumeClaimTemplate:
+            spec:
+              resources:
+                requests:
+                  storage: 50Gi
+              storageClassName: local-hostpath
+        version: v2.55.1
+      route:
+        main:
+          annotations:
+            gethomepage.dev/app: prometheus
+            gethomepage.dev/description: Monitoring system
+            gethomepage.dev/enabled: "true"
+            gethomepage.dev/group: Infrastructure
+            gethomepage.dev/href: https://prometheus.${SECRET_DOMAIN}
+            gethomepage.dev/icon: prometheus.svg
+            gethomepage.dev/name: Prometheus
+            gethomepage.dev/widget.type: prometheus
+            gethomepage.dev/widget.url: https://prometheus.${SECRET_DOMAIN}
+          enabled: true
+          hostnames: ["prometheus.${SECRET_DOMAIN}"]
+          parentRefs:
+            - name: envoy-internal
+              namespace: network
+    prometheus-node-exporter:
+      fullnameOverride: node-exporter

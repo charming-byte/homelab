@@ -19,7 +19,6 @@ kind: HelmRelease
 metadata:
   name: openebs
 spec:
-  interval: 1h
   chartRef:
     kind: OCIRepository
     name: openebs
@@ -27,35 +26,14 @@ spec:
     disableHooks: true
     remediation:
       retries: -1
+  interval: 1h
   upgrade:
     cleanupOnFail: true
     disableHooks: true
     remediation:
       retries: 3
   values:
-    localpv-provisioner:
-      localpv:
-        image:
-          registry: quay.io/
-        basePath: &hostPath /var/openebs/local
-      hostpathClass:
-        enabled: true
-        name: local-hostpath
-        isDefaultClass: false
-        basePath: *hostPath
-      helperPod:
-        image:
-          registry: quay.io/
-    openebs-crds:
-      csi:
-        volumeSnapshots:
-          enabled: false
-          keep: false
-    zfs-localpv:
-      enabled: false
-    lvm-localpv:
-      enabled: false
-    mayastor:
+    alloy:
       enabled: false
     engines:
       local:
@@ -66,9 +44,31 @@ spec:
       replicated:
         mayastor:
           enabled: false
+    localpv-provisioner:
+      helperPod:
+        image:
+          registry: quay.io/
+      hostpathClass:
+        basePath: /var/openebs/local
+        enabled: true
+        isDefaultClass: false
+        name: local-hostpath
+      localpv:
+        basePath: /var/openebs/local
+        image:
+          registry: quay.io/
     loki:
       enabled: false
-    alloy:
+    lvm-localpv:
+      enabled: false
+    mayastor:
       enabled: false
     minio:
+      enabled: false
+    openebs-crds:
+      csi:
+        volumeSnapshots:
+          enabled: false
+          keep: false
+    zfs-localpv:
       enabled: false

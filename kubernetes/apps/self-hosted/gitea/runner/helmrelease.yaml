@@ -4,43 +4,43 @@ kind: HelmRelease
 metadata:
   name: gitea-runner
 spec:
-  interval: 30m
   chartRef:
     kind: OCIRepository
     name: gitea-runner
-  maxHistory: 3
   install:
     remediation:
       retries: 3
+  interval: 30m
+  maxHistory: 3
+  uninstall:
+    keepHistory: false
   upgrade:
     remediation:
       retries: 3
-  uninstall:
-    keepHistory: false
   values:
     controller:
       annotations:
         reloader.stakater.com/auto: "true"
+    env:
+      GITEA_INSTANCE_URL: http://gitea.default.svc.cluster.local
+      TZ: Europe/Berlin
+    envFrom:
+      - name: gitea-runner-secret
+        secretRef: null
     image:
+      pullPolicy: IfNotPresent
       repository: vegardit/gitea-act-runner
       tag: dind-latest
-      pullPolicy: IfNotPresent
     persistence:
       data:
-        enabled: true
-        storageClass: local-hostpath
         accessMode: ReadWriteOnce
+        enabled: true
         size: 5Gi
+        storageClass: local-hostpath
+    podSecurityContext:
+      privileged: true
+    securityContext:
+      privileged: true
     service:
       main:
         enabled: false
-    securityContext:
-      privileged: true
-    podSecurityContext:
-      privileged: true
-    env:
-      TZ: Europe/Berlin
-      GITEA_INSTANCE_URL: http://gitea.default.svc.cluster.local
-    envFrom:
-      - secretRef:
-        name: gitea-runner-secret

@@ -5,5 +5,5 @@ resources:
   - ./certificate.yaml
   - ./envoy.yaml
   - ./helmrelease.yaml
-  - ./ocirepository.yaml
   - ./observability.yaml
+  - ./ocirepository.yaml

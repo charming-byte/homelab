@@ -8,19 +8,19 @@ spec:
     level:
       default: info
   provider:
-    type: Kubernetes
     kubernetes:
       envoyDeployment:
-        replicas: 2
         container:
           imageRepository: mirror.gcr.io/envoyproxy/envoy
           resources:
-            requests:
-              cpu: 100m
             limits:
               memory: 1Gi
+            requests:
+              cpu: 100m
+        replicas: 2
       envoyService:
         externalTrafficPolicy: Cluster
+    type: Kubernetes
   shutdown:
     drainTimeout: 180s
   telemetry:
@@ -28,6 +28,7 @@ spec:
       prometheus:
         compression:
           type: Gzip
+
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: GatewayClass
@@ -40,85 +41,7 @@ spec:
     kind: EnvoyProxy
     name: envoy
     namespace: network
----
-apiVersion: gateway.networking.k8s.io/v1
-kind: Gateway
-metadata:
-  name: envoy-external
-  annotations:
-    external-dns.alpha.kubernetes.io/target: external.${SECRET_DOMAIN}
-spec:
-  gatewayClassName: envoy
-  infrastructure:
-    annotations:
-      external-dns.alpha.kubernetes.io/hostname: external.${SECRET_DOMAIN}
-      lbipam.cilium.io/ips: "192.168.178.203"
-      gatus.home-operations.com/endpoint: |-
-        client:
-          dns-resolver: tcp://1.1.1.1:53
-        group: external
-  listeners:
-    - name: http
-      protocol: HTTP
-      port: 80
-      allowedRoutes:
-        namespaces:
-          from: Same
-    - name: https
-      protocol: HTTPS
-      port: 443
-      allowedRoutes:
-        namespaces:
-          from: All
-      tls:
-        certificateRefs:
-          - kind: Secret
-            name: ${SECRET_DOMAIN/./-}-production-tls
----
-apiVersion: gateway.networking.k8s.io/v1
-kind: Gateway
-metadata:
-  name: envoy-internal
-  annotations:
-    external-dns.alpha.kubernetes.io/target: internal.${SECRET_DOMAIN}
-    gatus.home-operations.com/endpoint: |-
-      group: internal
-      guarded: true
-      ui:
-        hide-hostname: true
-        hide-url: true
-spec:
-  gatewayClassName: envoy
-  infrastructure:
-    annotations:
-      external-dns.alpha.kubernetes.io/hostname: internal.${SECRET_DOMAIN}
-      lbipam.cilium.io/ips: "192.168.178.202"
-  listeners:
-    - name: http
-      protocol: HTTP
-      port: 80
-      allowedRoutes:
-        namespaces:
-          from: Same
-    - name: https
-      protocol: HTTPS
-      port: 443
-      allowedRoutes:
-        namespaces:
-          from: All
-      tls:
-        certificateRefs:
-          - kind: Secret
-            name: ${SECRET_DOMAIN/./-}-production-tls
-    - name: git-ssh
-      protocol: TCP
-      port: 22
-      allowedRoutes:
-        namespaces:
-          from: Selector
-          selector:
-              matchLabels:
-                  kubernetes.io/metadata.name: default
+
 ---
 apiVersion: gateway.envoyproxy.io/v1alpha1
 kind: BackendTrafficPolicy
@@ -137,6 +60,7 @@ spec:
   timeout:
     http:
       requestTimeout: 0s
+
 ---
 apiVersion: gateway.envoyproxy.io/v1alpha1
 kind: ClientTrafficPolicy
@@ -151,8 +75,8 @@ spec:
     bufferLimit: 4Mi
     maxAcceptPerSocketEvent: 0
   http2:
-    initialStreamWindowSize: 2Mi
     initialConnectionWindowSize: 32Mi
+    initialStreamWindowSize: 2Mi
     onInvalidMessage: TerminateStream
   http3: {}
   targetSelectors:
@@ -163,17 +87,18 @@ spec:
     http:
       requestReceivedTimeout: 0s
   tls:
-    minVersion: "1.2"
     alpnProtocols:
       - h2
       - http/1.1
+    minVersion: "1.2"
+
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
-  name: https-redirect
   annotations:
     external-dns.alpha.kubernetes.io/controller: none
+  name: https-redirect
 spec:
   parentRefs:
     - name: envoy-external
@@ -184,7 +109,7 @@ spec:
       sectionName: http
   rules:
     - filters:
-        - type: RequestRedirect
-          requestRedirect:
+        - requestRedirect:
             scheme: https
             statusCode: 301
+          type: RequestRedirect
