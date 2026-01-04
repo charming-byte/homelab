@@ -1,0 +1,98 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: soularr
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: app-template
+  driftDetection:
+    mode: enabled
+  install:
+    createNamespace: true
+    remediation:
+      retries: 3
+  interval: 1h
+  maxHistory: 2
+  uninstall:
+    keepHistory: false
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  values:
+    controllers:
+      soularr:
+        annotations:
+          reloader.stakater.com/auto: "true"
+        containers:
+          soularr:
+            env:
+              SCRIPT_INTERVAL: 300
+              TZ: Europe/Berlin
+            image:
+              repository: mrusse08/soularr
+              tag: latest
+            resources:
+              limits:
+                memory: 512Mi
+              requests:
+                cpu: 100m
+                memory: 128Mi
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop: ["ALL"]
+              readOnlyRootFilesystem: true
+        initContainers:
+          config-setup:
+            command:
+              - "-c"
+              - /usr/local/bin/bash
+              - |
+                envsubst < /tmp/config.ini > /data/config.ini
+                exit 0
+            envFrom:
+              - secretRef:
+                  name: soularr-secret
+            image:
+              repository: ghcr.io/dmfrey/bash
+              tag: 5.2.26-alpine3.20
+        type: statefulset
+    defaultPodOptions:
+      labels:
+        setGateway: "false"
+      securityContext:
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+        runAsGroup: 1000
+        runAsNonRoot: true
+        runAsUser: 1000
+    persistence:
+      config-file:
+        advancedMounts:
+          soularr:
+            config-setup:
+              - path: /tmp/config.ini
+                readOnly: true
+                subPath: config.ini
+        defaultMode: 0775
+        name: soularr-configmap
+        type: configMap
+      data:
+        existingClaim: soularr
+      media:
+        globalMounts:
+          - path: /media/downloads/soulseek
+            subPath: downloads/soulseek
+        path: /media
+        server: nas.internal
+        type: nfs
+      tmp:
+        medium: Memory
+        type: emptyDir
+    service:
+      soularr:
+        controller: soularr
+        enabled: false
