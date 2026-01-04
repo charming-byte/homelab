@@ -59,7 +59,7 @@ spec:
     labels:
       app.kubernetes.io/name: *app
   dependsOn:
-    - name: cloudnative-pg-operator
+    - name: cloudnative-pg
   path: ./kubernetes/apps/dbms/cloudnative-pg/plugin-barman-cloud
   prune: true
   sourceRef:
