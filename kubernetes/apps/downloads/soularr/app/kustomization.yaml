@@ -4,11 +4,8 @@ kind: Kustomization
 resources:
   - ./externalsecret.yaml
   - ./helmrelease.yaml
+  - ./ocirepository.yaml
   - ./pvc.yaml
-configMapGenerator:
-  - name: soularr-configmap
-    files:
-      - config.ini=./resources/config.ini
 generatorOptions:
   disableNameSuffixHash: true
   annotations:
