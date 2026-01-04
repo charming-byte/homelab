@@ -38,7 +38,7 @@ spec:
               readiness: *ref_0
             resources:
               limits:
-                memory: 512Mi
+                memory: 256Mi
               requests:
                 cpu: 10m
                 memory: 64Mi
