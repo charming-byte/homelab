@@ -15,7 +15,7 @@ spec:
         containers:
           app:
             env:
-              ND_AUTHREQUESTLIMIT: 0
+              ND_AUTHREQUESTLIMIT: 10
               ND_AUTOIMPORTPLAYLISTS: "false"
               ND_CACHEFOLDER: /cache
               ND_DATAFOLDER: /config
@@ -42,14 +42,14 @@ spec:
               repository: ghcr.io/navidrome/navidrome
               tag: 0.59.0
             probes:
-              liveness: &ref_0
+              liveness: &probes
                 custom: true
                 enabled: true
                 spec:
                   httpGet:
                     path: /ping
                     port: 8080
-              readiness: *ref_0
+              readiness: *probes
             resources:
               limits:
                 memory: 300Mi
@@ -60,7 +60,7 @@ spec:
               allowPrivilegeEscalation: false
               capabilities:
                 drop: ["ALL"]
-              readOnlyRootFilesystem: false
+              readOnlyRootFilesystem: true
         pod:
           securityContext:
             fsGroup: 1000
@@ -114,7 +114,7 @@ spec:
           gethomepage.dev/widget.user: "{{`{{HOMEPAGE_VAR_NAVIDROME_USER}}`}}"
         hostnames: ["music.${SECRET_DOMAIN}"]
         parentRefs:
-          - name: envoy-internal
+          - name: envoy-external
             namespace: network
             sectionName: https
         rules:
