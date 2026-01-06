@@ -60,7 +60,7 @@ spec:
               allowPrivilegeEscalation: false
               capabilities:
                 drop: ["ALL"]
-              readOnlyRootFilesystem: true
+              readOnlyRootFilesystem: false
         pod:
           securityContext:
             fsGroup: 1000
@@ -92,7 +92,7 @@ spec:
           navidrome:
             app:
               - path: /music
-                readOnly: false
+                readOnly: true
                 subPath: audio
         enabled: true
         path: /media
