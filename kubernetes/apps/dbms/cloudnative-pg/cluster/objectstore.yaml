@@ -8,7 +8,7 @@ spec:
   configuration:
     data:
       compression: bzip2
-    destinationPath: s3://postgres18/
+    destinationPath: s3://t-node/postgres18/
     endpointURL: https://${S3_BACKUP_ENDPOINT}
     s3Credentials:
       accessKeyId:
