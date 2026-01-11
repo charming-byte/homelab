@@ -32,6 +32,7 @@ spec:
               STORE_MODEL_IN_DB: true
               TZ: Europe/Berlin
               PRISMA_HOME_DIR: "/.cache"
+              PRISMA_BINARY_CACHE_DIR: "/.cache/"
               USE_PRISMA_MIGRATE: "True"
             envFrom: &envFrom
               - secretRef:
