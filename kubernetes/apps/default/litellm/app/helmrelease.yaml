@@ -101,12 +101,14 @@ spec:
             subPath: config.yaml
         name: litellm-configmap
         type: configMap
-      config-dir:
+      app:
+        advancedMounts:
+          litellm:
+            app:
+              - path: /app
         accessMode: ReadWriteOnce
         size: 5Gi
         storageClass: local-hostpath
-        globalMounts:
-          - path: /app
       prisma-client:
         globalMounts:
           - path: /usr/lib/python3.13/site-packages/litellm_proxy_extras/migrations
