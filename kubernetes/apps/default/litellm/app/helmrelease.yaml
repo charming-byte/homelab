@@ -119,7 +119,7 @@ spec:
           gethomepage.dev/enabled: "true"
           gethomepage.dev/group: AI
           gethomepage.dev/name: LiteLLM
-          gethomepage.dev/description: "AI Gateway to provide model access, fallbacks and spend tracking across 100+ LLMs."
+          gethomepage.dev/description: "AI Gateway"
         hostnames: ["{{ .Release.Name }}.${SECRET_DOMAIN}"]
         parentRefs:
           - name: envoy-internal
