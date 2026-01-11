@@ -36,8 +36,8 @@ spec:
               - secretRef:
                   name: "{{ .Release.Name }}-secret"
             image:
-              repository: ghcr.io/berriai/litellm-non_root:main-v1.80.11-stable
-              tag: v1.80.8-stable@sha256:9005bc060d495917bc901b2d34a720a58035f284ef7a375d561dffab6f5e59f5
+              repository: ghcr.io/berriai/litellm-non_root
+              tag: main-v1.80.11-stable@sha256:7a6e64350cb55cd52c2b8186e6135b842478c5847de027dcbae276307a8d1c92
             probes:
               liveness:
                 custom: true
@@ -71,7 +71,7 @@ spec:
               allowPrivilegeEscalation: false
               capabilities:
                 drop: ["ALL"]
-              readOnlyRootFilesystem: false
+              readOnlyRootFilesystem: true
         initContainers:
           init-db:
             envFrom: *envFrom
@@ -82,9 +82,9 @@ spec:
       securityContext:
         fsGroup: 1000
         fsGroupChangePolicy: OnRootMismatch
-        runAsNonRoot: false
-        #runAsGroup: 1000
-        #runAsUser: 1000
+        runAsNonRoot: true
+        runAsGroup: 1000
+        runAsUser: 1000
     persistence:
       cache:
         globalMounts:
