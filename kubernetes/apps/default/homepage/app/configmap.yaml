@@ -36,6 +36,7 @@ data:
         columns: 2
         icon: si-openapiinitiative
       Media:
+        useEqualHeights: true
         style: row
         columns: 2
         icon: mdi-play-circle
