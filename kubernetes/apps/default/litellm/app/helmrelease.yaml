@@ -58,7 +58,7 @@ spec:
                   httpGet:
                     path: /health/readiness
                     port: 4000
-                  initialDelaySeconds: 5
+                  initialDelaySeconds: 15
                   periodSeconds: 5
                   timeoutSeconds: 5
             resources:
@@ -118,7 +118,7 @@ spec:
       main:
         hostnames: ["{{ .Release.Name }}.${SECRET_DOMAIN}"]
         parentRefs:
-          - name: internal
+          - name: envoy-internal
             namespace: network
             sectionName: https
         rules:
