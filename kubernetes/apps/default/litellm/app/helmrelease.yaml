@@ -31,9 +31,6 @@ spec:
               REDIS_HOST: dragonfly.dbms.svc.cluster.local
               STORE_MODEL_IN_DB: true
               TZ: Europe/Berlin
-              HOME: "/.cache"
-              PRISMA_HOME_DIR: "/.cache"
-              PRISMA_BINARY_CACHE_DIR: "/.cache/"
               USE_PRISMA_MIGRATE: "True"
             envFrom: &envFrom
               - secretRef:
@@ -74,7 +71,7 @@ spec:
               allowPrivilegeEscalation: false
               capabilities:
                 drop: ["ALL"]
-              readOnlyRootFilesystem: true
+              readOnlyRootFilesystem: false
         initContainers:
           init-db:
             envFrom: *envFrom
@@ -85,9 +82,9 @@ spec:
       securityContext:
         fsGroup: 1000
         fsGroupChangePolicy: OnRootMismatch
-        runAsNonRoot: true
-        runAsGroup: 1000
-        runAsUser: 1000
+        runAsNonRoot: false
+        #runAsGroup: 1000
+        #runAsUser: 1000
     persistence:
       cache:
         globalMounts:
