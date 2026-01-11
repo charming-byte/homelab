@@ -99,12 +99,20 @@ spec:
           - path: /tmp
             subPath: tmp
         type: emptyDir
+      prisma-root-cache:
+        type: emptyDir
+        globalMounts:
+          - path: /root/.cache
       config:
         globalMounts:
           - path: /app/config.yaml
             subPath: config.yaml
         name: litellm-configmap
         type: configMap
+      config-dir:
+        type: emptyDir
+        globalMounts:
+          - path: /.config
       prisma-client:
         globalMounts:
           - path: /usr/local/lib/python3.13/site-packages/prisma
