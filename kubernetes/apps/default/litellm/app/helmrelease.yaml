@@ -36,7 +36,7 @@ spec:
               - secretRef:
                   name: "{{ .Release.Name }}-secret"
             image:
-              repository: ghcr.io/berriai/litellm
+              repository: ghcr.io/berriai/litellm-non_root:main-v1.80.11-stable
               tag: v1.80.8-stable@sha256:9005bc060d495917bc901b2d34a720a58035f284ef7a375d561dffab6f5e59f5
             probes:
               liveness:
@@ -95,10 +95,6 @@ spec:
           - path: /tmp
             subPath: tmp
         type: emptyDir
-      prisma-root-cache:
-        type: emptyDir
-        globalMounts:
-          - path: /root/.cache
       config:
         globalMounts:
           - path: /app/config.yaml
