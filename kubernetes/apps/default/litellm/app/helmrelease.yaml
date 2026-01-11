@@ -111,7 +111,9 @@ spec:
         name: litellm-configmap
         type: configMap
       config-dir:
-        type: emptyDir
+        accessMode: ReadWriteOnce
+        size: 5Gi
+        storageClass: local-hostpath
         globalMounts:
           - path: /.config
       prisma-client:
