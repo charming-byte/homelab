@@ -109,6 +109,8 @@ spec:
         globalMounts:
           - path: /usr/local/lib/python3.13/site-packages/prisma
             subPath: prisma
+          - path: /usr/lib/python3.13/site-packages/litellm_proxy_extras
+            subPath: litellm_proxy_extras
         type: emptyDir
     route:
       main:
