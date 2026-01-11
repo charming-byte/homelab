@@ -105,7 +105,8 @@ spec:
         advancedMounts:
           litellm:
             app:
-              - path: /app
+              - path: /app/.config
+                subPath: .config
         accessMode: ReadWriteOnce
         size: 5Gi
         storageClass: local-hostpath
