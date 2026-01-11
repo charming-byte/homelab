@@ -106,7 +106,7 @@ spec:
         size: 5Gi
         storageClass: local-hostpath
         globalMounts:
-          - path: /.config
+          - path: /app
       prisma-client:
         globalMounts:
           - path: /usr/lib/python3.13/site-packages/litellm_proxy_extras/migrations
