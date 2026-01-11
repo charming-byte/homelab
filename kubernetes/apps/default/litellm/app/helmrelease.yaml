@@ -31,7 +31,7 @@ spec:
               REDIS_HOST: dragonfly.dbms.svc.cluster.local
               STORE_MODEL_IN_DB: true
               TZ: Europe/Berlin
-              HOME: "/.cache"
+              PRISMA_HOME_DIR: "/.cache"
               USE_PRISMA_MIGRATE: "True"
             envFrom: &envFrom
               - secretRef:
