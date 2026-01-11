@@ -31,6 +31,7 @@ spec:
               REDIS_HOST: dragonfly.dbms.svc.cluster.local
               STORE_MODEL_IN_DB: true
               TZ: Europe/Berlin
+              HOME: "/.cache"
               USE_PRISMA_MIGRATE: "True"
             envFrom: &envFrom
               - secretRef:
@@ -115,8 +116,6 @@ spec:
           - path: /.config
       prisma-client:
         globalMounts:
-          - path: /usr/local/lib/python3.13/site-packages/prisma
-            subPath: prisma
           - path: /usr/lib/python3.13/site-packages/litellm_proxy_extras/migrations
         type: emptyDir
     route:
