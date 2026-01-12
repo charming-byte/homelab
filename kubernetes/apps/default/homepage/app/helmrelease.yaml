@@ -41,7 +41,7 @@ spec:
                 memory: 256Mi
               requests:
                 cpu: 15m
-                memory: 64Mi
+                memory: 128Mi
         replicas: 1
         strategy: RollingUpdate
     persistence:
