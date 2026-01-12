@@ -23,4 +23,4 @@ spec:
       memory: 1Gi
     requests:
       cpu: 100m
-      memory: 128Mi
+      memory: 64Mi

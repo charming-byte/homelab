@@ -29,7 +29,7 @@ spec:
       memory: 1Gi
     requests:
       cpu: 500m
-      memory: 512Mi
+      memory: 756Mi
   storage:
     size: 50Gi
     storageClass: local-hostpath
