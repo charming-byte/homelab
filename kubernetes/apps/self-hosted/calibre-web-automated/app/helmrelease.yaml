@@ -73,8 +73,9 @@ spec:
           calibre-web-automated:
             app:
               - path: /config
-        existingClaim: calibre-web-automated
-        type: persistentVolumeClaim
+        storageClass: local-hostpath
+        size: 5Gi
+        accessMode: ReadWriteOnce
       ingest:
         enabled: true
         globalMounts:
