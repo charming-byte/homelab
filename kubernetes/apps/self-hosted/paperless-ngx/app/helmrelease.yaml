@@ -44,7 +44,7 @@ spec:
                 spec:
                   httpGet:
                     path: /
-                    port: 8080
+                    port: 8000
                   initialDelaySeconds: 30
                   periodSeconds: 60
                   timeoutSeconds: 10
@@ -114,7 +114,7 @@ spec:
           gethomepage.dev/icon: paperless-ngx.svg
           gethomepage.dev/name: Paperless-ngx
           gethomepage.dev/widget.type: paperlessngx
-          gethomepage.dev/widget.url: http://paperless-ngx.self-hosted:8080
+          gethomepage.dev/widget.url: http://paperless-ngx.self-hosted:8000
           gethomepage.dev/widget.key: "{{`{{HOMEPAGE_VAR_PAPERLESS_TOKEN}}`}}"
         hostnames: ["paperless.${SECRET_DOMAIN}"]
         parentRefs:
@@ -124,7 +124,7 @@ spec:
         rules:
           - backendRefs:
               - name: app
-                port: 8080
+                port: 8000
     service:
       app:
         controller: paperless-ngx
