@@ -112,7 +112,7 @@ spec:
             sectionName: https
         rules:
           - backendRefs:
-              - name: app
+              - name: paperless-ngx
                 port: 8000
     service:
       app:
