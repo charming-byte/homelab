@@ -33,7 +33,6 @@ spec:
               PAPERLESS_URL: https://paperless.${SECRET_DOMAIN}
               S6_READ_ONLY_ROOT: 1
               S6_YES_I_WANT_A_WORLD_WRITABLE_RUN_BECAUSE_KUBERNETES: 1
-              S6_VERBOSITY: 2
               USERMAP_UID: 1000
             envFrom: &envFrom
               - secretRef:
@@ -84,7 +83,6 @@ spec:
           - path: /tmp
             subPath: tmp
           - path: /run
-            subPath: run
         type: emptyDir
       consume:
         globalMounts:
