@@ -39,15 +39,8 @@ spec:
                   name: paperless-ngx-secret
             probes:
               liveness: &probes
-                custom: true
+                custom: false
                 enabled: true
-                spec:
-                  httpGet:
-                    path: /
-                    port: 8000
-                  initialDelaySeconds: 30
-                  periodSeconds: 60
-                  timeoutSeconds: 10
               readiness: *probes
             resources:
               limits:
