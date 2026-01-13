@@ -17,6 +17,7 @@ spec:
           app:
             env:
               PAPERLESS_APPS: allauth.socialaccount.providers.openid_connect
+              PAPERLESS_BIND_ADDR: 0.0.0.0
               PAPERLESS_CONSUMER_DELETE_DUPLICATES: true
               PAPERLESS_CONSUMER_POLLING: 60
               PAPERLESS_CONSUMER_RECURSIVE: true
