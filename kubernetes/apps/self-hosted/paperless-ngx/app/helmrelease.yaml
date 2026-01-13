@@ -1,0 +1,122 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/app-template-4.5.0/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: paperless-ngx
+  namespace: media
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: paperless-ngx
+  interval: 15m
+  values:
+    controllers:
+      paperless-ngx:
+        containers:
+          app:
+            env:
+              PAPERLESS_APPS: allauth.socialaccount.providers.openid_connect
+              PAPERLESS_CONSUMER_DELETE_DUPLICATES: true
+              PAPERLESS_CONSUMER_POLLING: 60
+              PAPERLESS_CONSUMER_RECURSIVE: true
+              PAPERLESS_CONSUMPTION_DIR: /paperless/consume
+              PAPERLESS_DATA_DIR: /paperless/data
+              PAPERLESS_DISABLE_REGULAR_LOGIN: true
+              PAPERLESS_FILENAME_FORMAT_REMOVE_NONE: true
+              PAPERLESS_MEDIA_ROOT: /paperless/media
+              PAPERLESS_OCR_LANGUAGE: deu
+              PAPERLESS_REDIRECT_LOGIN_TO_SSO: true
+              PAPERLESS_REDIS: redis://dragonfly.dbms.svc.cluster.local:6379/7
+              PAPERLESS_REDIS_PREFIX: paperless-
+              PAPERLESS_TIME_ZONE: Europe/Berlin
+              PAPERLESS_URL: https://paperless.${SECRET_DOMAIN}
+              USERMAP_UID: 1000
+            envFrom: &envFrom
+              - secretRef:
+                  name: paperless-ngx-secret
+            probes:
+              liveness: &probes
+                custom: true
+                enabled: true
+                spec:
+                  httpGet:
+                    path: /
+                    port: 8080
+              readiness: *probes
+            resources:
+              limits:
+                memory: 300Mi
+              requests:
+                cpu: 25m
+                memory: 128Mi
+            image:
+              repository: ghcr.io/paperless-ngx/paperless-ngx
+              tag: 2.20.3@sha256:57ad9565bff3bdf2378ab1dcc21ea649dfd68ee58e0eeca2bfba0120a26563e8
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop: ["ALL"]
+              readOnlyRootFilesystem: true
+        initContainers:
+          init-db:
+            envFrom: *envFrom
+            image:
+              repository: ghcr.io/home-operations/postgres-init
+              tag: 18.1.0@sha256:866f15038ed5185a2b8118821f470bb7ca0df8c4231b8e277446e681ebb1ed84
+        pod:
+          annotations:
+            reloader.stakater.com/auto: "true"
+          securityContext:
+            fsGroup: 1000
+            fsGroupChangePolicy: OnRootMismatch
+            runAsGroup: 1000
+            runAsNonRoot: true
+            runAsUser: 1000
+            seccompProfile:
+              type: RuntimeDefault
+    persistence:
+      consume:
+        globalMounts:
+          - path: /paperless/consume
+        path: /paperless-consume
+        server: nas.internal
+        type: nfs
+      data:
+        accessMode: ReadWriteOnce
+        globalMounts:
+          - path: /paperless/data
+        size: 20Gi
+        storageClass: local-hostpath
+      media:
+        globalMounts:
+          - path: /paperless/media
+        path: /paperless-media
+        server: nas.internal
+        type: nfs
+    route:
+      app:
+        annotations:
+          gethomepage.dev/description: Document Management System
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/group: Self-hosted
+          gethomepage.dev/icon: paperless-ngx.svg
+          gethomepage.dev/name: Paperless-ngx
+          gethomepage.dev/widget.type: paperlessngx
+          gethomepage.dev/widget.url: http://paperless-ngx.self-hosted:8080
+          gethomepage.dev/widget.key: "{{`{{HOMEPAGE_VAR_PAPERLESS_TOKEN}}`}}"
+        hostnames: ["paperless.${SECRET_DOMAIN}"]
+        parentRefs:
+          - name: envoy-internal
+            namespace: network
+            sectionName: https
+        rules:
+          - backendRefs:
+              - name: app
+                port: 8080
+    service:
+      app:
+        controller: paperless-ngx
+        ports:
+          http:
+            port: 8000

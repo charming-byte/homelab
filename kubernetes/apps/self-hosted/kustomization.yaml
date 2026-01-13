@@ -10,3 +10,4 @@ resources:
   - ./open-webui/ks.yaml
   - ./atuin/ks.yaml
   - ./calibre-web-automated/ks.yaml
+  - ./paperless-ngx/ks.yaml
