@@ -31,6 +31,8 @@ spec:
               PAPERLESS_REDIS_PREFIX: paperless-
               PAPERLESS_TIME_ZONE: Europe/Berlin
               PAPERLESS_URL: https://paperless.${SECRET_DOMAIN}
+              S6_READ_ONLY_ROOT: 1
+              S6_YES_I_WANT_A_WORLD_WRITABLE_RUN_BECAUSE_KUBERNETES: 1
               USERMAP_UID: 1000
             envFrom: &envFrom
               - secretRef:
@@ -76,6 +78,13 @@ spec:
             seccompProfile:
               type: RuntimeDefault
     persistence:
+      tmpfs:
+        globalMounts:
+          - path: /tmp
+            subPath: tmp
+          - path: /run
+            subPath: run
+        type: emptyDir
       consume:
         globalMounts:
           - path: /paperless/consume
