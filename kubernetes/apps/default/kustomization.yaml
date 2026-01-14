@@ -5,7 +5,6 @@ namespace: default
 components:
   - ../../components/common
 resources:
-  #- ./copilot-api/ks.yaml
   - ./litellm/ks.yaml
   - ./echo/ks.yaml
   - ./homepage/ks.yaml
