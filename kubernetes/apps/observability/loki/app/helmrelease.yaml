@@ -5,9 +5,16 @@ kind: HelmRelease
 metadata:
   name: loki
 spec:
-  chartRef:
-    kind: HelmChart
-    name: grafana
+  chart:
+    spec:
+      # renovate: registryUrl=https://grafana.github.io/helm-charts
+      chart: loki
+      interval: 15m
+      version: 6.46.0
+      sourceRef:
+        kind: HelmRepository
+        name: grafana
+        namespace: observability
   interval: 30m
   timeout: 15m
   values:
