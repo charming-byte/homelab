@@ -10,6 +10,9 @@ spec:
     name: kube-prometheus-stack
   interval: 1h
   values:
+    crds:
+      upgradeJob:
+        enabled: true
     additionalPrometheusRulesMap:
       dockerhub-rules:
         groups:
