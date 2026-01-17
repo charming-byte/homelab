@@ -5,18 +5,9 @@ kind: HelmRelease
 metadata:
   name: loki
 spec:
-  chart:
-    spec:
-      chart: loki
-      interval: 30m
-      sourceRef:
-        kind: HelmRepository
-        name: grafana
-        namespace: flux-system
-      version: 6.21.0
-  install:
-    remediation:
-      retries: 3
+  chartRef:
+    kind: HelmRelease
+    name: grafana
   interval: 30m
   timeout: 15m
   upgrade:
