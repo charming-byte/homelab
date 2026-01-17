@@ -6,7 +6,7 @@ metadata:
   name: loki
 spec:
   chartRef:
-    kind: HelmRelease
+    kind: HelmChart
     name: grafana
   interval: 30m
   timeout: 15m
