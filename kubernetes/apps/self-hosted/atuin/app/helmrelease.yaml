@@ -18,11 +18,13 @@ spec:
               - server
               - start
             env:
-              ATUIN_DB_URI: sqlite:///config/atuin.db
               ATUIN_HOST: 0.0.0.0
               ATUIN_OPEN_REGISTRATION: "true"
               ATUIN_PORT: 80
               TZ: Europe/Berlin
+            envFrom: &envFrom
+              - secretRef:
+                  name: "{{ .Release.Name }}-secret"
             image:
               repository: ghcr.io/atuinsh/atuin
               tag: v18.11.0@sha256:18dba8938704706806d3c1133629ff2658c08bfa7815d71a916a8f072b61945b
@@ -50,6 +52,12 @@ spec:
               capabilities:
                 drop: ["ALL"]
               readOnlyRootFilesystem: true
+        initContainers:
+          init-db:
+            envFrom: *envFrom
+            image:
+              repository: ghcr.io/home-operations/postgres-init
+              tag: 18.1.0@sha256:3c54d39f19fdb82ed5b3f286450e4071133cc6025bd0e25856bc2c522f8fc030
     defaultPodOptions:
       securityContext:
         fsGroup: 1000
@@ -57,12 +65,6 @@ spec:
         runAsGroup: 1000
         runAsNonRoot: true
         runAsUser: 1000
-    persistence:
-      config:
-        accessMode: ReadWriteOnce
-        size: 5Gi
-        storageClass: local-hostpath
-        type: persistentVolumeClaim
     route:
       app:
         hostnames: ["{{ .Release.Name }}.${SECRET_DOMAIN}"]
