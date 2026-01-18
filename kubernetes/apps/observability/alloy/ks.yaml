@@ -6,7 +6,7 @@ metadata:
   name: alloy
 spec:
   targetNamespace: observability
-  path: ./kubernetes/main/apps/observability/alloy/app
+  path: ./kubernetes/apps/observability/alloy/app
   sourceRef:
     kind: GitRepository
     name: flux-system
