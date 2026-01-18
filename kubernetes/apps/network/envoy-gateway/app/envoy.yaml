@@ -50,7 +50,7 @@ spec:
   infrastructure:
     annotations:
       external-dns.alpha.kubernetes.io/hostname: internal.${SECRET_DOMAIN}
-      lbipam.cilium.io/ips: "192.168.178.202"
+      lbipam.cilium.io/ips: "192.168.178.250"
   listeners:
     - name: http
       protocol: HTTP
