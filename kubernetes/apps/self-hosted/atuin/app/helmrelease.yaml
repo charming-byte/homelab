@@ -66,12 +66,13 @@ spec:
         runAsNonRoot: true
         runAsUser: 1000
     persistence:
-      advancedMounts:
-        atuin:
-          app:
-            - path: /config
-      enabled: true
-      type: emptyDir
+      config:
+        advancedMounts:
+          atuin:
+            app:
+              - path: /config
+        enabled: true
+        type: emptyDir
     route:
       app:
         hostnames: ["{{ .Release.Name }}.${SECRET_DOMAIN}"]
