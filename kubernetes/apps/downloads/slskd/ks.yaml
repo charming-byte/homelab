@@ -6,6 +6,9 @@ metadata:
   name: slskd
   namespace: downloads
 spec:
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: slskd
   components:
     - ../../../../components/ext-auth
     - ../../../../components/nfs-scaler
