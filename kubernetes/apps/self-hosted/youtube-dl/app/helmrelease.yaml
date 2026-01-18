@@ -2,27 +2,23 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: copilot-api
+  name: youtube-dl
 spec:
   chartRef:
     kind: OCIRepository
-    name: copilot-api
+    name: youtube-dl
   interval: 1h
   values:
     controllers:
-      copilot-api:
-        annotations:
-          reloader.stakater.com/auto: "true"
+      youtube-dl:
         containers:
           app:
             env:
-              TZ: Europe/Berlin
-            envFrom:
-              - secretRef:
-                  name: copilot-api-secret
+              YTDL_PORT: 80
+              YTDL_DEFAULT_THEME: "dark"
             image:
-              repository: ghcr.io/ericc-ch/copilot-api
-              tag: v0.7@sha256:528117aa62e0393f90dbdb8f33ab0c8383335690c06eeee9c2abc7f81b6d974f
+              repository: ghcr.io/tzahi12345/youtubedl-material
+              tag: 4.3.2@sha256:2f943d584711cb07c3535b518939fabb2ab90fdd7452d9a9938cd05378468ed9
             probes:
               liveness: &probes
                 custom: true
@@ -31,7 +27,7 @@ spec:
                   failureThreshold: 3
                   httpGet:
                     path: /
-                    port: 4141
+                    port: 80
                   initialDelaySeconds: 0
                   periodSeconds: 10
                   timeoutSeconds: 1
@@ -41,26 +37,26 @@ spec:
                 memory: 256Mi
               requests:
                 cpu: 10m
-                memory: 64Mi
-        replicas: 1
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop: ["ALL"]
+              readOnlyRootFilesystem: true
         strategy: RollingUpdate
     defaultPodOptions:
       securityContext:
         runAsGroup: 65534
         runAsNonRoot: true
         runAsUser: 65534
-    persistence:
-      config:
-        accessMode: ReadWriteOnce
-        enabled: true
-        globalMounts:
-          - path: /.local
-        size: 3Gi
-        storageClass: local-hostpath
-        type: persistentVolumeClaim
     route:
       app:
-        hostnames: ["api.ai.${SECRET_DOMAIN}"]
+        annotations:
+          gethomepage.dev/description: Self-Hosted YouTube Downloader
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/group: Tools
+          gethomepage.dev/icon: youtube-dl.svg
+          gethomepage.dev/name: YouTubeDL
+        hostnames: ["ytdl.${SECRET_DOMAIN}"]
         parentRefs:
           - name: envoy-internal
             namespace: network
@@ -68,9 +64,13 @@ spec:
         rules:
           - backendRefs:
               - identifier: app
-                port: 4141
+                port: 80
     service:
       app:
         ports:
           http:
-            port: 4141
+            port: 80
+    serviceMonitor:
+      app:
+        endpoints:
+          - port: http

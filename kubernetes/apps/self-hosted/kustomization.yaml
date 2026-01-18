@@ -9,5 +9,6 @@ resources:
   - ./navidrome/ks.yaml
   # - ./open-webui/ks.yaml
   - ./atuin/ks.yaml
+  - ./youtube-dl/ks.yaml
   #- ./calibre-web-automated/ks.yaml
   # - ./paperless-ngx/ks.yaml
