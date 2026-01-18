@@ -14,5 +14,5 @@ resources:
   - ./kromgo/ks.yaml
   - ./kube-prometheus-stack/ks.yaml
   - ./namespace.yaml
-  #- ./loki/ks.yaml
+  - ./loki/ks.yaml
   - ./promtail/ks.yaml
