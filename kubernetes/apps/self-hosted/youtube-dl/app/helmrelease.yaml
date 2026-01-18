@@ -53,9 +53,9 @@ spec:
     route:
       app:
         annotations:
-          gethomepage.dev/description: Self-Hosted YouTube Downloader
+          gethomepage.dev/description: YouTube Downloader
           gethomepage.dev/enabled: "true"
-          gethomepage.dev/group: Tools
+          gethomepage.dev/group: Self-hosted
           gethomepage.dev/icon: youtube-dl.svg
           gethomepage.dev/name: MeTube
         hostnames: ["ytdl.${SECRET_DOMAIN}"]
