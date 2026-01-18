@@ -7,8 +7,8 @@ metadata:
 spec:
   allowCrossNamespaceImport: true
   datasources:
-    - datasourceName: loki
-      inputName: DS_LOKI
+    - datasourceName: prometheus
+      inputName: DS_PROMETHEUS
   instanceSelector:
     matchLabels:
       grafana.internal/instance: grafana
@@ -22,8 +22,8 @@ metadata:
 spec:
   allowCrossNamespaceImport: true
   datasources:
-    - datasourceName: loki
-      inputName: DS_LOKI
+    - datasourceName: prometheus
+      inputName: DS_PROMETHEUS
   instanceSelector:
     matchLabels:
       grafana.internal/instance: grafana
@@ -37,8 +37,8 @@ metadata:
 spec:
   allowCrossNamespaceImport: true
   datasources:
-    - datasourceName: loki
-      inputName: DS_LOKI
+    - datasourceName: prometheus
+      inputName: DS_PROMETHEUS
   instanceSelector:
     matchLabels:
       grafana.internal/instance: grafana
@@ -52,8 +52,8 @@ metadata:
 spec:
   allowCrossNamespaceImport: true
   datasources:
-    - datasourceName: loki
-      inputName: DS_LOKI
+    - datasourceName: prometheus
+      inputName: DS_PROMETHEUS
   instanceSelector:
     matchLabels:
       grafana.internal/instance: grafana
@@ -67,8 +67,8 @@ metadata:
 spec:
   allowCrossNamespaceImport: true
   datasources:
-    - datasourceName: loki
-      inputName: DS_LOKI
+    - datasourceName: prometheus
+      inputName: DS_PROMETHEUS
   instanceSelector:
     matchLabels:
       grafana.internal/instance: grafana
@@ -82,8 +82,8 @@ metadata:
 spec:
   allowCrossNamespaceImport: true
   datasources:
-    - datasourceName: loki
-      inputName: DS_LOKI
+    - datasourceName: prometheus
+      inputName: DS_PROMETHEUS
   instanceSelector:
     matchLabels:
       grafana.internal/instance: grafana
@@ -97,8 +97,8 @@ metadata:
 spec:
   allowCrossNamespaceImport: true
   datasources:
-    - datasourceName: loki
-      inputName: DS_LOKI
+    - datasourceName: prometheus
+      inputName: DS_PROMETHEUS
   instanceSelector:
     matchLabels:
       grafana.internal/instance: grafana
@@ -112,8 +112,8 @@ metadata:
 spec:
   allowCrossNamespaceImport: true
   datasources:
-    - datasourceName: loki
-      inputName: DS_LOKI
+    - datasourceName: prometheus
+      inputName: DS_PROMETHEUS
   instanceSelector:
     matchLabels:
       grafana.internal/instance: grafana
@@ -127,8 +127,8 @@ metadata:
 spec:
   allowCrossNamespaceImport: true
   datasources:
-    - datasourceName: loki
-      inputName: DS_LOKI
+    - datasourceName: prometheus
+      inputName: DS_PROMETHEUS
   instanceSelector:
     matchLabels:
       grafana.internal/instance: grafana
@@ -142,8 +142,8 @@ metadata:
 spec:
   allowCrossNamespaceImport: true
   datasources:
-    - datasourceName: loki
-      inputName: DS_LOKI
+    - datasourceName: prometheus
+      inputName: DS_PROMETHEUS
   instanceSelector:
     matchLabels:
       grafana.internal/instance: grafana

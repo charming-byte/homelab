@@ -89,3 +89,24 @@ spec:
       enabled: false
     write:
       replicas: 0
+
+    monitoring:
+      dashboards:
+        enabled: true
+        annotations:
+          grafana_folder: loki
+        labels:
+          grafana_dashboard: "1"
+      serviceMonitor:
+        enabled: true
+        metricsInstance:
+          enabled: false
+      selfMonitoring:
+        enabled: false
+        grafanaAgent:
+          installOperator: false
+      rules:
+        enabled: true
+        alerting: true
+      alerts:
+        enabled: true
