@@ -135,13 +135,6 @@ spec:
               runAsGroup: 0
               runAsNonRoot: false
               runAsUser: 0
-        statefulset:
-          volumeClaimTemplates:
-            - accessMode: ReadWriteOnce
-              name: config
-              size: 5Gi
-              storageClass: local-hostpath
-        type: statefulset
     defaultPodOptions:
       securityContext:
         fsGroup: 1000
@@ -164,6 +157,15 @@ spec:
         type: nfs
       tmp:
         type: emptyDir
+      config:
+        advancedMounts:
+          slskd:
+            app:
+              - path: /config
+        storageClass: local-hostpath
+        size: 5Gi
+        accessMode: ReadWriteOnce
+        type: persistentVolumeClaim
     route:
       slskd:
         annotations:
