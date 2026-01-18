@@ -15,4 +15,4 @@ resources:
   - ./kube-prometheus-stack/ks.yaml
   - ./namespace.yaml
   - ./loki/ks.yaml
-  - ./promtail/ks.yaml
+  - ./alloy/ks.yaml
