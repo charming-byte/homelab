@@ -105,7 +105,7 @@ spec:
           gethomepage.dev/description: eBook Management
           gethomepage.dev/enabled: "true"
           gethomepage.dev/group: Media
-          gethomepage.dev/icon: calibre-web-automated-book-downloader.svg
+          gethomepage.dev/icon: calibre-web-automated-book-downloader.png
           gethomepage.dev/name: Calibre-Web
           gethomepage.dev/widget.password: "{{`{{HOMEPAGE_VAR_CALIBRE_PASSWORD}}`}}"
           gethomepage.dev/widget.type: calibreweb
