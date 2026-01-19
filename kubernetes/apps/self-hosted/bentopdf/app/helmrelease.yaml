@@ -1,0 +1,78 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: bentopdf
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: bentopdf
+  interval: 1h
+  values:
+    controllers:
+      bentopdf:
+        containers:
+          app:
+            env: null
+            image:
+              repository: ghcr.io/alam00000/bentopdf
+              tag: v1.15.3@sha256:4eb4ec8f5030faf87c29a73d3d5a2781f28a597cf440c3ab111eb96aee550871
+            probes:
+              liveness: &ref_0
+                custom: true
+                enabled: true
+                spec:
+                  failureThreshold: 3
+                  httpGet:
+                    path: /
+                    port: 8080
+                  initialDelaySeconds: 10
+                  periodSeconds: 10
+                  timeoutSeconds: 1
+              readiness: *ref_0
+            resources:
+              limits:
+                memory: 256Mi
+              requests:
+                cpu: 10m
+                memory: 128Mi
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop: ["ALL"]
+              readOnlyRootFilesystem: true
+        strategy: RollingUpdate
+    defaultPodOptions:
+      securityContext:
+        runAsGroup: 1000
+        runAsNonRoot: true
+        runAsUser: 1000
+    persistence:
+      tmpfs:
+        globalMounts:
+          - path: /etc/nginx/tmp
+          - path: /tmp
+        type: emptyDir
+    route:
+      app:
+        annotations:
+          gethomepage.dev/description: PDF Toolkit
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/group: Self-hosted
+          gethomepage.dev/icon: bentopdf.svg
+          gethomepage.dev/name: BentoPDF
+        hostnames: ["pdf.${SECRET_DOMAIN}"]
+        parentRefs:
+          - name: envoy-external
+            namespace: network
+            sectionName: https
+        rules:
+          - backendRefs:
+              - identifier: app
+                port: 8080
+    service:
+      app:
+        ports:
+          http:
+            port: 80
+            targetPort: 8080

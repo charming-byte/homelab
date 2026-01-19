@@ -5,10 +5,11 @@ namespace: self-hosted
 components:
   - ../../components/common
 resources:
-  - ./namespace.yaml
-  - ./navidrome/ks.yaml
   # - ./open-webui/ks.yaml
   - ./atuin/ks.yaml
-  - ./youtube-dl/ks.yaml
+  - ./bentopdf/ks.yaml
   - ./calibre-web-automated/ks.yaml
+  - ./namespace.yaml
+  - ./navidrome/ks.yaml
   - ./paperless-ngx/ks.yaml
+  - ./youtube-dl/ks.yaml
