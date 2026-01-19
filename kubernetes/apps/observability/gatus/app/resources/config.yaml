@@ -1,4 +1,14 @@
 ---
+alerting:
+  discord:
+    default-alert:
+      description: health-check failed
+      failure-threshold: 3
+      minimum-reminder-interval: 1h
+      send-on-recovery: true
+      send-on-resolved: true
+      success-threshold: 2
+    webhook-url: ${GATUS_ALERTING_DISCORD_WEBHOOK_URL}
 connectivity:
   checker:
     interval: 1m

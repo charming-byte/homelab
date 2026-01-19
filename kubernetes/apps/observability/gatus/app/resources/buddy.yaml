@@ -34,3 +34,4 @@ external-endpoints:
       interval: 5m
     alerts:
       - type: pushover
+      - type: discord

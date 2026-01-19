@@ -45,6 +45,9 @@ metadata:
       ui:
         hide-hostname: true
         hide-url: true
+      alerts:
+        - type: discord
+          description: health-check failed
 spec:
   gatewayClassName: envoy
   infrastructure:
