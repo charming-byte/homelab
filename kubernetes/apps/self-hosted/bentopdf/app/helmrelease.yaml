@@ -51,7 +51,7 @@ spec:
         globalMounts:
           - path: /etc/nginx/tmp
           - path: /tmp
-          - path: /var/cache/nginx
+          - path: /var/cache/nginx/client_temp
         type: emptyDir
     route:
       app:
