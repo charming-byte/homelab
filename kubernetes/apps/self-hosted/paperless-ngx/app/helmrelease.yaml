@@ -23,11 +23,11 @@ spec:
               PAPERLESS_CONSUMER_RECURSIVE: true
               PAPERLESS_CONSUMPTION_DIR: /paperless/consume
               PAPERLESS_DATA_DIR: /paperless/data
-              PAPERLESS_DISABLE_REGULAR_LOGIN: true
+              PAPERLESS_DISABLE_REGULAR_LOGIN: false
               PAPERLESS_FILENAME_FORMAT_REMOVE_NONE: true
               PAPERLESS_MEDIA_ROOT: /paperless/media
               PAPERLESS_OCR_LANGUAGE: deu
-              PAPERLESS_REDIRECT_LOGIN_TO_SSO: true
+              PAPERLESS_REDIRECT_LOGIN_TO_SSO: false
               PAPERLESS_REDIS: redis://dragonfly.dbms.svc.cluster.local:6379/7
               PAPERLESS_REDIS_PREFIX: paperless-
               PAPERLESS_TIME_ZONE: Europe/Berlin
