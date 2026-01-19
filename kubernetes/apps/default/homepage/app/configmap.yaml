@@ -73,12 +73,12 @@ data:
         - Tutanota:
             - icon: tuta.png
               href: https://tutanota.de
-        - Reddit:
-            - icon: reddit.png
-              href: https://reddit.com
         - ProtonMail:
             - icon: proton-mail.png
               href: https://mail.proton.me/u/0/inbox
+        - Reddit:
+            - icon: reddit.png
+              href: https://reddit.com
         - YouTube:
             - icon: youtube.png
               href: https://youtube.com/feed/subscriptions
@@ -86,15 +86,12 @@ data:
         - CloudFlare:
             - icon: cloudflare.png
               href: https://dash.cloudflare.com
-        - AWS Console:
-            - icon: aws.png
-              href: https://aws.amazon.com/console/
+        - Hetzner Console:
+            - icon: si-hetzner
+              href: https://console.hetzner.com/
         - Pushover:
             - icon: pushover.png
               href: https://client.pushover.net/
-        - UptimeRobot:
-            - icon: si-statuspage
-              href: https://uptimerobot.com/
         - HealthChecks:
             - icon: healthchecks.png
               href: https://healthcheck.io/

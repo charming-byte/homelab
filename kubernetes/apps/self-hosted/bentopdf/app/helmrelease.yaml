@@ -68,10 +68,9 @@ spec:
         rules:
           - backendRefs:
               - identifier: app
-                port: 80
+                port: 8080
     service:
       app:
         ports:
           http:
-            port: 80
-            targetPort: 8080
+            port: 8080
