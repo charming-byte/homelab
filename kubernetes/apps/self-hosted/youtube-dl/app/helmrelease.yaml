@@ -78,7 +78,3 @@ spec:
         ports:
           http:
             port: 80
-    serviceMonitor:
-      app:
-        endpoints:
-          - port: http
