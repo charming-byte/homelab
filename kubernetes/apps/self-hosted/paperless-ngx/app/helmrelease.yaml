@@ -93,11 +93,11 @@ spec:
         advancedMounts:
           paperless-ngx:
             app:
-              - path: /paperless
+              - path: /paperless/consume
                 subPath: consume
-              - path: /paperless
+              - path: /paperless/media
                 subPath: media
-              - path: /paperless
+              - path: /paperless/restore
                 subPath: restore
         path: /paperless
         server: nas.internal
