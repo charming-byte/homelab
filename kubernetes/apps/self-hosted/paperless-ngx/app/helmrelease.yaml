@@ -89,24 +89,37 @@ spec:
             subPath: tmp
           - path: /run
         type: emptyDir
-      consume:
-        globalMounts:
-          - path: /paperless/consume
-        path: /paperless-consume
+      paperless-ngx:
+        advancedMounts:
+          paperless-ngx:
+            app:
+              - path: /paperless
+                subPath: consume
+              - path: /paperless
+                subPath: media
+              - path: /paperless
+                subPath: restore
+        path: /paperless
         server: nas.internal
         type: nfs
+      # consume:
+      #   globalMounts:
+      #     - path: /paperless/consume
+      #   path: /paperless-consume
+      #   server: nas.internal
+      #   type: nfs
       data:
         accessMode: ReadWriteOnce
         globalMounts:
           - path: /paperless/data
         size: 20Gi
         storageClass: local-hostpath
-      media:
-        globalMounts:
-          - path: /paperless/media
-        path: /paperless-media
-        server: nas.internal
-        type: nfs
+      # media:
+      #   globalMounts:
+      #     - path: /paperless/media
+      #   path: /paperless-media
+      #   server: nas.internal
+      #   type: nfs
     route:
       app:
         annotations:
