@@ -53,7 +53,7 @@ spec:
               readiness: *probes
             resources:
               limits:
-                memory: 1Gi
+                memory: 2Gi
               requests:
                 cpu: 25m
                 memory: 128Mi
@@ -102,24 +102,12 @@ spec:
         path: /paperless
         server: nas.internal
         type: nfs
-      # consume:
-      #   globalMounts:
-      #     - path: /paperless/consume
-      #   path: /paperless-consume
-      #   server: nas.internal
-      #   type: nfs
       data:
         accessMode: ReadWriteOnce
         globalMounts:
           - path: /paperless/data
         size: 20Gi
         storageClass: local-hostpath
-      # media:
-      #   globalMounts:
-      #     - path: /paperless/media
-      #   path: /paperless-media
-      #   server: nas.internal
-      #   type: nfs
     route:
       app:
         annotations:
