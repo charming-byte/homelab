@@ -1,0 +1,122 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: seerr
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: seerr
+  interval: 30m
+  values:
+    controllers:
+      seerr:
+        annotations:
+          reloader.stakater.com/auto: "true"
+        containers:
+          app:
+            env:
+              DB_PORT: 5432
+              DB_TYPE: postgres
+              LOG_LEVEL: info
+              PORT: 5055
+              TZ: Europe/Berlin
+            envFrom: &envFrom
+              - secretRef:
+                  name: "{{ .Release.Name }}-secret"
+            image:
+              repository: ghcr.io/seerr-team/seerr
+              tag: develop@sha256:6288f2c40743e4c906a22e373fdd0151bc98868224617ad6a95618726653d886
+            probes:
+              liveness: &probes
+                custom: true
+                enabled: true
+                spec:
+                  failureThreshold: 3
+                  httpGet:
+                    path: /api/v1/status
+                    port: 5055
+                  initialDelaySeconds: 5
+                  periodSeconds: 10
+                  timeoutSeconds: 1
+              readiness: *probes
+            resources:
+              limits:
+                memory: 2Gi
+              requests:
+                cpu: 10m
+                memory: 256Mi
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop: ["ALL"]
+              readOnlyRootFilesystem: true
+        initContainers:
+          init-db:
+            envFrom: *envFrom
+            image:
+              repository: ghcr.io/home-operations/postgres-init
+              tag: 18.1.0@sha256:3c54d39f19fdb82ed5b3f286450e4071133cc6025bd0e25856bc2c522f8fc030
+    defaultPodOptions:
+      securityContext:
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+        runAsGroup: 1000
+        runAsNonRoot: true
+        runAsUser: 1000
+        seccompProfile:
+          type: RuntimeDefault
+    persistence:
+      config:
+        accessMode: ReadWriteOnce
+        advancedMounts:
+          seerr:
+            app:
+              - path: /app/config
+        size: 2Gi
+        storageClass: local-hostpath
+        type: persistentVolumeClaim
+      config-cache:
+        accessMode: ReadWriteOnce
+        advancedMounts:
+          seerr:
+            app:
+              - path: /app/config/cache
+        size: 10Gi
+        storageClass: local-hostpath
+        type: persistentVolumeClaim
+      config-logs:
+        advancedMounts:
+          seerr:
+            app:
+              - path: /app/config/logs
+        type: emptyDir
+      tmp:
+        type: emptyDir
+    route:
+      app:
+        annotations:
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/group: Media
+          gethomepage.dev/icon: overseerr.png
+          gethomepage.dev/name: Requests
+          gethomepage.dev/widget.key: '{{ "{{HOMEPAGE_VAR_SEERR_API_KEY}}" }}'
+          gethomepage.dev/widget.type: overseerr
+          gethomepage.dev/widget.url: http://seerr.media.svc.cluster.local:5055
+        hostnames:
+          - requests.${SECRET_DOMAIN}
+        parentRefs:
+          - name: envoy-external
+            namespace: networking
+            sectionName: https
+        rules:
+          - backendRefs:
+              - name: seerr
+                port: 5055
+    service:
+      app:
+        controller: seerr
+        ports:
+          http:
+            port: 5055
