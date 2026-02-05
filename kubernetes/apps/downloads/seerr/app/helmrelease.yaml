@@ -108,7 +108,7 @@ spec:
           - requests.${SECRET_DOMAIN}
         parentRefs:
           - name: envoy-external
-            namespace: networking
+            namespace: network
             sectionName: https
         rules:
           - backendRefs:
