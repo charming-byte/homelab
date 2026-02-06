@@ -40,7 +40,8 @@ spec:
     persistence:
       config:
         enabled: true
-        existingClaim: pgadmin
+        accessMode: ReadWriteOnce
+        size: 5Gi
         type: persistentVolumeClaim
     route:
       app:

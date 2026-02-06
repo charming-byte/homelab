@@ -9,8 +9,6 @@ spec:
   commonMetadata:
     labels:
       app.kubernetes.io/name: pgadmin
-  components:
-    - ../../../../components/openebs
   dependsOn:
     - name: cloudnative-pg
   interval: 30m
@@ -18,7 +16,6 @@ spec:
   postBuild:
     substitute:
       APP: pgadmin
-      OPENEBS_CAPACITY: 5Gi
     substituteFrom:
       - kind: Secret
         name: cluster-secrets
