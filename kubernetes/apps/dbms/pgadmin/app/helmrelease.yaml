@@ -42,6 +42,7 @@ spec:
         enabled: true
         accessMode: ReadWriteOnce
         size: 5Gi
+        storageClass: local-hostpath
         type: persistentVolumeClaim
     route:
       app:
