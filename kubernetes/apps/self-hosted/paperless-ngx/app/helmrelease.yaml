@@ -27,7 +27,9 @@ spec:
               PAPERLESS_FILENAME_FORMAT_REMOVE_NONE: true
               PAPERLESS_MEDIA_ROOT: /paperless/media
               PAPERLESS_OCR_LANGUAGE: deu
-              PAPERLESS_REDIRECT_LOGIN_TO_SSO: false
+              PAPERLESS_TIKA_ENABLED: "true"
+              PAPERLESS_TIKA_GOTENBERG_ENDPOINT: http://127.0.0.1:3000
+              PAPERLESS_TIKA_ENDPOINT: http://127.0.0.1:9998
               PAPERLESS_REDIS: redis://dragonfly.dbms.svc.cluster.local:6379/7
               PAPERLESS_REDIS_PREFIX: paperless-
               PAPERLESS_TIME_ZONE: Europe/Berlin
@@ -65,6 +67,23 @@ spec:
               capabilities:
                 drop: ["ALL"]
               readOnlyRootFilesystem: true
+          tika:
+            image:
+              repository: apache/tika
+              tag: 3.2.3.0-full
+              pullPolicy: IfNotPresent
+            ports:
+              - containerPort: 9998
+          gotenberg:
+            image:
+              repository: gotenberg/gotenberg
+              tag: 8.26.0
+            command:
+              - "gotenberg"
+              - "--chromium-disable-javascript=true"
+              - "--chromium-allow-list=file:///tmp/.*"
+            ports:
+              - containerPort: 3000
         initContainers:
           init-db:
             envFrom: *envFrom
