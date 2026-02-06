@@ -8,7 +8,6 @@ spec:
     failOpen: false
     headersToExtAuth:
       - cookie
-      - location
     http:
       backendRefs:
         - name: authentik-outpost-proxy
