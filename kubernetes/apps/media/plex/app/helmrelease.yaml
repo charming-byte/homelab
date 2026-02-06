@@ -24,7 +24,7 @@ spec:
               repository: ghcr.io/home-operations/plex
               tag: 1.43.0.10467@sha256:fa62165df48d04e9a418805951e903f831dec0e0601f4dc4245f9948d7fd719b
             probes:
-              liveness: &ref_0
+              liveness: &probes
                 custom: true
                 enabled: true
                 spec:
@@ -35,7 +35,7 @@ spec:
                   initialDelaySeconds: 0
                   periodSeconds: 10
                   timeoutSeconds: 1
-              readiness: *ref_0
+              readiness: *probes
               startup:
                 enabled: true
                 spec:

@@ -14,6 +14,11 @@ spec:
           namespace: security
           port: 9000
       headersToBackend:
+        - content-type
+        - host
+        - content-length
+        - path
+        - method
         - authorization
         - set-cookie
         - x-authentik-email
