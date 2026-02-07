@@ -88,6 +88,7 @@ spec:
         initContainers:
           gluetun:
             env:
+              WIREGUARD_PERSISTENT_KEEPALIVE_INTERVAL: 25s
               FIREWALL_INPUT_PORTS: "80"
               FIREWALL_OUTBOUND_SUBNETS: 192.168.0.0/20,10.42.0.0/16
               SERVER_COUNTRIES: Netherlands
