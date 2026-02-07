@@ -1,0 +1,60 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/app-template-4.4.0/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: generic-device-plugin
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: generic-device-plugin
+  interval: 30m
+  values:
+    controllers:
+      gdp:
+        annotations:
+          reloader.stakater.com/auto: "true"
+        containers:
+          app:
+            args:
+              - "--config=/config/config.yaml"
+              - "--log-level=info"
+            image:
+              repository: ghcr.io/squat/generic-device-plugin
+              tag: 36bfc606bba2064de6ede0ff2764cbb52edff70d@sha256:ba6f0b4cf6c858d6ad29ba4d32e4da11638abbc7d96436bf04f582a97b2b8821
+            resources:
+              limits:
+                memory: 64Mi
+              requests:
+                cpu: 10m
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop:
+                  - ALL
+              readOnlyRootFilesystem: true
+        strategy: RollingUpdate
+        type: daemonset
+    defaultPodOptions:
+      priorityClassName: system-node-critical
+    persistence:
+      config:
+        globalMounts:
+          - path: /config/config.yaml
+            readOnly: true
+            subPath: config.yaml
+        name: generic-device-plugin-configmap
+        type: configMap
+      dev:
+        globalMounts:
+          - readOnly: true
+        hostPath: /dev
+        type: hostPath
+      sys:
+        globalMounts:
+          - readOnly: true
+        hostPath: /sys
+        type: hostPath
+      var-lib-kubelet-device-plugins:
+        hostPath: /var/lib/kubelet/device-plugins
+        type: hostPath

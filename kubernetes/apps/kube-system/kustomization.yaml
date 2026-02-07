@@ -14,4 +14,5 @@ resources:
   - ./onepassword/ks.yaml
   - ./reloader/ks.yaml
   - ./spegel/ks.yaml
+  - ./generic-device-plugin/ks.yaml
 #  - ./node-feature-discovery/ks.yaml
