@@ -10,7 +10,7 @@ spec:
   interval: 1h
   values:
     configMaps:
-      config:
+      config-defaults:
         data:
           slskd.yml: |-
             web:
@@ -90,7 +90,7 @@ spec:
               FIREWALL_OUTBOUND_SUBNETS: 192.168.0.0/20,10.42.0.0/16
               SERVER_COUNTRIES: Netherlands
               VPN_PORT_FORWARDING_UP_COMMAND: |
-                {{`/bin/sh -c 'sed -i "s/^([[:space:]]listen_port:)./\1 $(cat {{PORT}} )/" /config/slskd.yml'`}}
+                {{`/bin/sh -c 'sed -i "s/^([[:space:]]listen_port:)./\1 {{PORT}} /" /config/slskd.yml'`}}
               VPN_PORT_FORWARDING: on
               VPN_TYPE: wireguard
               TZ: Europe/Berlin
@@ -140,6 +140,20 @@ spec:
               runAsGroup: 0
               runAsNonRoot: false
               runAsUser: 0
+          init-slskd-config:
+            image:
+              repository: ghcr.io/home-operations/busybox
+              tag: sha256-441b70c7c0a18c2a179b5e1368998654ea58c421fdba01cbc14e0b0257c99455@sha256:88b66d911dda8d02432e2b3653e9497ca615e2e5803c2fdc789b0d24c1ba8110
+            command:
+              - /bin/sh
+              - -c
+              - |
+                  if [ ! -f /config/slskd.yml ]; then
+                    echo "Initializing slskd.yml"
+                    cp /defaults/slskd.yml /config/slskd.yml
+                  else
+                    echo "slskd.yml already exists, skipping init"
+                  fi
     defaultPodOptions:
       securityContext:
         fsGroup: 1000
@@ -150,9 +164,9 @@ spec:
     persistence:
       config-file:
         globalMounts:
-          - path: /config/slskd.yml
+          - path: /defaults/slskd.yml
             subPath: slskd.yml
-        identifier: config
+        identifier: config-defaults
         type: configMap
       media:
         globalMounts:
@@ -163,10 +177,8 @@ spec:
       tmp:
         type: emptyDir
       config:
-        advancedMounts:
-          slskd:
-            app:
-              - path: /config
+        globalMounts:
+          - path: /config
         storageClass: local-hostpath
         size: 5Gi
         accessMode: ReadWriteOnce
