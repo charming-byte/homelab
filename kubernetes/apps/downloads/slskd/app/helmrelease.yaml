@@ -39,6 +39,8 @@ spec:
                 - \.ini$
                 - Thumbs.db$
                 - \.DS_Store$
+            soulseek:
+              listenPort: 50429
     controllers:
       slskd:
         annotations:
