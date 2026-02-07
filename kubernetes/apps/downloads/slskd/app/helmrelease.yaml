@@ -92,7 +92,7 @@ spec:
               FIREWALL_OUTBOUND_SUBNETS: 192.168.0.0/20,10.42.0.0/16
               SERVER_COUNTRIES: Netherlands
               VPN_PORT_FORWARDING_UP_COMMAND: |
-                {{`/bin/sh -c 'sed -i "s/^listen_port:.*/listen_port: {{PORT}}/" /config/slskd.yml'`}}
+                {{`/bin/sh -c 'sed -i "s/^[[:space:]]*listenPort:.*/listenPort: {{PORT}}/" /config/slskd.yml'`}}
               VPN_PORT_FORWARDING: on
               VPN_TYPE: wireguard
               TZ: Europe/Berlin
