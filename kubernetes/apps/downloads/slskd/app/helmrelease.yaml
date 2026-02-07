@@ -121,9 +121,9 @@ spec:
                       - -c
                       - "ping -c 1 $(echo $WIREGUARD_ADDRESSES | cut -d'/' -f1)"
                   failureThreshold: 3
-                  initialDelaySeconds: 10
+                  initialDelaySeconds: 20
                   periodSeconds: 15
-                  timeoutSeconds: 2
+                  timeoutSeconds: 30
               readiness:
                 custom: true
                 enabled: true
@@ -138,6 +138,9 @@ spec:
                   periodSeconds: 3
                   timeoutSeconds: 2
             restartPolicy: Always
+            resources:
+              limits:
+                    squat.ai/tun: "1"
             securityContext:
               capabilities:
                 add: ["NET_ADMIN"]
