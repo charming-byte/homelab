@@ -89,7 +89,7 @@ spec:
           gluetun:
             env:
               WIREGUARD_PERSISTENT_KEEPALIVE_INTERVAL: 25s
-              FIREWALL_INPUT_PORTS: "80,9999"
+              FIREWALL_INPUT_PORTS: "80"
               FIREWALL_OUTBOUND_SUBNETS: 192.168.0.0/20,10.42.0.0/16
               SERVER_COUNTRIES: Netherlands
               OPENVPN_PROTOCOL: tcp
@@ -101,19 +101,6 @@ spec:
               VPN_TYPE: openvpn
               TZ: Europe/Berlin
               UPDATER_PERIOD: 24h
-            probes:
-              liveness: &probes
-                enabled: true
-                custom: true
-                spec:
-                  failureThreshold: 3
-                  httpGet:
-                    path: /
-                    port: 9999
-                  initialDelaySeconds: 60
-                  periodSeconds: 10
-                  timeoutSeconds: 1
-              readiness: *probes
             envFrom:
               - secretRef:
                   name: "{{ .Release.Name }}-secret"
