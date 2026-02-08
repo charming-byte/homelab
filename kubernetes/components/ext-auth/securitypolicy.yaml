@@ -8,25 +8,12 @@ spec:
     failOpen: false
     headersToExtAuth:
       - cookie
-      - location
     http:
       backendRefs:
         - name: authentik-outpost-proxy
           namespace: security
           port: 9000
       headersToBackend:
-        - accept
-        - accept-encoding
-        - accept-language
-        - content-type
-        - content-length
-        - cookie
-        - origin
-        - referer
-        - host
-        - path
-        - location
-        - method
         - authorization
         - set-cookie
         - x-authentik-email
