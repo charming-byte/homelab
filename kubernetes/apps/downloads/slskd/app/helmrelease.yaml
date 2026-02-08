@@ -97,7 +97,7 @@ spec:
               VPN_PORT_FORWARDING: on
               VPN_SERVICE_PROVIDER: protonvpn
               PORT_FORWARD_ONLY: on
-              VPN_TYPE: wireguard
+              VPN_TYPE: openvpn
               TZ: Europe/Berlin
               UPDATER_PERIOD: 24h
             envFrom:
