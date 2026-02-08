@@ -13,3 +13,4 @@ resources:
   - ./seerr/ks.yaml
   - ./slskd/ks.yaml
   - ./sonarr/ks.yaml
+  - ./qbittorrent/ks.yaml

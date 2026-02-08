@@ -14,6 +14,42 @@ spec:
       qbittorrent:
         annotations:
           reloader.stakater.com/auto: "true"
+        initContainers:
+          gluetun:
+            env:
+              FIREWALL_INPUT_PORTS: "80,8000"
+              FIREWALL_OUTBOUND_SUBNETS: 192.168.0.0/20,10.42.0.0/16
+              SERVER_COUNTRIES: Netherlands
+              OPENVPN_PROTOCOL: tcp
+              VPN_PORT_FORWARDING_UP_COMMAND: |
+                {{`/bin/sh -c 'sed -i "s/^\([[:space:]]*\)listenPort:.*/\1listenPort: {{PORT}}/" /config/slskd.yml'`}}
+              VPN_PORT_FORWARDING: on
+              VPN_SERVICE_PROVIDER: protonvpn
+              PORT_FORWARD_ONLY: on
+              VPN_TYPE: openvpn
+              TZ: Europe/Berlin
+              UPDATER_PERIOD: 24h
+            envFrom: &envFrom
+              - secretRef:
+                  name: "{{ .Release.Name }}-secret"
+            image:
+              repository: ghcr.io/qdm12/gluetun
+              tag: v3.41@sha256:6b54856716d0de56e5bb00a77029b0adea57284cf5a466f23aad5979257d3045
+            ports:
+              - containerPort: 8000
+                name: controlport
+                protocol: TCP
+              - containerPort: 80
+                name: http
+                protocol: TCP
+            restartPolicy: Always
+            securityContext:
+              capabilities:
+                add: ["NET_ADMIN"]
+              privileged: true
+              runAsGroup: 0
+              runAsNonRoot: false
+              runAsUser: 0
         containers:
           app:
             image:
@@ -52,8 +88,17 @@ spec:
             resources:
               requests:
                 cpu: 100m
+                memory: 128Mi
               limits:
-                memory: 32Gi
+                memory: 2Gi
+          qbittorrent-port-forward-gluetun-server:
+            image:
+              repository: ghcr.io/mjmeli/qbittorrent-port-forward-gluetun-server
+              tag: 2025.12.21.02@sha256:4e30826d2f46bdcf387b6c3a610478ab3856d55fff457f98196e4d48975eb1dd
+            env:
+              QBT_ADDR: http://localhost:80
+              GTN_ADDR: http://localhost:8000
+            envFrom: *envFrom
     defaultPodOptions:
       securityContext:
         runAsNonRoot: true
@@ -81,7 +126,10 @@ spec:
                 port: *port
     persistence:
       config:
-        existingClaim: "{{ .Release.Name }}"
+        accessMode: ReadWriteOnce
+        size: 5Gi
+        storageClass: local-hostpath
+        type: persistentVolumeClaim
       incomplete:
         type: custom
         volumeSpec:
@@ -93,19 +141,15 @@ spec:
                 resources:
                   requests:
                     storage: 1Mi # ignored
-                storageClassName: openebs-hostpath
+                storageClassName: local-hostpath
                 volumeMode: Filesystem
-      scratch:
-        type: nfs
-        server: expanse.internal
-        path: /mnt/ceres/Scratch
-        globalMounts:
-          - path: /scratch
       media:
         type: nfs
-        server: expanse.internal
-        path: /mnt/eros/Media
-        globalMounts:
-          - path: /media
+        server: nas.internal
+        path: /media
+        advancedMounts:
+          qbittorrent:
+            app:
+              - path: /media
       tmp:
         type: emptyDir
