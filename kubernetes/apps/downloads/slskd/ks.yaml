@@ -10,7 +10,7 @@ spec:
     labels:
       app.kubernetes.io/name: slskd
   components:
-    - ../../../../components/ext-auth
+    #- ../../../../components/ext-auth
     - ../../../../components/nfs-scaler
   dependsOn:
     - name: openebs
