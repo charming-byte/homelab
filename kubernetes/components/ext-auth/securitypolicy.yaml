@@ -15,9 +15,15 @@ spec:
           namespace: security
           port: 9000
       headersToBackend:
+        - accept
+        - accept-encoding
+        - accept-language
         - content-type
-        - host
         - content-length
+        - cookie
+        - origin
+        - referer
+        - host
         - path
         - location
         - method
