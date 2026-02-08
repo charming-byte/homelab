@@ -92,6 +92,7 @@ spec:
               FIREWALL_INPUT_PORTS: "80"
               FIREWALL_OUTBOUND_SUBNETS: 192.168.0.0/20,10.42.0.0/16
               SERVER_COUNTRIES: Netherlands
+              OPENVPN_PROTOCOL: tcp
               VPN_PORT_FORWARDING_UP_COMMAND: |
                 {{`/bin/sh -c 'sed -i "s/^\([[:space:]]*\)listenPort:.*/\1listenPort: {{PORT}}/" /config/slskd.yml'`}}
               VPN_PORT_FORWARDING: on
