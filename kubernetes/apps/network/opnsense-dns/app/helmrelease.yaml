@@ -1,0 +1,72 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/helm.toolkit.fluxcd.io/helmrelease_v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: opnsense-dns
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: opnsense-dns
+  interval: 1h
+  values:
+    domainFilters:
+      - ${SECRET_DOMAIN}
+    fullnameOverride: opnsense-dns
+    podAnnotations:
+      secret.reloader.stakater.com/reload: opnsense-dns-secret
+    policy: sync
+    provider:
+      name: webhook
+      webhook:
+        env:
+          - name: OPNSENSE_API_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: external-dns-opnsense-secret
+                key: OPNSENSE__API_SECRET
+          - name: OPNSENSE_API_KEY
+            valueFrom:
+              secretKeyRef:
+                name: external-dns-opnsense-secret
+                key: OPNSENSE__API_KEY
+          - name: OPNSENSE_HOST
+            value: https://192.168.1.1
+          - name: OPNSENSE_SKIP_TLS_VERIFY
+            value: "true"
+          - name: LOG_LEVEL
+            value: debug
+        image:
+          pullPolicy: IfNotPresent
+          repository: ghcr.io/crutonjohn/external-dns-opnsense-webhook
+          tag: v1.0.0@sha256:0bf02fe18db4fe3a86fe5f561313ee434a203f4dcee7d19e770f67df854f3cff
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 8080
+          initialDelaySeconds: 10
+          timeoutSeconds: 5
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: 8080
+          initialDelaySeconds: 10
+          timeoutSeconds: 5
+        securityContext:
+          allowPrivilegeEscalation: false
+          runAsNonRoot: true
+          runAsUser: 1000
+        service:
+          port: 8888
+    rbac:
+      additionalPermissions: []
+      create: true
+    serviceAccount:
+      create: true
+      name: external-dns
+    serviceMonitor:
+      enabled: true
+    sources:
+      - gateway-httproute
+      - service
+    triggerLoopOnEvent: true
