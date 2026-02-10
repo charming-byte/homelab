@@ -11,7 +11,7 @@ spec:
     - name: onepassword-connect
       namespace: kube-system
   interval: 1h
-  path: ./kubernetes/network/apps/default/zigbee2mqtt/app
+  path: ./kubernetes/apps/default/zigbee2mqtt/app
   postBuild:
     substituteFrom:
       - kind: Secret
