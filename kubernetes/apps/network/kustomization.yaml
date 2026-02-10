@@ -10,3 +10,4 @@ resources:
   - ./cloudflare-tunnel/ks.yaml
   - ./envoy-gateway/ks.yaml
   - ./namespace.yaml
+  - ./opnsense-dns/ks.yaml
