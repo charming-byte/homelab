@@ -23,12 +23,12 @@ spec:
           - name: OPNSENSE_API_SECRET
             valueFrom:
               secretKeyRef:
-                name: external-dns-opnsense-secret
+                name: opnsense-dns-secret
                 key: OPNSENSE__API_SECRET
           - name: OPNSENSE_API_KEY
             valueFrom:
               secretKeyRef:
-                name: external-dns-opnsense-secret
+                name: opnsense-dns-secret
                 key: OPNSENSE__API_KEY
           - name: OPNSENSE_HOST
             value: https://192.168.1.1
