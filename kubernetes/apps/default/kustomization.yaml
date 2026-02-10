@@ -8,6 +8,7 @@ resources:
   - ./echo/ks.yaml
   - ./homepage/ks.yaml
   - ./litellm/ks.yaml
+  - ./mosquitto/ks.yaml
   - ./namespace.yaml
   - ./smtp-relay/ks.yaml
   - ./zigbee2mqtt/ks.yaml
