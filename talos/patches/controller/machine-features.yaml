@@ -8,3 +8,4 @@ machine:
       allowedKubernetesNamespaces:
         - actions-runner-system
         - system-upgrade
+        - network
