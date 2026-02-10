@@ -5,8 +5,9 @@ namespace: default
 components:
   - ../../components/common
 resources:
-  - ./litellm/ks.yaml
   - ./echo/ks.yaml
   - ./homepage/ks.yaml
+  - ./litellm/ks.yaml
   - ./namespace.yaml
   - ./smtp-relay/ks.yaml
+  - ./zigbee2mqtt/ks.yaml
