@@ -15,3 +15,4 @@ spec:
           matchExpressions:
             vendor: { op: In, value: ["10c4"] }
             product: {op: In, value: ["ea60"]}
+            class:   { op: In, value: ["ff"] }
