@@ -10,4 +10,4 @@ resources:
   - ./litellm/ks.yaml
   - ./namespace.yaml
   - ./smtp-relay/ks.yaml
-  #- ./zigbee2mqtt/ks.yaml
+  - ./zigbee2mqtt/ks.yaml
