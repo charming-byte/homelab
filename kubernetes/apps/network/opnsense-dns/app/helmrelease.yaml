@@ -12,6 +12,8 @@ spec:
   values:
     domainFilters:
       - ${SECRET_DOMAIN}
+    extraArgs:
+      - --gateway-name=envoy-internal
     fullnameOverride: opnsense-dns
     podAnnotations:
       secret.reloader.stakater.com/reload: opnsense-dns-secret
@@ -70,3 +72,5 @@ spec:
       - gateway-httproute
       - service
     triggerLoopOnEvent: true
+    txtOwnerId: k8s-internal
+    txtPrefix: k8s.
