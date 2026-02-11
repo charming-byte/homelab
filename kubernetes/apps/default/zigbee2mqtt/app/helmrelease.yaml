@@ -74,8 +74,6 @@ spec:
               privileged: true
               readOnlyRootFilesystem: true
         pod:
-          nodeSelector:
-            zigbee.feature.node.kubernetes.io/sonoff: "true"
           securityContext:
             fsGroup: 1022
             fsGroupChangePolicy: OnRootMismatch
