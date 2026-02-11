@@ -7,6 +7,6 @@ devices:
           - path: /dev/net/tun
   - name: zigbee-device
     groups:
-      usb:
-        vendor: 10c4
-        product: ea60
+      - usb:
+          vendor: 10c4
+          product: ea60
