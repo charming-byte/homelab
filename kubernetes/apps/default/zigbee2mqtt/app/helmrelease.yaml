@@ -64,6 +64,7 @@ spec:
                   periodSeconds: 10
             resources:
               limits:
+                squat.ai/zigbee-device: "1"
                 memory: 512Mi
               requests:
                 cpu: 10m
