@@ -129,6 +129,17 @@ data:
               accountid: {{HOMEPAGE_VAR_CLOUDFLARE_ACCOUNTID}}
               tunnelid: {{HOMEPAGE_VAR_CLOUDFLARE_TUNNELID}}
               key: {{HOMEPAGE_VAR_CLOUDFLARE_API_TOKEN}}
+        - OPNSense:
+            href: https://192.168.1.1
+            icon: opnsense
+            description: Firewall and routing platform
+            widget:
+              type: opnsense
+              url: http://192.168.1.1
+              username: {{HOMEPAGE_VAR_OPNSENSE_USERNAME}}
+              password: {{HOMEPAGE_VAR_OPNSENSE_PASSWORD}}
+              fields: ["cpu", "memory", "wanUpload", "wanDownload"]
+
     - Storage:
         - NAS:
             href: http://nas.internal
