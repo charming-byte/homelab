@@ -61,13 +61,13 @@ spec:
           mosquitto.conf: |-
             allow_anonymous true
             autosave_interval 60
-            connection_messages false
+            connection_messages true
             listener 1883
             per_listener_settings false
             persistence true
             persistence_location /config
-            log_type debug
-            log_dest stderr
+            log_type all
+            log_dest stdout
     persistence:
       config:
         size: 5Gi
