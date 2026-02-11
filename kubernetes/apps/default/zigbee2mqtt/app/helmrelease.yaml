@@ -97,6 +97,7 @@ spec:
         annotations:
           gethomepage.dev/enabled: "true"
           gethomepage.dev/group: Home Automation
+          gethomepage.dev/description: Zigbee to MQTT bridge
           gethomepage.dev/icon: zigbee2mqtt.png
           gethomepage.dev/name: Zigbee2MQTT
         hostnames: ["zigbee.${SECRET_DOMAIN}"]

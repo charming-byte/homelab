@@ -1,3 +1,4 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
 ---
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
@@ -68,9 +69,8 @@ spec:
                 enabled: true
                 spec:
                   failureThreshold: 3
-                  httpGet:
-                    path: /health
-                    port: *port
+                  exec:
+                    command: ["ping", "-c1", "8.8.8.8"]
                   initialDelaySeconds: 60
                   periodSeconds: 10
                   timeoutSeconds: 1
@@ -88,7 +88,6 @@ spec:
         initContainers:
           gluetun:
             env:
-              WIREGUARD_PERSISTENT_KEEPALIVE_INTERVAL: 25s
               FIREWALL_INPUT_PORTS: "80"
               FIREWALL_OUTBOUND_SUBNETS: 192.168.0.0/20,10.42.0.0/16
               SERVER_COUNTRIES: Netherlands
@@ -112,9 +111,19 @@ spec:
                 name: http
                 protocol: TCP
             restartPolicy: Always
+            probes:
+              liveness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    scheme: HTTP
+                    host: vpn-only-service.example.com
+                    path: /health
+                    port: 80
             resources:
               limits:
-                    squat.ai/tun: "1"
+                squat.ai/tun: "1"
             securityContext:
               capabilities:
                 add: ["NET_ADMIN"]
@@ -130,12 +139,12 @@ spec:
               - /bin/sh
               - -c
               - |
-                  if [ ! -f /config/slskd.yml ]; then
-                    echo "Initializing slskd.yml"
-                    cp /defaults/slskd.yml /config/slskd.yml
-                  else
-                    echo "slskd.yml already exists, skipping init"
-                  fi
+                if [ ! -f /config/slskd.yml ]; then
+                  echo "Initializing slskd.yml"
+                  cp /defaults/slskd.yml /config/slskd.yml
+                else
+                  echo "slskd.yml already exists, skipping init"
+                fi
     defaultPodOptions:
       securityContext:
         fsGroup: 1000
