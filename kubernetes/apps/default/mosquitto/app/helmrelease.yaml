@@ -67,7 +67,7 @@ spec:
             persistence true
             persistence_location /config
             log_type debug
-            log_dest stdout
+            log_dest stderr
     persistence:
       config:
         size: 5Gi
