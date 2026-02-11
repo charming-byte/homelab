@@ -51,7 +51,7 @@ spec:
                   name: zigbee2mqtt-secret
             image:
               repository: ghcr.io/koenkk/zigbee2mqtt
-              tag: 2.8.0
+              tag: 2.6.3
             probes:
               liveness:
                 enabled: true
