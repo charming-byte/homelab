@@ -112,12 +112,12 @@ data:
   services.yaml: |
     - Infrastructure:
         - AdGuard Home:
-            href: http://nas.internal:3000
+            href: http://192.168.1.1:3000
             icon: adguard-home.svg
             description: Network-wide ads & trackers blocking DNS server.
             widget:
               type: adguard
-              url: http://nas.internal:3000
+              url: http://192.168.1.1:3000
               username: {{HOMEPAGE_VAR_ADGUARD_USERNAME}}
               password: {{HOMEPAGE_VAR_ADGUARD_PASSWORD}}
         - Cloudflared:
