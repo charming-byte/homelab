@@ -8,5 +8,5 @@ devices:
   - name: zigbee-device
     groups:
       - usb:
-          vendor: 10c4
-          product: ea60
+          - vendor: 10c4
+            product: ea60
