@@ -66,6 +66,8 @@ spec:
             per_listener_settings false
             persistence true
             persistence_location /config
+            log_type debug
+            log_dest stdout
     persistence:
       config:
         size: 5Gi
