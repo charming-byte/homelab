@@ -144,6 +144,13 @@ data:
         - NAS:
             href: http://nas.internal
             icon: openmediavault.png
+            widget:
+              type: openmediavault
+              url: http://nas.internal
+              username: {{HOMEPAGE_VAR_NAS_USERNAME}}
+              password: {{HOMEPAGE_VAR_NAS_PASSWORD}}
+              method: smart.getListBg
+              fields: ["passed", "failed"]
     - Calendar:
         - Calendar:
             widget:
