@@ -6,8 +6,6 @@ metadata:
   name: zigbee2mqtt
 spec:
   dependsOn:
-    - name: node-feature-discovery-rules
-      namespace: kube-system
     - name: onepassword-connect
       namespace: kube-system
   interval: 1h
