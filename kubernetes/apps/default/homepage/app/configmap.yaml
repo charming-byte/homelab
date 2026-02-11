@@ -98,7 +98,7 @@ data:
         - homelab:
             - icon: github.png
               description: Renovate Dashboard
-              href: https://github.com/charming-byte/homelab/issues/1
+              href: https://github.com/charming-byte/homelab/issues/153
         - Homepage Icons:
             - icon: si-jpeg
               href: https://github.com/homarr-labs/dashboard-icons/blob/main/ICONS.md
@@ -134,7 +134,7 @@ data:
             description: Firewall and routing platform
             widget:
               type: opnsense
-              url: http://192.168.1.1
+              url: http://192.168.178.1
               username: {{HOMEPAGE_VAR_OPNSENSE_USERNAME}}
               password: {{HOMEPAGE_VAR_OPNSENSE_PASSWORD}}
               fields: ["cpu", "memory", "wanUpload", "wanDownload"]
