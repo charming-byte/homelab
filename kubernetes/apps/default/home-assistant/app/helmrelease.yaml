@@ -47,7 +47,7 @@ spec:
               - |
                 if [ ! -f /config/configuration.yaml ]; then
                   echo "Initializing configuration.yaml"
-                  cp /defaults/configuration.yaml /config/configuration.yaml
+                  envstub < /defaults/configuration.yaml > /config/configuration.yaml
                 else
                   echo "configuration.yaml already exists, skipping init"
                 fi
@@ -75,7 +75,7 @@ spec:
           gethomepage.dev/enabled: "true"
           gethomepage.dev/group: "Home Automation"
           gethomepage.dev/name: "Home Assistant"
-          gethomepage.dev/icon: home-assistant.png
+          gethomepage.dev/icon: .png
           gethomepage.dev/description: "Open source home automation"
           gethomepage.dev/widget.type: homeassistant
           gethomepage.dev/widget.url: http://home-assistant.default.svc.cluster.local:8123

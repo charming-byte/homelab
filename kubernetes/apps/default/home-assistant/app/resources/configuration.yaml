@@ -2,3 +2,10 @@
 recorder:
   db_url: "postgresql://${HASS_POSTGRES_USER}:${HASS_POSTGRES_PASS}@${HASS_POSTGRES_HOST}/${HASS_POSTGRES_DB}"
   db_retry_wait: 10
+
+# WebServer
+http:
+  use_x_forwarded_for: true
+  trusted_proxies:
+   - ${HASS_HTTP_TRUSTED_PROXY_1}
+   - ${HASS_HTTP_TRUSTED_PROXY_2}
