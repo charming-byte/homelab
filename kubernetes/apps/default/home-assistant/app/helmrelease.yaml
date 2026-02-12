@@ -39,10 +39,10 @@ spec:
         initContainers:
           init-hass-config:
             image:
-              repository: docker.io/library/alpine
-              tag: 3.23@sha256:25109184c71bdad752c8312a8623239686a9a2071e8825f20acb8f2198c3f659
+              repository: ghcr.io/charming-byte/init-base
+              tag: sha256-0b805ad4e7926ceff55b1cd725c3541e4a3637d9c219ed71c94de7ecb30fcd83
             command:
-              - /bin/sh
+              - /bin/bash
               - -c
               - |
                 if [ ! -s /config/configuration.yaml ]; then
