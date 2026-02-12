@@ -41,6 +41,7 @@ spec:
             image:
               repository: ghcr.io/charming-byte/init-base
               tag: sandbox@sha256:0b805ad4e7926ceff55b1cd725c3541e4a3637d9c219ed71c94de7ecb30fcd83
+            envFrom: *envFrom
             command:
               - /bin/bash
               - -c
