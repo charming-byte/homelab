@@ -39,8 +39,8 @@ spec:
         initContainers:
           init-hass-config:
             image:
-              repository: ghcr.io/home-operations/busybox
-              tag: sandbox@sha256:441b70c7c0a18c2a179b5e1368998654ea58c421fdba01cbc14e0b0257c99455
+              repository: docker.io/library/alpine
+              tag: 3.23@sha256:25109184c71bdad752c8312a8623239686a9a2071e8825f20acb8f2198c3f659
             command:
               - /bin/sh
               - -c
