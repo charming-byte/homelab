@@ -1,0 +1,103 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: home-assistant
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: home-assistant
+  interval: 1h
+  values:
+    controllers:
+      home-assistant:
+        annotations:
+          reloader.stakater.com/auto: "true"
+        containers:
+          app:
+            image:
+              repository: ghcr.io/home-operations/home-assistant
+              tag: 2026.2.1@sha256:79f5a2e8d0aa2b8a7dcfbc4fe7e0930321248724bce219d97acf9f5ce7ff854b
+            env:
+              TZ: Europe/Berlin
+              HASS_HTTP_TRUSTED_PROXY_1: 192.168.178.0/24
+              HASS_HTTP_TRUSTED_PROXY_2: 10.42.0.0/16
+            envFrom: &envFrom
+              - secretRef:
+                  name: "{{ .Release.Name }}-secret"
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: {drop: ["ALL"]}
+            resources:
+              requests:
+                cpu: 10m
+                memory: 512Mi
+              limits:
+                memory: 2Gi
+        initContainers:
+          init-hass-config:
+            image:
+              repository: ghcr.io/home-operations/busybox
+              tag: sandbox@sha256:441b70c7c0a18c2a179b5e1368998654ea58c421fdba01cbc14e0b0257c99455
+            command:
+              - /bin/sh
+              - -c
+              - |
+                if [ ! -f /config/configuration.yaml ]; then
+                  echo "Initializing configuration.yaml"
+                  cp /defaults/configuration.yaml /config/configuration.yaml
+                else
+                  echo "configuration.yaml already exists, skipping init"
+                fi
+          init-db:
+            envFrom: *envFrom
+            image:
+              repository: ghcr.io/home-operations/postgres-init
+              tag: 18.1.0@sha256:3c54d39f19fdb82ed5b3f286450e4071133cc6025bd0e25856bc2c522f8fc030
+    defaultPodOptions:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+    service:
+      app:
+        ports:
+          http:
+            appProtocol: kubernetes.io/ws
+            port: 8123
+    route:
+      app:
+        annotations:
+          gatus.home-operations.com/endpoint: |-
+            conditions: ["[STATUS] == 200"]
+        hostnames:
+          - "{{ .Release.Name }}.${SECRET_DOMAIN}"
+          - hass.${SECRET_DOMAIN}
+        parentRefs:
+          - name: envoy-internal
+            namespace: network
+    persistence:
+      config:
+        globalMounts:
+          - path: /defaults/configuration.yaml
+            subPath: configuration.yaml
+        name: home-assistant-configmap
+        type: configMap
+      app:
+        storageClass: local-hostpath
+        size: 5Gi
+        accessMode: ReadWriteOnce
+        globalMounts:
+          - path: /config
+      config-cache:
+        storageClass: local-hostpath
+        size: 5Gi
+        accessMode: ReadWriteOnce
+        globalMounts:
+          - path: /config/.venv
+      tmp:
+        type: emptyDir

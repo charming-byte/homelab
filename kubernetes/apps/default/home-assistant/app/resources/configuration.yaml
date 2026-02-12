@@ -1,0 +1,4 @@
+# Database
+recorder:
+  db_url: "postgresql://${HASS_POSTGRES_USER}:${HASS_POSTGRES_PASS}@${HASS_POSTGRES_HOST}/${HASS_POSTGRES_DB}"
+  db_retry_wait: 10
