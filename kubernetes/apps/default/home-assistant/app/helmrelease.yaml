@@ -40,7 +40,7 @@ spec:
           init-hass-config:
             image:
               repository: ghcr.io/charming-byte/init-base
-              tag: sha256-0b805ad4e7926ceff55b1cd725c3541e4a3637d9c219ed71c94de7ecb30fcd83
+              tag: sandbox@sha256:0b805ad4e7926ceff55b1cd725c3541e4a3637d9c219ed71c94de7ecb30fcd83
             command:
               - /bin/bash
               - -c
