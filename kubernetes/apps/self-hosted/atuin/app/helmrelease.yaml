@@ -15,7 +15,6 @@ spec:
           app:
             command:
               - atuin
-              - server
               - start
             env:
               ATUIN_HOST: 0.0.0.0
