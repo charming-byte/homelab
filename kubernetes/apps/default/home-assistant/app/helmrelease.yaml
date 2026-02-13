@@ -137,6 +137,10 @@ spec:
         parentRefs:
           - name: envoy-internal
             namespace: network
+        rules:
+          - backendRefs:
+              - identifier: app
+                port: 8123
       code-server:
         annotations:
           gethomepage.dev/enabled: "true"
@@ -151,6 +155,10 @@ spec:
         parentRefs:
           - name: envoy-internal
             namespace: network
+        rules:
+          - backendRefs:
+              - identifier: app
+                port: 8080
     persistence:
       config:
         globalMounts:
