@@ -7,7 +7,13 @@ spec:
   chartRef:
     kind: OCIRepository
     name: atuin
-  interval: 1h
+  interval: 5m
+  install:
+    remediation:
+      retries: 5
+  upgrade:
+    remediation:
+      retries: 5
   values:
     controllers:
       atuin:
