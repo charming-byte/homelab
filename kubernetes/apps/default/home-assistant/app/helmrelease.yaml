@@ -167,9 +167,11 @@ spec:
         name: home-assistant-configmap
         type: configMap
       backup:
-        globalMounts:
-          - path: /config/backup
-            subPath: backup
+        advancedMounts:
+          home-assistant:
+            app:
+              - path: /config/backup
+                subPath: backup
         enabled: true
         path: /home-assistant
         server: nas.internal
