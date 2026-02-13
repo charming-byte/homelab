@@ -141,9 +141,12 @@ spec:
           gethomepage.dev/group: "Development"
           gethomepage.dev/name: "Code Server"
           gethomepage.dev/icon: code-server.png
-          gethomepage.dev/app: code-server
-          gethomepage.dev/namespace: default
           gethomepage.dev/description: "Remote Development Machine"
+        hostnames:
+          - "code-server.${SECRET_DOMAIN}"
+        parentRefs:
+          - name: envoy-internal
+            namespace: network
     persistence:
       config:
         globalMounts:
