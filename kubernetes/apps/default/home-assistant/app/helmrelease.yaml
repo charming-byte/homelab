@@ -170,7 +170,7 @@ spec:
         advancedMounts:
           home-assistant:
             app:
-              - path: /config/backup
+              - path: /config/backups
                 subPath: backup
         enabled: true
         path: /home-assistant
