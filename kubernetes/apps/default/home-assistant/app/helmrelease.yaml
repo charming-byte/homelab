@@ -166,12 +166,12 @@ spec:
             subPath: configuration.yaml
         name: home-assistant-configmap
         type: configMap
-      backup:
+      backups:
         advancedMounts:
           home-assistant:
             app:
               - path: /config/backups
-                subPath: backup
+                subPath: backups
         enabled: true
         path: /home-assistant
         server: nas.internal
