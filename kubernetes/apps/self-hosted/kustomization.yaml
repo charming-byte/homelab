@@ -5,7 +5,7 @@ namespace: self-hosted
 components:
   - ../../components/common
 resources:
-  - ./open-webui/ks.yaml
+  #- ./open-webui/ks.yaml
   #- ./atuin/ks.yaml
   - ./bentopdf/ks.yaml
   - ./calibre-web-automated/ks.yaml
