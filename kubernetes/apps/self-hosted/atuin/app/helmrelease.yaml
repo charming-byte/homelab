@@ -7,10 +7,10 @@ spec:
   chartRef:
     kind: OCIRepository
     name: atuin
-  interval: 5m
   install:
     remediation:
       retries: 5
+  interval: 5m
   upgrade:
     remediation:
       retries: 5
@@ -19,8 +19,7 @@ spec:
       atuin:
         containers:
           app:
-            command:
-              - start
+            args: ["start"]
             env:
               ATUIN_HOST: 0.0.0.0
               ATUIN_OPEN_REGISTRATION: "true"
