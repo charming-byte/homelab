@@ -34,6 +34,26 @@ spec:
                 memory: 512Mi
               limits:
                 memory: 2Gi
+          code-server:
+            image:
+              repository: ghcr.io/coder/code-server
+              tag: 4.109.2@sha256:1b84cd817fe8eb1159323ae9d2f29b3c70c6ccd44958d651a94900cf7f0ff9c4
+            args:
+              [
+                "--auth",
+                "none",
+                "--disable-telemetry",
+                "--disable-update-check",
+                "--user-data-dir",
+                "/config/.vscode",
+                "--extensions-dir",
+                "/config/.vscode",
+                "--port",
+                "8080",
+                "/config"
+              ]
+            env:
+              TZ: "Europe/Berlin"
         initContainers:
           init-hass-config:
             image:
@@ -68,6 +88,9 @@ spec:
           http:
             appProtocol: kubernetes.io/ws
             port: 8123
+            primary: true
+          code-server:
+            port: 8080
     route:
       app:
         annotations:
@@ -86,6 +109,13 @@ spec:
         parentRefs:
           - name: envoy-internal
             namespace: network
+      code-server:
+        annotations:
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/group: "Development"
+          gethomepage.dev/name: "Code Server"
+          gethomepage.dev/icon: code-server.png
+          gethomepage.dev/description: "Remote Development Machine"
     persistence:
       config:
         globalMounts:
@@ -107,3 +137,14 @@ spec:
           - path: /config/.venv
       tmp:
         type: emptyDir
+      sshKey:
+        enabled: true
+        type: secret
+        name: home-assistant-secret
+        items:
+          - key: id_rsa
+            path: id_rsa
+        defaultMode: 256
+        globalMounts:
+          - path: /root/.ssh
+            readOnly: true
