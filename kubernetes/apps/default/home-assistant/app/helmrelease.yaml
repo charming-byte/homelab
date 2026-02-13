@@ -166,6 +166,14 @@ spec:
             subPath: configuration.yaml
         name: home-assistant-configmap
         type: configMap
+      backup:
+        globalMounts:
+          - path: /config/backup
+            subPath: backup
+        enabled: true
+        path: /home-assistant
+        server: nas.internal
+        type: nfs
       app:
         storageClass: local-hostpath
         size: 5Gi
