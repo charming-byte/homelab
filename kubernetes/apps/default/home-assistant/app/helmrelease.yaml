@@ -8,7 +8,7 @@ spec:
   chartRef:
     kind: OCIRepository
     name: home-assistant
-  interval: 1h
+  interval: 10m
   values:
     controllers:
       home-assistant:
