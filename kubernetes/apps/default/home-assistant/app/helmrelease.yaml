@@ -137,7 +137,7 @@ spec:
           - path: /config/.venv
       tmp:
         type: emptyDir
-      sshKey:
+      sshkey:
         enabled: true
         type: secret
         name: home-assistant-secret
