@@ -56,6 +56,19 @@ spec:
               requests:
                 cpu: 250m
                 memory: 1Gi
+            probes:
+              liveness: &probes
+                custom: true
+                enabled: true
+                spec:
+                  failureThreshold: 3
+                  httpGet:
+                    path: /
+                    port: 8080
+                  initialDelaySeconds: 60
+                  periodSeconds: 10
+                  timeoutSeconds: 1
+              readiness: *probes
         initContainers:
           init-db:
             envFrom: *envFrom
