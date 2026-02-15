@@ -172,9 +172,6 @@ spec:
         hostname: error-pages.${SECRET_DOMAIN}
         path: { type: ReplaceFullPath, replaceFullPath: /400.html }
         statusCode: 302
-      response:
-        header:
-          set: [{ name: X-Code, value: "400" }]
 
     - match:
         statusCodes: [{ type: Value, value: 401 }]
@@ -183,9 +180,6 @@ spec:
         hostname: error-pages.${SECRET_DOMAIN}
         path: { type: ReplaceFullPath, replaceFullPath: /401.html }
         statusCode: 302
-      response:
-        header:
-          set: [{ name: X-Code, value: "401" }]
 
     - match:
         statusCodes: [{ type: Value, value: 403 }]
@@ -194,9 +188,6 @@ spec:
         hostname: error-pages.${SECRET_DOMAIN}
         path: { type: ReplaceFullPath, replaceFullPath: /403.html }
         statusCode: 302
-      response:
-        header:
-          set: [{ name: X-Code, value: "403" }]
 
     - match:
         statusCodes: [{ type: Value, value: 404 }]
@@ -205,9 +196,6 @@ spec:
         hostname: error-pages.${SECRET_DOMAIN}
         path: { type: ReplaceFullPath, replaceFullPath: /404.html }
         statusCode: 302
-      response:
-        header:
-          set: [{ name: X-Code, value: "404" }]
 
     - match:
         statusCodes: [{ type: Value, value: 500 }]
@@ -216,9 +204,6 @@ spec:
         hostname: error-pages.${SECRET_DOMAIN}
         path: { type: ReplaceFullPath, replaceFullPath: /500.html }
         statusCode: 302
-      response:
-        header:
-          set: [{ name: X-Code, value: "500" }]
 
     - match:
         statusCodes: [{ type: Value, value: 502 }]
@@ -227,9 +212,6 @@ spec:
         hostname: error-pages.${SECRET_DOMAIN}
         path: { type: ReplaceFullPath, replaceFullPath: /502.html }
         statusCode: 302
-      response:
-        header:
-          set: [{ name: X-Code, value: "502" }]
 
     - match:
         statusCodes: [{ type: Value, value: 503 }]
@@ -238,9 +220,6 @@ spec:
         hostname: error-pages.${SECRET_DOMAIN}
         path: { type: ReplaceFullPath, replaceFullPath: /503.html }
         statusCode: 302
-      response:
-        header:
-          set: [{ name: X-Code, value: "503" }]
 
     - match:
         statusCodes: [{ type: Value, value: 504 }]
@@ -249,9 +228,6 @@ spec:
         hostname: error-pages.${SECRET_DOMAIN}
         path: { type: ReplaceFullPath, replaceFullPath: /504.html }
         statusCode: 302
-      response:
-        header:
-          set: [{ name: X-Code, value: "504" }]
 
 ---
 apiVersion: gateway.envoyproxy.io/v1alpha1
