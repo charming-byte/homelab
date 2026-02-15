@@ -116,8 +116,9 @@ spec:
                 subPath: consume
               - path: /paperless/media
                 subPath: media
-              - path: /paperless/restore
-                subPath: restore
+              # used for restore
+              #- path: /paperless/restore
+              #  subPath: restore
         path: /paperless
         server: nas.internal
         type: nfs
