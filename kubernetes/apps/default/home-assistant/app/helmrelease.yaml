@@ -114,6 +114,12 @@ spec:
           lbipam.cilium.io/ips: 192.168.178.132
         externalTrafficPolicy: Local
         ports:
+          homekit-udp:
+            port: 5353
+            protocol: UDP
+          homekit-tcp:
+            port: 21063
+            protocol: TCP
           http:
             appProtocol: kubernetes.io/ws
             port: 8123
