@@ -173,7 +173,7 @@ spec:
         path: { type: ReplaceFullPath, replaceFullPath: /400.html }
         statusCode: 302
       response:
-        headerModifier:
+        responseHeaderModifier:
           set: [{ name: X-Code, value: "400" }]
 
     - match:
@@ -184,7 +184,7 @@ spec:
         path: { type: ReplaceFullPath, replaceFullPath: /401.html }
         statusCode: 302
       response:
-        headerModifier:
+        responseHeaderModifier:
           set: [{ name: X-Code, value: "401" }]
 
     - match:
@@ -195,7 +195,7 @@ spec:
         path: { type: ReplaceFullPath, replaceFullPath: /403.html }
         statusCode: 302
       response:
-        headerModifier:
+        responseHeaderModifier:
           set: [{ name: X-Code, value: "403" }]
 
     - match:
@@ -206,7 +206,7 @@ spec:
         path: { type: ReplaceFullPath, replaceFullPath: /404.html }
         statusCode: 302
       response:
-        headerModifier:
+        responseHeaderModifier:
           set: [{ name: X-Code, value: "404" }]
 
     - match:
@@ -217,7 +217,7 @@ spec:
         path: { type: ReplaceFullPath, replaceFullPath: /500.html }
         statusCode: 302
       response:
-        headerModifier:
+        responseHeaderModifier:
           set: [{ name: X-Code, value: "500" }]
 
     - match:
@@ -228,7 +228,7 @@ spec:
         path: { type: ReplaceFullPath, replaceFullPath: /502.html }
         statusCode: 302
       response:
-        headerModifier:
+        responseHeaderModifier:
           set: [{ name: X-Code, value: "502" }]
 
     - match:
@@ -239,7 +239,7 @@ spec:
         path: { type: ReplaceFullPath, replaceFullPath: /503.html }
         statusCode: 302
       response:
-        headerModifier:
+        responseHeaderModifier:
           set: [{ name: X-Code, value: "503" }]
 
     - match:
@@ -250,7 +250,7 @@ spec:
         path: { type: ReplaceFullPath, replaceFullPath: /504.html }
         statusCode: 302
       response:
-        headerModifier:
+        responseHeaderModifier:
           set: [{ name: X-Code, value: "504" }]
 
 ---
