@@ -17,6 +17,9 @@ spec:
             web:
               authentication:
                 api_keys:
+                  lidarr:
+                    key: ${SLSKD_API_KEY_LIDARR}
+                    cidr: 10.42.0.0/16
                   homepage_widget:
                     key: ${SLSKD_API_KEY_HOMEPAGE}
                     role: readonly
