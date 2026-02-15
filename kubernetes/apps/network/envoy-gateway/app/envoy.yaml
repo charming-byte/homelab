@@ -129,6 +129,7 @@ apiVersion: gateway.envoyproxy.io/v1alpha1
 kind: BackendTrafficPolicy
 metadata:
   name: envoy
+  namespace: network
 spec:
   compressor:
   - type: Zstd
@@ -147,8 +148,8 @@ spec:
       kind: Gateway
   tcpKeepalive: {}
   timeout:
-  http:
-    requestTimeout: 0s
+    http:
+      requestTimeout: 0s
   responseOverride:
     - match:
         statusCodes: [{ type: Value, value: 400 }]
@@ -157,6 +158,7 @@ spec:
         hostname: error-pages.${SECRET_DOMAIN}
         path: { type: ReplaceFullPath, replaceFullPath: /400.html }
         statusCode: 302
+
     - match:
         statusCodes: [{ type: Value, value: 401 }]
       redirect:
@@ -164,6 +166,7 @@ spec:
         hostname: error-pages.${SECRET_DOMAIN}
         path: { type: ReplaceFullPath, replaceFullPath: /401.html }
         statusCode: 302
+
     - match:
         statusCodes: [{ type: Value, value: 403 }]
       redirect:
@@ -171,6 +174,7 @@ spec:
         hostname: error-pages.${SECRET_DOMAIN}
         path: { type: ReplaceFullPath, replaceFullPath: /403.html }
         statusCode: 302
+
     - match:
         statusCodes: [{ type: Value, value: 404 }]
       redirect:
@@ -178,6 +182,7 @@ spec:
         hostname: error-pages.${SECRET_DOMAIN}
         path: { type: ReplaceFullPath, replaceFullPath: /404.html }
         statusCode: 302
+
     - match:
         statusCodes: [{ type: Value, value: 500 }]
       redirect:
@@ -185,6 +190,7 @@ spec:
         hostname: error-pages.${SECRET_DOMAIN}
         path: { type: ReplaceFullPath, replaceFullPath: /500.html }
         statusCode: 302
+
     - match:
         statusCodes: [{ type: Value, value: 502 }]
       redirect:
@@ -192,6 +198,7 @@ spec:
         hostname: error-pages.${SECRET_DOMAIN}
         path: { type: ReplaceFullPath, replaceFullPath: /502.html }
         statusCode: 302
+
     - match:
         statusCodes: [{ type: Value, value: 503 }]
       redirect:
@@ -199,6 +206,7 @@ spec:
         hostname: error-pages.${SECRET_DOMAIN}
         path: { type: ReplaceFullPath, replaceFullPath: /503.html }
         statusCode: 302
+
     - match:
         statusCodes: [{ type: Value, value: 504 }]
       redirect:
