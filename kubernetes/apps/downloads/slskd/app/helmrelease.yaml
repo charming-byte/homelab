@@ -121,7 +121,7 @@ spec:
                 spec:
                   failureThreshold: 3
                   httpGet:
-                    port: 80
+                    port: 8000
                     path: /
                   initialDelaySeconds: 60
                   periodSeconds: 10
