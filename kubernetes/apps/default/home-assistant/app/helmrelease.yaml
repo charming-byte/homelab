@@ -102,6 +102,7 @@ spec:
               repository: ghcr.io/home-operations/postgres-init
               tag: 18.2.0@sha256:ae89578925b480f5972f237dda2f7a37efe36aff500d3e7bd1d3a6a3181e4191
     defaultPodOptions:
+      hostNetwork: true
       securityContext:
         runAsNonRoot: true
         runAsUser: 1000
@@ -110,23 +111,13 @@ spec:
         fsGroupChangePolicy: OnRootMismatch
     service:
       app:
-        annotations:
-          lbipam.cilium.io/ips: 192.168.178.132
-        externalTrafficPolicy: Local
         ports:
-          homekit-udp:
-            port: 5353
-            protocol: UDP
-          homekit-tcp:
-            port: 21063
-            protocol: TCP
           http:
             appProtocol: kubernetes.io/ws
             port: 8123
             primary: true
           code-server:
             port: 8080
-        type: LoadBalancer
     route:
       app:
         annotations:
