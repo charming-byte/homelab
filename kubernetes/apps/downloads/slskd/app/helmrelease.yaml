@@ -120,8 +120,9 @@ spec:
                 custom: true
                 spec:
                   failureThreshold: 3
-                  exec:
-                    command: ["ping", "-c1", "8.8.8.8"]
+                  httpGet:
+                    port: 80
+                    path: /
                   initialDelaySeconds: 60
                   periodSeconds: 10
                   timeoutSeconds: 1
