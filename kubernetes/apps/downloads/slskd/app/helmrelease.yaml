@@ -119,11 +119,12 @@ spec:
                 enabled: true
                 custom: true
                 spec:
-                  httpGet:
-                    scheme: HTTP
-                    host: vpn-only-service.example.com
-                    path: /health
-                    port: 80
+                  failureThreshold: 3
+                  exec:
+                    command: ["ping", "-c1", "8.8.8.8"]
+                  initialDelaySeconds: 60
+                  periodSeconds: 10
+                  timeoutSeconds: 1
             resources:
               limits:
                 squat.ai/tun: "1"
