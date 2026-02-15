@@ -157,7 +157,7 @@ metadata:
   name: response-override-error-pages
   namespace: network
 spec:
-  targetSelectors:
+  targetRefs:
     - group: gateway.networking.k8s.io
       kind: Gateway
       name: envoy-external
@@ -167,105 +167,91 @@ spec:
   responseOverride:
     - match:
         statusCodes: [{ type: Value, value: 400 }]
-      status: 302
+      redirect:
+        scheme: https
+        hostname: error-pages.${SECRET_DOMAIN}
+        path: { type: ReplaceFullPath, replaceFullPath: /400.html }
+        statusCode: 302
       response:
-        responseHeaderModifier:
-          add: [{ name: X-Code, value: "400" }]
-          set:
-            - name: Location
-              value: https://error-pages.${SECRET_DOMAIN}/400.html
+        headerModifier:
+          set: [{ name: X-Code, value: "400" }]
 
     - match:
         statusCodes: [{ type: Value, value: 401 }]
-      status: 302
+      redirect:
+        scheme: https
+        hostname: error-pages.${SECRET_DOMAIN}
+        path: { type: ReplaceFullPath, replaceFullPath: /401.html }
+        statusCode: 302
       response:
-        responseHeaderModifier:
-          add: [{ name: X-Code, value: "401" }]
-          set:
-            - name: Location
-              value: https://error-pages.${SECRET_DOMAIN}/401.html
+        headerModifier:
+          set: [{ name: X-Code, value: "401" }]
 
     - match:
         statusCodes: [{ type: Value, value: 403 }]
-      status: 302
+      redirect:
+        scheme: https
+        hostname: error-pages.${SECRET_DOMAIN}
+        path: { type: ReplaceFullPath, replaceFullPath: /403.html }
+        statusCode: 302
       response:
-        responseHeaderModifier:
-          add: [{ name: X-Code, value: "403" }]
-          set:
-            - name: Location
-              value: https://error-pages.${SECRET_DOMAIN}/403.html
+        headerModifier:
+          set: [{ name: X-Code, value: "403" }]
 
     - match:
         statusCodes: [{ type: Value, value: 404 }]
-      status: 302
+      redirect:
+        scheme: https
+        hostname: error-pages.${SECRET_DOMAIN}
+        path: { type: ReplaceFullPath, replaceFullPath: /404.html }
+        statusCode: 302
       response:
-        responseHeaderModifier:
-          add: [{ name: X-Code, value: "404" }]
-          set:
-            - name: Location
-              value: https://error-pages.${SECRET_DOMAIN}/404.html
-
-    - match:
-        statusCodes: [{ type: Value, value: 429 }]
-      status: 302
-      response:
-        responseHeaderModifier:
-          add: [{ name: X-Code, value: "429" }]
-          set:
-            - name: Location
-              value: https://error-pages.${SECRET_DOMAIN}/429.html
+        headerModifier:
+          set: [{ name: X-Code, value: "404" }]
 
     - match:
         statusCodes: [{ type: Value, value: 500 }]
-      status: 302
+      redirect:
+        scheme: https
+        hostname: error-pages.${SECRET_DOMAIN}
+        path: { type: ReplaceFullPath, replaceFullPath: /500.html }
+        statusCode: 302
       response:
-        responseHeaderModifier:
-          add: [{ name: X-Code, value: "500" }]
-          set:
-            - name: Location
-              value: https://error-pages.${SECRET_DOMAIN}/500.html
+        headerModifier:
+          set: [{ name: X-Code, value: "500" }]
 
     - match:
         statusCodes: [{ type: Value, value: 502 }]
-      status: 302
+      redirect:
+        scheme: https
+        hostname: error-pages.${SECRET_DOMAIN}
+        path: { type: ReplaceFullPath, replaceFullPath: /502.html }
+        statusCode: 302
       response:
-        responseHeaderModifier:
-          add: [{ name: X-Code, value: "502" }]
-          set:
-            - name: Location
-              value: https://error-pages.${SECRET_DOMAIN}/502.html
+        headerModifier:
+          set: [{ name: X-Code, value: "502" }]
 
     - match:
         statusCodes: [{ type: Value, value: 503 }]
-      status: 302
+      redirect:
+        scheme: https
+        hostname: error-pages.${SECRET_DOMAIN}
+        path: { type: ReplaceFullPath, replaceFullPath: /503.html }
+        statusCode: 302
       response:
-        responseHeaderModifier:
-          add: [{ name: X-Code, value: "503" }]
-          set:
-            - name: Location
-              value: https://error-pages.${SECRET_DOMAIN}/503.html
+        headerModifier:
+          set: [{ name: X-Code, value: "503" }]
 
     - match:
         statusCodes: [{ type: Value, value: 504 }]
-      status: 302
+      redirect:
+        scheme: https
+        hostname: error-pages.${SECRET_DOMAIN}
+        path: { type: ReplaceFullPath, replaceFullPath: /504.html }
+        statusCode: 302
       response:
-        responseHeaderModifier:
-          add: [{ name: X-Code, value: "504" }]
-          set:
-            - name: Location
-              value: https://error-pages.${SECRET_DOMAIN}/504.html
-    - match:
-        statusCodes:
-          - type: Range
-            range: { start: 501, end: 511 }
-      status: 302
-      response:
-        responseHeaderModifier:
-          add: [{ name: X-Code, value: "500" }]
-          set:
-            - name: Location
-              value: https://error-pages.${SECRET_DOMAIN}/500.html
-
+        headerModifier:
+          set: [{ name: X-Code, value: "504" }]
 
 ---
 apiVersion: gateway.envoyproxy.io/v1alpha1
