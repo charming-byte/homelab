@@ -34,8 +34,6 @@ spec:
               ENABLE_SEARCH_QUERY: true
               ENABLE_VERSION_UPDATE_CHECK: false
               ENABLE_WEBSOCKET_SUPPORT: true
-              IMAGE_GENERATION_ENGINE: automatic1111
-              IMAGE_GENERATION_MODEL: dreamshaper_8
               IMAGE_SIZE: 400x400
               IMAGE_STEPS: 8
               OAUTH_ADMIN_ROLES: admin
@@ -47,6 +45,8 @@ spec:
               OAUTH_SCOPES: openid email profile avatar
               OAUTH_UPDATE_PICTURE_ON_LOGIN: true
               RAG_WEB_SEARCH_ENGINE: tavily
+              RAG_EMBEDDING_ENGINE: openai
+              RAG_EMBEDDING_MODEL: text-embedding-ada-002
               WEBSOCKET_MANAGER: redis
               WEBSOCKET_REDIS_URL: redis://dragonfly.dbms.svc.cluster.local:6379/6
               WEBUI_URL: https://chat.${SECRET_DOMAIN}
@@ -110,7 +110,7 @@ spec:
           gethomepage.dev/group: AI
           gethomepage.dev/icon: sh-open-webui.svg
           gethomepage.dev/name: Open WebUI
-        hostnames: ["chat.${SECRET_DOMAIN}"]
+        hostnames: ["aichat.${SECRET_DOMAIN}"]
         parentRefs:
           - name: envoy-internal
             namespace: network

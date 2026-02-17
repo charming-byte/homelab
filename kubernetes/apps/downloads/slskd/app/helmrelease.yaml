@@ -189,7 +189,7 @@ spec:
           gethomepage.dev/name: Slskd
           gethomepage.dev/widget.key: "{{`{{HOMEPAGE_VAR_SLSKD_API_KEY}}`}}"
           gethomepage.dev/widget.type: slskd
-          gethomepage.dev/widget.url: http://slskd.downloads
+          gethomepage.dev/widget.url: http://slskd.downloads.svc.cluster.local:80
         hostnames: ["{{ .Release.Name }}.${SECRET_DOMAIN}"]
         parentRefs:
           - name: envoy-internal
