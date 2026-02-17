@@ -22,6 +22,7 @@ spec:
             env:
               TZ: "Europe/Berlin"
               OPENCLAW_DISABLE_BONJOUR: 1
+              OPENCLAW_GATEWAY_BIND: "lan"
             envFrom:
               - secretRef:
                   name: openclaw-secret
