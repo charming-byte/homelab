@@ -11,6 +11,7 @@ resources:
   - ./miniflux/ks.yaml
   - ./namespace.yaml
   - ./navidrome/ks.yaml
+  - ./openclaw/ks.yaml
   - ./open-webui/ks.yaml
   - ./paperless-ngx/ks.yaml
   - ./youtube-dl/ks.yaml
