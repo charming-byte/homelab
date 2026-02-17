@@ -26,19 +26,19 @@ spec:
             envFrom:
               - secretRef:
                   name: openclaw-secret
-            probes:
-              liveness: &probes
-                custom: true
-                enabled: true
-                spec:
-                  failureThreshold: 3
-                  httpGet:
-                    path: /
-                    port: 18789
-                  initialDelaySeconds: 30
-                  periodSeconds: 10
-                  timeoutSeconds: 1
-              readiness: *probes
+            # probes:
+              # liveness: &probes
+              #   custom: true
+              #   enabled: true
+              #   spec:
+              #     failureThreshold: 3
+              #     httpGet:
+              #       path: /
+              #       port: 18789
+              #     initialDelaySeconds: 30
+              #     periodSeconds: 10
+              #     timeoutSeconds: 1
+              # readiness: *probes
             resources:
               limits:
                 memory: 2Gi
