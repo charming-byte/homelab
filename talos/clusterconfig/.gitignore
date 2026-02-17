@@ -1,3 +1,4 @@
-kubernetes-t-node.yaml
 talosconfig
 
+kubernetes-node01.yaml
+kubernetes-node02.yaml
