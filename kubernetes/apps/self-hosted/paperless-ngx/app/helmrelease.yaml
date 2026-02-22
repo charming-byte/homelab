@@ -77,7 +77,7 @@ spec:
           gotenberg:
             image:
               repository: gotenberg/gotenberg
-              tag: 8.26.0
+              tag: 8.27.0
             command:
               - "gotenberg"
               - "--chromium-disable-javascript=true"
