@@ -10,7 +10,7 @@ resources:
   - ./calibre-web-automated/ks.yaml
   - ./miniflux/ks.yaml
   - ./namespace.yaml
-  - ./navidrome/ks.yaml
+  #- ./navidrome/ks.yaml
   - ./open-webui/ks.yaml
   - ./paperless-ngx/ks.yaml
   - ./youtube-dl/ks.yaml
