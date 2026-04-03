@@ -27,7 +27,7 @@ spec:
                   name: "{{ .Release.Name }}-secret"
             image:
               repository: ghcr.io/seerr-team/seerr
-              tag: develop@sha256:e4955032cca80e57fe8c79857a855d534f1dda325a151aecf4ca395d829f0c16
+              tag: develop@sha256:0f7fbd16da051dca5905944bef82ff9c803c8024ce35a13c7790ad5509e76ae5
             probes:
               liveness: &probes
                 custom: true
