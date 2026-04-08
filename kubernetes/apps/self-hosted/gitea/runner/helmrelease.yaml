@@ -1,3 +1,4 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
 ---
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
@@ -18,29 +19,53 @@ spec:
     remediation:
       retries: 3
   values:
-    controller:
-      annotations:
-        reloader.stakater.com/auto: "true"
-    env:
-      GITEA_INSTANCE_URL: http://gitea.default.svc.cluster.local
-      TZ: Europe/Berlin
-    envFrom:
-      - name: gitea-runner-secret
-        secretRef: null
-    image:
-      pullPolicy: IfNotPresent
-      repository: vegardit/gitea-act-runner
-      tag: dind-latest
+    controllers:
+      gitea-runner:
+        type: statefulset
+        replicas: 3
+        annotations:
+          reloader.stakater.com/auto: "true"
+        containers:
+          runner:
+            env:
+              GITEA_INSTANCE_URL: http://gitea.self-hosted.svc.cluster.local
+              ACT_CACHE_SERVER_DIR: /cache/server
+              GITEA_RUNNER_ACTION_CACHE_DIR: /cache/actions
+              TZ: Europe/Berlin
+            envFrom:
+              - secretRef:
+                  name: gitea-runner-secret
+            image:
+              pullPolicy: IfNotPresent
+              repository: ghcr.io/vegardit/gitea-act-runner
+              tag: dind-0.3.1@sha256:7a697aa40e3adb8c9714fa10dbc6c8df1436b2a0afe18a96fb477cbc45aba53f
+            securityContext:
+              privileged: true
     persistence:
       data:
-        accessMode: ReadWriteOnce
         enabled: true
+        type: persistentVolumeClaim
+        accessMode: ReadWriteOnce
         size: 5Gi
         storageClass: local-hostpath
-    podSecurityContext:
-      privileged: true
-    securityContext:
-      privileged: true
+        advancedMounts:
+          gitea-runner:
+            runner:
+              - path: /data
+      cache:
+        enabled: true
+        type: emptyDir
+        advancedMounts:
+          gitea-runner:
+            runner:
+              - path: /cache
+      docker-storage:
+        enabled: true
+        type: emptyDir
+        advancedMounts:
+          gitea-runner:
+            runner:
+              - path: /var/lib/docker
     service:
       main:
         enabled: false
