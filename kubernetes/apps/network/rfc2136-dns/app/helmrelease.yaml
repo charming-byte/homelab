@@ -35,7 +35,7 @@ spec:
         rfc2136-port: 5302
         rfc2136-zone: k8s.${SECRET_DOMAIN}
         rfc2136-tsig-secret: ${RFC2136_TSIG_SECRET}
-        rfc2136-tsig-secret-alg: hmac-sha256
+        rfc2136-tsig-secret-alg: "hmac-sha256"
         rfc2136-tsig-keyname: ${RFC2136_TSIG_KEYNAME}
         rfc2136-min-ttl: 60s
     rbac:
