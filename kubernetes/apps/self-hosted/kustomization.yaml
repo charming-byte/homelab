@@ -8,9 +8,9 @@ resources:
   - ./atuin/ks.yaml
   - ./bentopdf/ks.yaml
   - ./calibre-web-automated/ks.yaml
+  - ./gitea/ks.yaml
   - ./miniflux/ks.yaml
   - ./namespace.yaml
-  #- ./navidrome/ks.yaml
   - ./open-webui/ks.yaml
   - ./paperless-ngx/ks.yaml
   - ./youtube-dl/ks.yaml

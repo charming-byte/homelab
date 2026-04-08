@@ -52,7 +52,7 @@ nodes:
                   - rw
     machineSpec:
       secureboot: false
-    talosImageURL: factory.talos.dev/installer/81b19949e67d7cc1d8ddc427eda7c4fb4cecac6e3e53958f316d13581029de08
+    talosImageURL: factory.talos.dev/metal-installer/81b19949e67d7cc1d8ddc427eda7c4fb4cecac6e3e53958f316d13581029de08
     schematic:
       customization:
         extraKernelArgs:
@@ -124,7 +124,7 @@ nodes:
                   - rw
     machineSpec:
       secureboot: false
-    talosImageURL: factory.talos.dev/installer/837d5b9d7b4c339eaca0ff7cb596534f726ad81fe0afb59a9ecb769f92bbde7d
+    talosImageURL: factory.talos.dev/metal-installer/837d5b9d7b4c339eaca0ff7cb596534f726ad81fe0afb59a9ecb769f92bbde7d
     schematic:
       customization:
         extraKernelArgs:

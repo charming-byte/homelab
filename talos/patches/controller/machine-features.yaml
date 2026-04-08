@@ -6,6 +6,7 @@ machine:
       allowedRoles:
         - os:admin
       allowedKubernetesNamespaces:
+        - dbms
         - actions-runner-system
         - system-upgrade
         - network
