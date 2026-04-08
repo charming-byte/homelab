@@ -37,7 +37,10 @@ spec:
               GITEA__SERVER__START_SSH_SERVER: "true"
               #GITEA__SECURITY__INSTALL_LOCK: "true"
               GITEA__SERVICE__DISABLE_REGISTRATION: "true"
-              GITEA__database__DB_TYPE: postgres
+              GITEA__DATABASE__DB_TYPE: postgres
+              GITEA__OAUTH2_CLIENT_OPENID_CONNECT_SCOPES: "avatar"
+              GITEA__OAUTH2_CLIENT_UPDATE_AVATAR: "true"
+              GITEA__OAUTH2_CLIENT_ENABLE_AUTO_REGISTRATION: "true"
               TZ: Europe/Berlin
               USER_GID: 1000
               USER_UID: 1000
