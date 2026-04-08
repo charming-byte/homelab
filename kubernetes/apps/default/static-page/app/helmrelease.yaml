@@ -81,4 +81,4 @@ spec:
         type: emptyDir
         sizeLimit: 1Gi
         globalMounts:
-          - path: "/var/run"
+          - path: "/run"
