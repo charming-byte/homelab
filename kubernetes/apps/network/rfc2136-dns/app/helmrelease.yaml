@@ -50,12 +50,12 @@ spec:
     policy: sync
     provider:
       name: rfc2136
-    # rbac:
-    #   additionalPermissions: []
-    #   create: true
-    # serviceAccount:
-    #   create: true
-    #   name: external-dns
+    rbac:
+      additionalPermissions: []
+      create: true
+    serviceAccount:
+      create: true
+      name: external-dns
     serviceMonitor:
       enabled: true
     sources:
