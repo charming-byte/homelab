@@ -69,8 +69,16 @@ spec:
         endpoints:
           - port: http
     persistence:
+      tmp:
+        type: emptyDir
+        sizeLimit: 1Gi
       cache:
         type: emptyDir
-        enabled: true
+        sizeLimit: 1Gi
         globalMounts:
-          - path: /var/cache/nginx
+          - path: "/var/cache/nginx"
+      run:
+        type: emptyDir
+        sizeLimit: 1Gi
+        globalMounts:
+          - path: "/var/run"
