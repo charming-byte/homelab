@@ -11,6 +11,7 @@ rules:
   - services
   - pods
   - nodes
+  - namespaces
   verbs:
   - get
   - watch

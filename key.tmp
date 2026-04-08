@@ -1,0 +1,4 @@
+key "externaldns-key" {
+        algorithm hmac-sha256;
+        secret "FOYWurvKqmYFWv0aPFQHxDP6JEISnDr+6RxLhcsjVuI=";
+};
