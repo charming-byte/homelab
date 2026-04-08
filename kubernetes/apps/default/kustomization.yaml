@@ -11,6 +11,6 @@ resources:
   - ./mosquitto/ks.yaml
   - ./namespace.yaml
   - ./smtp-relay/ks.yaml
-  - ./static-page/ks.yaml
+  - ./landing-page/ks.yaml
   - ./zigbee2mqtt/ks.yaml
   - ./home-assistant/ks.yaml
