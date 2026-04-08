@@ -3,13 +3,13 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: adguard-dns
+  name: rfc2136-dns
 spec:
   dependsOn:
     - name: onepassword-connect
       namespace: kube-system
   interval: 1h
-  path: ./kubernetes/apps/network/adguard-dns/app
+  path: ./kubernetes/apps/network/rfc2136-dns/app
   postBuild:
     substituteFrom:
       - kind: Secret
