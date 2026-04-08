@@ -54,9 +54,9 @@ spec:
       name: rfc2136
     rbac:
       additionalPermissions: []
-      create: false
+      create: true
     serviceAccount:
-      create: false
+      create: true
       name: external-dns
     serviceMonitor:
       enabled: true
