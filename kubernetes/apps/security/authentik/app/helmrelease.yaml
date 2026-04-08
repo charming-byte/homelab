@@ -64,11 +64,8 @@ spec:
           enabled: true
           hostnames: ["id.${SECRET_DOMAIN}"]
           parentRefs:
-            - group: gateway.networking.k8s.io
-              kind: Gateway
-              name: envoy-external
+            - name: envoy-external
               namespace: network
-              sectionName: https
           rules:
             - backendRefs:
                 - name: authentik-server
