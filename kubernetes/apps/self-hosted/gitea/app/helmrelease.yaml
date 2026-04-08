@@ -115,7 +115,7 @@ spec:
       gitea:
         annotations:
           gethomepage.dev/enabled: "true"
-          gethomepage.dev/group: Development
+          gethomepage.dev/group: Self-hosted
           gethomepage.dev/icon: gitea.png
           gethomepage.dev/name: Gitea
           gethomepage.dev/widget.key: "{{`{{HOMEPAGE_VAR_GITEA_API_KEY}}`}}"
