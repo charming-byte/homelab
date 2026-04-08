@@ -17,12 +17,12 @@ spec:
         valueFrom:
           secretKeyRef:
             key: rfc2136-dns-secret
-            name: RFC2136_TSIG_SECRET
+            name: tsig-secret
       - name: "RFC2136_TSIG_KEYNAME"
         valueFrom:
           secretKeyRef:
             key: rfc2136-dns-secret
-            name: RFC2136_TSIG_KEYNAME
+            name: tsig-keyname
     fullnameOverride: rfc2136-dns
     podAnnotations:
       secret.reloader.stakater.com/reload: rfc2136-dns-secret
