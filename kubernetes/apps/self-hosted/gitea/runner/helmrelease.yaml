@@ -20,17 +20,19 @@ spec:
       retries: 3
   values:
     controllers:
-      gitea-runner:
+      runner:
         type: statefulset
         replicas: 3
         annotations:
           reloader.stakater.com/auto: "true"
         containers:
-          runner:
+          app:
             env:
               GITEA_INSTANCE_URL: http://gitea.self-hosted.svc.cluster.local
               ACT_CACHE_SERVER_DIR: /cache/server
               GITEA_RUNNER_ACTION_CACHE_DIR: /cache/actions
+              GITEA_RUNNER_JOB_CONTAINER_NETWORK: host
+              GITEA_RUNNER_JOB_CONTAINER_PRIVILEGED: "true"
               TZ: Europe/Berlin
             envFrom:
               - secretRef:
