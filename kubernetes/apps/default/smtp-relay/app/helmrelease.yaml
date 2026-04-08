@@ -82,6 +82,8 @@ spec:
         annotations:
           external-dns.alpha.kubernetes.io/hostname: smtp.${SECRET_DOMAIN}
           gatus.home-operations.com/endpoint: |
+            client:
+              insecure: true
             name: smtp-relay
             group: infrastructure
             url: starttls://smtp.${SECRET_DOMAIN}:25
