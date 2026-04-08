@@ -38,9 +38,9 @@ spec:
               - secretRef:
                   name: gitea-runner-secret
             image:
-              pullPolicy: IfNotPresent
+              pullPolicy: Always
               repository: ghcr.io/vegardit/gitea-act-runner
-              tag: dind-0.3.1@sha256:7a697aa40e3adb8c9714fa10dbc6c8df1436b2a0afe18a96fb477cbc45aba53f
+              tag: dind-0.3.0@sha256:8e415c329f6351ab32b7bd12f30316e0f6c877bd97fef5bc3a86598335e424c5
             securityContext:
               privileged: true
               appArmorProfile:
