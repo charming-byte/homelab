@@ -59,22 +59,22 @@ spec:
         size: 5Gi
         storageClass: local-hostpath
         advancedMounts:
-          gitea-runner:
-            runner:
+          runner:
+            app:
               - path: /data
       cache:
         enabled: true
         type: emptyDir
         advancedMounts:
-          gitea-runner:
-            runner:
+          runner:
+            app:
               - path: /cache
       docker-storage:
         enabled: true
         type: emptyDir
         advancedMounts:
-          gitea-runner:
-            runner:
+          runner:
+            app:
               - path: /var/lib/docker
     service:
       main:
