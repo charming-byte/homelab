@@ -44,6 +44,8 @@ spec:
         value: 60s
       - name: EXTERNAL_DNS_RFC2136_TSIG_SECRET_ALG
         value: hmac-sha256
+      - name: EXTERNAL_DNS_LOG_LEVEL
+        value: debug
     fullnameOverride: rfc2136-dns
     podAnnotations:
       secret.reloader.stakater.com/reload: rfc2136-dns-secret
