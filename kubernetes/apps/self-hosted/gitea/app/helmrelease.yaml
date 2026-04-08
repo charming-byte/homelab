@@ -115,7 +115,7 @@ spec:
             sectionName: git-ssh
         rules:
           - backendRefs:
-              - name: ssh
+              - name: gitea-ssh
                 port: 22
       gitea:
         annotations:
