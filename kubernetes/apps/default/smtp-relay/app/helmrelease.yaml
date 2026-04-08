@@ -80,21 +80,21 @@ spec:
     service:
       app:
         annotations:
-          external-dns.alpha.kubernetes.io/hostname: smtp.${SECRET_DOMAIN}
-          gatus.home-operations.com/endpoint: |
-            client:
-              insecure: true
-            name: smtp-relay
-            group: infrastructure
-            url: starttls://smtp.${SECRET_DOMAIN}:25
-            interval: 1m
-            ui:
-              hide-url: true
-              hide-hostname: true
-            conditions:
-              - "[CONNECTED] == true"
-            alerts:
-              - type: pushover
+          # external-dns.alpha.kubernetes.io/hostname: smtp.${SECRET_DOMAIN}
+          # gatus.home-operations.com/endpoint: |
+          #   client:
+          #     insecure: true
+          #   name: smtp-relay
+          #   group: infrastructure
+          #   url: starttls://smtp.${SECRET_DOMAIN}:25
+          #   interval: 1m
+          #   ui:
+          #     hide-url: true
+          #     hide-hostname: true
+          #   conditions:
+          #     - "[CONNECTED] == true"
+          #   alerts:
+          #     - type: pushover
           lbipam.cilium.io/ips: 192.168.178.129
         externalTrafficPolicy: Local
         ports:
