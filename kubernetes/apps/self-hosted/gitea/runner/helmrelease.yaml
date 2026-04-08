@@ -41,6 +41,8 @@ spec:
               tag: dind-0.3.1@sha256:7a697aa40e3adb8c9714fa10dbc6c8df1436b2a0afe18a96fb477cbc45aba53f
             securityContext:
               privileged: true
+              appArmorProfile:
+                type: Unconfined
               seccompProfile:
                 type: Unconfined
         pod:
