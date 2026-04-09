@@ -121,18 +121,6 @@ spec:
                 name: http
                 protocol: TCP
             restartPolicy: Always
-            probes:
-              liveness:
-                enabled: true
-                custom: true
-                spec:
-                  failureThreshold: 3
-                  httpGet:
-                    port: 8000
-                    path: /
-                  initialDelaySeconds: 60
-                  periodSeconds: 10
-                  timeoutSeconds: 1
             resources:
               limits:
                 squat.ai/tun: "1"
