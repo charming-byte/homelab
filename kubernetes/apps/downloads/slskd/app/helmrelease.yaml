@@ -24,10 +24,6 @@ spec:
                     key: ${SLSKD_API_KEY_HOMEPAGE}
                     role: ReadOnly
                     cidr: 10.42.0.0/16
-                  gluetun:
-                    key: ${SLSKD_API_KEY_GLUETUN}
-                    cidr: 10.42.0.0/16
-                    role: Administrator
             global:
               upload:
                 slots: 10
@@ -87,7 +83,7 @@ spec:
                   httpGet:
                     port: 80
                     path: /
-                  initialDelaySeconds: 360
+                  initialDelaySeconds: 620 # needed in case share scan started
                   periodSeconds: 10
                   timeoutSeconds: 1
               readiness: *probes
