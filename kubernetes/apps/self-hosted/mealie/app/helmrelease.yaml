@@ -33,13 +33,13 @@ spec:
               API_DOCS: "false"
               BASE_URL: https://mealie.${SECRET_DDOMAIN}
               DB_ENGINE: postgres
-              OIDC_ADMIN_GROUP: mealie Admins
+              OIDC_ADMIN_GROUP: "mealie Admins"
               OIDC_AUTH_ENABLED: "true"
               OIDC_AUTO_REDIRECT: "true"
               OIDC_PROVIDER_NAME: ${SECRET_DOMAIN}
               OIDC_REMEMBER_ME: "true"
               OIDC_SIGNUP_ENABLED: "true"
-              OIDC_USER_GROUP: mealie Users
+              OIDC_USER_GROUP: "mealie Users"
               SMTP_HOST: smtp.${SECRET_DOMAIN}
               SMTP_PORT: 25
               SMTP_AUTH_STRATEGY: NONE
@@ -60,6 +60,12 @@ spec:
                     path: /api/app/about
                     port: 9000
               readiness: *probes
+            resources:
+              limits:
+                memory: 512Mi
+              requests:
+                cpu: 25m
+                memory: 256Mi
             securityContext:
               allowPrivilegeEscalation: false
               capabilities:

@@ -8,7 +8,7 @@ spec:
     nodeSelector:
       kubernetes.io/arch: amd64
   enableSuperuserAccess: true
-  imageName: ghcr.io/cloudnative-pg/postgresql:18.1@sha256:765687b22589dd52a2de969c245d7e2b0667f8ab1aa29a9f70d6254f4a7208e0
+  imageName: ghcr.io/cloudnative-pg/postgresql:18.3@sha256:d7fc326bcf58b361a6df4338f4d7775ce533716aabf3fd2ee27a1776c688bb8f
   instances: 1
   monitoring:
     enablePodMonitor: true
