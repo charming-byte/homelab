@@ -87,7 +87,7 @@ spec:
                   httpGet:
                     port: 80
                     path: /
-                  initialDelaySeconds: 60
+                  initialDelaySeconds: 360
                   periodSeconds: 10
                   timeoutSeconds: 1
               readiness: *probes
