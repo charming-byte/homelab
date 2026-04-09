@@ -113,7 +113,7 @@ spec:
               VPN_TYPE: wireguard
               TZ: Europe/Berlin
               UPDATER_PERIOD: 24h
-              WIREGUARD_PERSISTENT_KEEPALIVE_INTERVAL: 25
+              WIREGUARD_PERSISTENT_KEEPALIVE_INTERVAL: 25s
             envFrom:
               - secretRef:
                   name: "{{ .Release.Name }}-secret"
