@@ -132,12 +132,6 @@ data:
             href: https://192.168.1.1
             icon: opnsense
             description: Firewall and routing platform
-            widget:
-              type: opnsense
-              url: http://192.168.178.1
-              username: {{HOMEPAGE_VAR_OPNSENSE_USERNAME}}
-              password: {{HOMEPAGE_VAR_OPNSENSE_PASSWORD}}
-              fields: ["cpu", "memory", "wanUpload", "wanDownload"]
 
     - Storage:
         - NAS:
