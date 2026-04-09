@@ -18,7 +18,7 @@ spec:
           gluetun:
             env:
               FIREWALL_INPUT_PORTS: "80,8000"
-              FIREWALL_OUTBOUND_SUBNETS: 192.168.0.0/20,10.42.0.0/16
+              FIREWALL_OUTBOUND_SUBNETS: 10.42.0.0/16
               SERVER_COUNTRIES: Netherlands
               OPENVPN_PROTOCOL: tcp
               VPN_PORT_FORWARDING_UP_COMMAND: |

@@ -49,6 +49,14 @@ spec:
                 - \.DS_Store$
             soulseek:
               listenPort: 50429
+            integration:
+              vpn:
+                enabled: true
+                port_forwarding: true
+                polling_interval: 2500
+                gluetun:
+                  url: http://localhost:8000
+                  timeout: 1000
     controllers:
       slskd:
         annotations:
@@ -99,17 +107,13 @@ spec:
               FIREWALL_INPUT_PORTS: "80"
               FIREWALL_OUTBOUND_SUBNETS: 10.42.0.0/16
               SERVER_COUNTRIES: Netherlands
-              OPENVPN_PROTOCOL: udp
-              VPN_PORT_FORWARDING_UP_COMMAND: |
-                {{`/bin/sh -c 'wget -q -O- --method=PATCH --header="X-API-Key: $SLSKD_API_KEY_GLUETUN" --header="Content-Type: application/json" --body-data="{\"soulseek\":{\"listenPort\":{{PORT}}}}" http://localhost:80/api/v0/options'`}}
-              #VPN_PORT_FORWARDING_UP_COMMAND: |
-              #  {{`/bin/sh -c 'sed -i "s/^\([[:space:]]*\)listenPort:.*/\1listenPort: {{PORT}}/" /config/slskd.yml'`}}
               VPN_PORT_FORWARDING: on
               VPN_SERVICE_PROVIDER: protonvpn
               PORT_FORWARD_ONLY: on
-              VPN_TYPE: openvpn
+              VPN_TYPE: wireguard
               TZ: Europe/Berlin
               UPDATER_PERIOD: 24h
+              WIREGUARD_PERSISTENT_KEEPALIVE_INTERVAL: 25
             envFrom:
               - secretRef:
                   name: "{{ .Release.Name }}-secret"
