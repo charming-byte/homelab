@@ -93,11 +93,13 @@ spec:
           gluetun:
             env:
               FIREWALL_INPUT_PORTS: "80"
-              FIREWALL_OUTBOUND_SUBNETS: 192.168.0.0/20,10.42.0.0/16
+              FIREWALL_OUTBOUND_SUBNETS: 10.42.0.0/16
               SERVER_COUNTRIES: Netherlands
-              OPENVPN_PROTOCOL: tcp
+              OPENVPN_PROTOCOL: udp
               VPN_PORT_FORWARDING_UP_COMMAND: |
-                {{`/bin/sh -c 'sed -i "s/^\([[:space:]]*\)listenPort:.*/\1listenPort: {{PORT}}/" /config/slskd.yml'`}}
+                {{`/bin/sh -c 'wget -q -O- --method=PATCH --header="X-API-Key: ${SLSKD_API_KEY_LIDARR}" --header="Content-Type: application/json" --body-data="{\"soulseek\":{\"listenPort\":{{PORT}}}}" http://localhost:80/api/v0/options'`}}
+              #VPN_PORT_FORWARDING_UP_COMMAND: |
+              #  {{`/bin/sh -c 'sed -i "s/^\([[:space:]]*\)listenPort:.*/\1listenPort: {{PORT}}/" /config/slskd.yml'`}}
               VPN_PORT_FORWARDING: on
               VPN_SERVICE_PROVIDER: protonvpn
               PORT_FORWARD_ONLY: on
@@ -129,6 +131,8 @@ spec:
                   timeoutSeconds: 1
             resources:
               limits:
+                squat.ai/tun: "1"
+              requests:
                 squat.ai/tun: "1"
             securityContext:
               capabilities:
