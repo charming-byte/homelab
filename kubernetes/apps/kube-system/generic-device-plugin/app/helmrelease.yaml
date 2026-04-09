@@ -52,7 +52,7 @@ spec:
         type: configMap
       dev:
         globalMounts:
-          - readOnly: true
+          - readOnly: false
         hostPath: /dev
         type: hostPath
       sys:
