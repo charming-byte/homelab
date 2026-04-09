@@ -83,7 +83,7 @@ spec:
                   httpGet:
                     port: 80
                     path: /
-                  initialDelaySeconds: 620 # needed in case share scan started
+                  initialDelaySeconds: 920 # needed in case share scan started
                   periodSeconds: 10
                   timeoutSeconds: 1
               readiness: *probes
