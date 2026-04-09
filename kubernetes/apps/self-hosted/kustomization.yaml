@@ -1,0 +1,17 @@
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: self-hosted
+components:
+  - ../../components/common
+resources:
+  - ./atuin/ks.yaml
+  - ./bentopdf/ks.yaml
+  - ./calibre-web-automated/ks.yaml
+ # - ./gitea/ks.yaml
+  - ./mealie/ks.yaml
+  - ./miniflux/ks.yaml
+  - ./namespace.yaml
+  - ./open-webui/ks.yaml
+  - ./paperless-ngx/ks.yaml
+  - ./youtube-dl/ks.yaml

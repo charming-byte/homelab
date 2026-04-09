@@ -1,0 +1,71 @@
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: postgres18
+spec:
+  affinity:
+    nodeSelector:
+      kubernetes.io/arch: amd64
+  enableSuperuserAccess: true
+  imageName: ghcr.io/cloudnative-pg/postgresql:18.1@sha256:765687b22589dd52a2de969c245d7e2b0667f8ab1aa29a9f70d6254f4a7208e0
+  instances: 1
+  monitoring:
+    enablePodMonitor: true
+  plugins:
+    - enabled: true
+      isWALArchiver: true
+      name: barman-cloud.cloudnative-pg.io
+      parameters:
+        barmanObjectName: homelab-backup-store
+        serverName: postgres18-v1
+  postgresql:
+    parameters:
+      max_connections: "300"
+      shared_buffers: 512MB
+  primaryUpdateStrategy: unsupervised
+  resources:
+    limits:
+      memory: 1Gi
+    requests:
+      cpu: 500m
+      memory: 756Mi
+  storage:
+    size: 50Gi
+    storageClass: local-hostpath
+  superuserSecret:
+    name: cloudnative-pg-secret
+
+  # Note: previousCluster needs to be set to the name of the previous
+  # cluster when recovering from an existing cnpg cluster
+  # bootstrap:
+  #   recovery:
+  #     source: &previousCluster postgres18-v1
+  # Note: externalClusters is needed when recovering from an existing cnpg cluster
+  # externalClusters:
+  #   - name: *previousCluster
+  #     plugin:
+  #       name: barman-cloud.cloudnative-pg.io
+  #       parameters:
+  #         <<: *barmanParamaters  #         name: cloudnative-pg-secret
+  #         key: access-key-id
+  #       secretAccessKey:
+  #       compression: bzip2
+  #     wal:
+  # backup:
+  #   retentionPolicy: 30d
+  #   barmanObjectStore: &barmanObjectStore
+  #     data:
+  #       compression: bzip2
+  #       maxParallel: 8
+  #     destinationPath: s3://cloudnative-pg/
+  #     endpointURL: https://${S3_BACKUP_ENDPOINT}
+  #     # Note: serverName version needs to be incremented
+  #     # when recovering from an existing cnpg cluster
+  #     serverName: &currentCluster postgres18-v1
+  #     s3Credentials:
+  #       accessKeyId:
+  #         name: cloudnative-pg-secret
+  #         key: secret-access-key
+
+  #         serverName: *previousCluster

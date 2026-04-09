@@ -1,0 +1,138 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: litellm
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: app-template
+    namespace: flux-system
+  interval: 1h
+  values:
+    controllers:
+      litellm:
+        annotations:
+          reloader.stakater.com/auto: "true"
+        containers:
+          app:
+            args:
+              - "--config"
+              - /app/config.yaml
+              - "--host"
+              - "0.0.0.0"
+              - "--port"
+              - "4000"
+            env:
+              LITELLM_DONT_SHOW_FEEDBACK_BOX: "True"
+              LITELLM_MODE: PRODUCTION
+              REDIS_HOST: dragonfly.dbms.svc.cluster.local
+              STORE_MODEL_IN_DB: true
+              TZ: Europe/Berlin
+              USE_PRISMA_MIGRATE: "True"
+            envFrom: &envFrom
+              - secretRef:
+                  name: "{{ .Release.Name }}-secret"
+            image:
+              repository: ghcr.io/berriai/litellm-non_root
+              tag: main-v1.80.11-stable@sha256:7a6e64350cb55cd52c2b8186e6135b842478c5847de027dcbae276307a8d1c92
+            probes:
+              liveness:
+                custom: true
+                enabled: true
+                spec:
+                  failureThreshold: 3
+                  httpGet:
+                    path: /health/liveliness
+                    port: 4000
+                  initialDelaySeconds: 30
+                  periodSeconds: 60
+                  timeoutSeconds: 10
+              readiness:
+                custom: true
+                enabled: true
+                spec:
+                  failureThreshold: 3
+                  httpGet:
+                    path: /health/readiness
+                    port: 4000
+                  initialDelaySeconds: 15
+                  periodSeconds: 5
+                  timeoutSeconds: 5
+            resources:
+              limits:
+                memory: 2Gi
+              requests:
+                cpu: 10m
+                memory: 756Mi
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop: ["ALL"]
+              readOnlyRootFilesystem: true
+        initContainers:
+          init-db:
+            envFrom: *envFrom
+            image:
+              repository: ghcr.io/home-operations/postgres-init
+              tag: 18.3.0@sha256:6fa1f331cddd2eb0b6afa7b8d3685c864127a81ab01c3d9400bc3ff5263a51cf
+    defaultPodOptions:
+      securityContext:
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+        runAsNonRoot: true
+        runAsGroup: 1000
+        runAsUser: 1000
+    persistence:
+      cache:
+        globalMounts:
+          - path: /.cache
+            subPath: cache
+          - path: /.npm
+            subPath: npm
+          - path: /tmp
+            subPath: tmp
+        type: emptyDir
+      config:
+        globalMounts:
+          - path: /app/config.yaml
+            subPath: config.yaml
+        name: litellm-configmap
+        type: configMap
+      app:
+        advancedMounts:
+          litellm:
+            app:
+              - path: /app/.config
+                subPath: .config
+        accessMode: ReadWriteOnce
+        size: 5Gi
+        storageClass: local-hostpath
+      prisma-client:
+        globalMounts:
+          - path: /usr/lib/python3.13/site-packages/litellm_proxy_extras/migrations
+        type: emptyDir
+    route:
+      main:
+        annotations:
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/group: AI
+          gethomepage.dev/name: LiteLLM
+          gethomepage.dev/description: "AI Gateway"
+        hostnames: ["{{ .Release.Name }}.${SECRET_DOMAIN}"]
+        parentRefs:
+          - name: envoy-internal
+            namespace: network
+            sectionName: https
+        rules:
+          - backendRefs:
+              - identifier: app
+                port: 80
+    service:
+      app:
+        controller: litellm
+        ports:
+          http:
+            port: 80
+            targetPort: 4000

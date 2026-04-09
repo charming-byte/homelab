@@ -1,0 +1,122 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/kashalls/kromgo/main/config.schema.json
+badge:
+  font: Verdana.ttf
+  size: 12
+metrics:
+  - label: version_id
+    name: talos_version
+    query: label_replace(node_os_info{name="Talos"}, "version_id", "$1", "version_id", "v(.+)")
+    title: Talos
+
+  - label: git_version
+    name: kubernetes_version
+    query: label_replace(kubernetes_build_info{service="kubernetes"}, "git_version", "$1", "git_version", "v(.+)")
+    title: Kubernetes
+
+  - label: revision
+    name: flux_version
+    query: label_replace(flux_instance_info, "revision", "$1", "revision", "v(.+)@sha256:.+")
+    title: Flux
+
+  - colors:
+      - color: green
+        max: 9999
+        min: 0
+    name: cluster_node_count
+    query: count(count by (node) (kube_node_status_condition{condition="Ready"}))
+    title: Nodes
+
+  - colors:
+      - color: green
+        max: 9999
+        min: 0
+    name: cluster_pod_count
+    query: sum(kube_pod_status_phase{phase="Running"})
+    title: Pods
+
+  - colors:
+      - color: green
+        max: 35
+        min: 0
+      - color: orange
+        max: 75
+        min: 36
+      - color: red
+        max: 9999
+        min: 76
+    name: cluster_cpu_usage
+    query: round(avg(instance:node_cpu_utilisation:rate5m{pod!=""}) * 100, 0.1)
+    suffix: "%"
+    title: CPU
+
+  - colors:
+      - color: green
+        max: 35
+        min: 0
+      - color: orange
+        max: 75
+        min: 36
+      - color: red
+        max: 9999
+        min: 76
+    name: cluster_memory_usage
+    query: round(sum(node_memory_MemTotal_bytes{pod!=""} - node_memory_MemAvailable_bytes{pod!=""}) / sum(node_memory_MemTotal_bytes{pod!=""}) * 100, 0.1)
+    suffix: "%"
+    title: Memory
+
+  - colors:
+      - color: green
+        max: 400
+        min: 0
+      - color: orange
+        max: 750
+        min: 401
+      - color: red
+        max: 9999
+        min: 751
+    name: cluster_power_usage
+    query: round(upsHighPrecOutputLoad, 0.1)
+    suffix: w
+    title: Power
+
+  - colors:
+      - color: green
+        max: 180
+        min: 0
+      - color: orange
+        max: 360
+        min: 181
+      - color: red
+        max: 9999
+        min: 361
+    name: cluster_age_days
+    query: round((time() - min(kube_node_created) ) / 86400)
+    suffix: d
+    title: Age
+
+  - colors:
+      - color: green
+        max: 180
+        min: 0
+      - color: orange
+        max: 360
+        min: 181
+      - color: red
+        max: 9999
+        min: 361
+    name: cluster_uptime_days
+    query: round(avg(node_time_seconds{pod!=""} - node_boot_time_seconds{pod!=""}) / 86400)
+    suffix: d
+    title: Uptime
+
+  - colors:
+      - color: green
+        max: 0
+        min: 0
+      - color: red
+        max: 9999
+        min: 1
+    name: cluster_alert_count
+    query: alertmanager_alerts{state="active"} - 1
+    title: Alerts

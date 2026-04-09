@@ -1,0 +1,34 @@
+---
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: SecurityPolicy
+metadata:
+  name: ${EXT_AUTH_APP:-${APP}}
+spec:
+  extAuth:
+    failOpen: false
+    headersToExtAuth:
+      - cookie
+    http:
+      backendRefs:
+        - name: authentik-outpost-proxy
+          namespace: security
+          port: 9000
+      headersToBackend:
+        - authorization
+        - set-cookie
+        - x-authentik-email
+        - x-authentik-entitlements
+        - x-authentik-groups
+        - x-authentik-meta-app
+        - x-authentik-meta-outpost
+        - x-authentik-meta-provider
+        - x-authentik-meta-version
+        - x-authentik-name
+        - x-authentik-uid
+        - x-authentik-username
+        - x-forwarded-host
+      path: /outpost.goauthentik.io/auth/envoy
+  targetRefs:
+    - group: ${EXT_AUTH_TARGET_GROUP:-gateway.networking.k8s.io}
+      kind: ${EXT_AUTH_TARGET_KIND:-HTTPRoute}
+      name: ${EXT_AUTH_TARGET_NAME:-${APP}}

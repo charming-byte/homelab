@@ -1,0 +1,187 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: homepage-config
+  labels:
+    app.kubernetes.io/name: homepage
+data:
+  kubernetes.yaml: |
+    mode: cluster
+    gateway: true
+    ingress: false
+    traefik: false
+  settings.yaml: |
+    # https://raw.githubusercontent.com/walkxcode/dashboard-icons/main/ICONS.md
+    # https://pictogrammers.com/library/mdi/
+    # https://simpleicons.org/
+    title: Dashboard
+    theme: dark
+    headerStyle: clean
+    hideVersion: true
+    target: _blank
+    quicklaunch:
+      searchDescriptions: true
+      hideInternetSearch: true
+    layout:
+      Calendar:
+        style: row
+        header: false
+      Home:
+        style: row
+        columns: 2
+        icon: mdi-home-analytics
+      AI:
+        style: row
+        columns: 2
+        icon: si-openapiinitiative
+      Media:
+        useEqualHeights: true
+        style: row
+        columns: 3
+        icon: mdi-play-circle
+      Downloads:
+        style: row
+        columns: 3
+        icon: mdi-download-circle
+        useEqualHeights: true
+      Home Automation:
+        style: column
+        columns: 3
+        icon: mdi-home-automation
+        useEqualHeights: true
+      Self-hosted:
+        useEqualHeights: true
+        style: column
+        columns: 1
+        icon: mdi-server-network
+      Infrastructure:
+        useEqualHeights: true
+        style: row
+        columns: 3
+        icon: mdi-server-network
+      Storage:
+        style: column
+        icon: mdi-database
+  custom.css: ""
+  custom.js: ""
+  bookmarks.yaml: |
+    - Social:
+        - Discord:
+            - icon: discord.png
+              href: https://discord.com/app
+        - Tutanota:
+            - icon: tuta.png
+              href: https://tutanota.de
+        - ProtonMail:
+            - icon: proton-mail.png
+              href: https://mail.proton.me/u/0/inbox
+        - Reddit:
+            - icon: reddit.png
+              href: https://reddit.com
+        - YouTube:
+            - icon: youtube.png
+              href: https://youtube.com/feed/subscriptions
+    - Cloud:
+        - CloudFlare:
+            - icon: cloudflare.png
+              href: https://dash.cloudflare.com
+        - Hetzner Console:
+            - icon: si-hetzner
+              href: https://console.hetzner.com/
+        - Pushover:
+            - icon: pushover.png
+              href: https://client.pushover.net/
+        - HealthChecks:
+            - icon: healthchecks.png
+              href: https://healthcheck.io/
+    - Git:
+        - homelab:
+            - icon: github.png
+              description: Renovate Dashboard
+              href: https://github.com/charming-byte/homelab/issues/153
+        - Homepage Icons:
+            - icon: si-jpeg
+              href: https://github.com/homarr-labs/dashboard-icons/blob/main/ICONS.md
+        - Homepage MDI:
+            - icon: si-materialdesign
+              href: https://pictogrammers.com/library/mdi/
+        - Homepage SI:
+            - icon: si-simpleicons
+              href: https://simpleicons.org/
+  services.yaml: |
+    - Infrastructure:
+        - AdGuard Home:
+            href: http://192.168.1.1:3000
+            icon: adguard-home.svg
+            description: Network-wide ads & trackers blocking DNS server.
+            widget:
+              type: adguard
+              url: http://192.168.1.1:3000
+              username: {{HOMEPAGE_VAR_ADGUARD_USERNAME}}
+              password: {{HOMEPAGE_VAR_ADGUARD_PASSWORD}}
+        - Cloudflared:
+            href: https://dash.cloudflare.com/
+            icon: cloudflare-zero-trust.png
+            description: Cloudflared Tunnel
+            widget:
+              type: cloudflared
+              accountid: {{HOMEPAGE_VAR_CLOUDFLARE_ACCOUNTID}}
+              tunnelid: {{HOMEPAGE_VAR_CLOUDFLARE_TUNNELID}}
+              key: {{HOMEPAGE_VAR_CLOUDFLARE_API_TOKEN}}
+        - OPNSense:
+            href: https://192.168.1.1
+            icon: opnsense
+            description: Firewall and routing platform
+
+    - Storage:
+        - NAS:
+            href: http://nas.internal
+            icon: openmediavault.png
+            widget:
+              type: openmediavault
+              url: http://nas.internal
+              username: {{HOMEPAGE_VAR_NAS_USERNAME}}
+              password: {{HOMEPAGE_VAR_NAS_PASSWORD}}
+              method: smart.getListBg
+              fields: ["passed", "failed"]
+    - Calendar:
+        - Calendar:
+            widget:
+              type: calendar
+              firstDayInWeek: sunday
+              view: monthly
+              maxEvents: 10
+              showTime: true
+              timezone: Europe/Berlin
+              integrations:
+                - type: sonarr
+                  service_group: Downloads
+                  service_name: Sonarr
+                - type: radarr
+                  service_group: Downloads
+                  service_name: Radarr
+  widgets.yaml: |
+    - search:
+        provider: [google]
+        focus: false
+        target: _blank
+    - kubernetes:
+        cluster:
+          cpu: true
+          label: cluster
+          memory: true
+          show: true
+          showLabel: true
+        nodes:
+          cpu: true
+          memory: true
+          show: true
+          showLabel: true
+    - datetime:
+        text_size: l
+        format:
+          dateStyle: long
+          timeStyle: short
+          hourCycle: h23
+  docker.yaml: ""

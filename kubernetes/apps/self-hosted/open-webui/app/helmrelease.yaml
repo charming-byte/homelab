@@ -1,0 +1,135 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: open-webui
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: app-template
+  interval: 10m
+  install:
+    remediation:
+      retries: 5
+  upgrade:
+    remediation:
+      retries: 5
+  values:
+    controllers:
+      open-webui:
+        containers:
+          app:
+            env:
+              DATABASE_TYPE: postgresql
+              DEFAULT_LOCALE: de
+              DEFAULT_USER_ROLE: user
+              ENABLE_LOGIN_FORM: false
+              ENABLE_OAUTH_GROUP_CREATION: true
+              ENABLE_OAUTH_GROUP_MANAGEMENT: true
+              ENABLE_OAUTH_ROLE_MANAGEMENT: true
+              ENABLE_OAUTH_SIGNUP: true
+              ENABLE_OLLAMA_API: false
+              ENABLE_OPENAI_API: true
+              ENABLE_RAG_WEB_SEARCH: true
+              ENABLE_SEARCH_QUERY: true
+              ENABLE_VERSION_UPDATE_CHECK: false
+              ENABLE_WEBSOCKET_SUPPORT: true
+              IMAGE_SIZE: 400x400
+              IMAGE_STEPS: 8
+              OAUTH_ADMIN_ROLES: admin
+              OAUTH_ALLOWED_ROLES: users, admin
+              OAUTH_MERGE_ACCOUNTS_BY_EMAIL: true
+              OAUTH_PICTURE_CLAIM: avatar
+              OAUTH_PROVIDER_NAME: ${SECRET_DOMAIN}
+              OAUTH_ROLES_CLAIM: groups
+              OAUTH_SCOPES: openid email profile avatar
+              OAUTH_UPDATE_PICTURE_ON_LOGIN: true
+              RAG_WEB_SEARCH_ENGINE: tavily
+              RAG_EMBEDDING_ENGINE: openai
+              RAG_EMBEDDING_MODEL: text-embedding-ada-002
+              WEBSOCKET_MANAGER: redis
+              WEBSOCKET_REDIS_URL: redis://dragonfly.dbms.svc.cluster.local:6379/6
+              WEBUI_URL: https://aichat.${SECRET_DOMAIN}
+            envFrom: &envFrom
+              - secretRef:
+                  name: open-webui-secret
+            image:
+              repository: ghcr.io/open-webui/open-webui
+              tag: v0.8.12@sha256:8113fa5510020ef05a44afc0c42d33eabeeb2524a996e3e3fb8c437c00f0d792
+            resources:
+              limits:
+                memory: 2Gi
+              requests:
+                cpu: 250m
+                memory: 1Gi
+            probes:
+              liveness: &probes
+                custom: true
+                enabled: true
+                spec:
+                  failureThreshold: 3
+                  httpGet:
+                    path: /
+                    port: 8080
+                  initialDelaySeconds: 60
+                  periodSeconds: 10
+                  timeoutSeconds: 1
+              readiness: *probes
+          tika:
+            image:
+              repository: apache/tika
+              tag: 3.3.0.0-full
+              pullPolicy: IfNotPresent
+            ports:
+              - containerPort: 9998
+        initContainers:
+          init-db:
+            envFrom: *envFrom
+            image:
+              repository: ghcr.io/home-operations/postgres-init
+              tag: 18.3.0@sha256:6fa1f331cddd2eb0b6afa7b8d3685c864127a81ab01c3d9400bc3ff5263a51cf
+        pod:
+          annotations:
+            reloader.stakater.com/auto: "true"
+        strategy: RollingUpdate
+    persistence:
+      data:
+        accessMode: ReadWriteOnce
+        enabled: true
+        globalMounts:
+          - path: /app/backend/data
+        size: 2G
+        storageClass: local-hostpath
+        type: persistentVolumeClaim
+      tmpfs:
+        advancedMounts:
+          open-webui:
+            app:
+              - path: /tmp
+                subPath: tmp
+        type: emptyDir
+    route:
+      app:
+        annotations:
+          gethomepage.dev/app: open-webui
+          gethomepage.dev/description: Interact with your AI models
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/group: AI
+          gethomepage.dev/icon: sh-open-webui.svg
+          gethomepage.dev/name: Open WebUI
+        hostnames: ["aichat.${SECRET_DOMAIN}"]
+        parentRefs:
+          - name: envoy-external
+            namespace: network
+            sectionName: https
+        rules:
+          - backendRefs:
+              - identifier: app
+                port: 80
+    service:
+      app:
+        controller: open-webui
+        ports:
+          http:
+            port: 80
+            targetPort: 8080

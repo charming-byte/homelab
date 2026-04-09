@@ -1,0 +1,225 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app slskd
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: *app
+  interval: 1h
+  values:
+    configMaps:
+      config-defaults:
+        data:
+          slskd.yml: |-
+            web:
+              authentication:
+                api_keys:
+                  lidarr:
+                    key: ${SLSKD_API_KEY_LIDARR}
+                    cidr: 10.42.0.0/16
+                  homepage_widget:
+                    key: ${SLSKD_API_KEY_HOMEPAGE}
+                    role: ReadOnly
+                    cidr: 10.42.0.0/16
+            global:
+              upload:
+                slots: 10
+                speed_limit: 1500
+              download:
+                slots: 500
+            directories:
+              downloads: /media/downloads/soulseek/complete
+              incomplete: /media/downloads/soulseek/incomplete
+            permissions:
+              file:
+                mode: 750
+            shares:
+              directories:
+                - /media/media/audio
+              filters:
+                - \.ini$
+                - Thumbs.db$
+                - \.DS_Store$
+            soulseek:
+              listenPort: 50429
+            integration:
+              vpn:
+                enabled: true
+                port_forwarding: true
+                polling_interval: 2500
+                gluetun:
+                  url: http://localhost:8000
+                  timeout: 1000
+    controllers:
+      slskd:
+        annotations:
+          reloader.stakater.com/auto: "true"
+        containers:
+          app:
+            env:
+              DOTNET_BUNDLE_EXTRACT_BASE_DIR: /tmp/.net
+              SLSKD_APP_DIR: /config
+              SLSKD_HTTP_PORT: &port 80
+              SLSKD_NO_AUTH: true
+              SLSKD_NO_HTTPS: true
+              SLSKD_NO_VERSION_CHECK: true
+              SLSKD_SLSK_LISTEN_PORT: 50429
+              TZ: Europe/Berlin
+            envFrom:
+              - secretRef:
+                  name: "{{ .Release.Name }}-secret"
+            image:
+              repository: ghcr.io/slskd/slskd
+              tag: 0.24.5@sha256:17ef977563be206f3b5932080b1e23883b2cb39dc9010640f6f39b4eaec887e3
+            probes:
+              liveness: &probes
+                custom: true
+                enabled: true
+                spec:
+                  failureThreshold: 8
+                  httpGet:
+                    port: 80
+                    path: /
+                  initialDelaySeconds: 120 # needed in case share scan started
+                  periodSeconds: 60
+                  timeoutSeconds: 10
+              readiness: *probes
+            resources:
+              limits:
+                memory: 1Gi
+              requests:
+                cpu: 10m
+                memory: 256Mi
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities: { drop: ["ALL"] }
+              readOnlyRootFilesystem: true
+        initContainers:
+          gluetun:
+            env:
+              FIREWALL_INPUT_PORTS: "80,9999"
+              FIREWALL_OUTBOUND_SUBNETS: 10.42.0.0/16
+              SERVER_COUNTRIES: Netherlands
+              VPN_PORT_FORWARDING: on
+              VPN_SERVICE_PROVIDER: protonvpn
+              PORT_FORWARD_ONLY: on
+              VPN_TYPE: wireguard
+              TZ: Europe/Berlin
+              UPDATER_PERIOD: 24h
+              WIREGUARD_PERSISTENT_KEEPALIVE_INTERVAL: 25s
+              HEALTH_SERVER_ADDRESS: 0.0.0.0:9999
+            envFrom:
+              - secretRef:
+                  name: "{{ .Release.Name }}-secret"
+            image:
+              repository: ghcr.io/qdm12/gluetun
+              tag: v3.41@sha256:1a5bf4b4820a879cdf8d93d7ef0d2d963af56670c9ebff8981860b6804ebc8ab
+            ports:
+              - containerPort: 80
+                name: http
+                protocol: TCP
+            restartPolicy: Always
+            probes:
+              liveness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /
+                    port: 9999
+                  periodSeconds: 60
+                  timeoutSeconds: 10
+                  failureThreshold: 5
+              startup:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /
+                    port: 9999
+                  initialDelaySeconds: 10
+                  timeoutSeconds: 10
+                  periodSeconds: 10
+                  failureThreshold: 5
+            resources:
+              limits:
+                squat.ai/tun: "1"
+              requests:
+                squat.ai/tun: "1"
+            securityContext:
+              capabilities:
+                add: ["NET_ADMIN", "NET_RAW"]
+              privileged: true
+              runAsGroup: 0
+              runAsNonRoot: false
+              runAsUser: 0
+          init-slskd-config:
+            image:
+              repository: ghcr.io/home-operations/busybox
+              tag: sandbox@sha256:441b70c7c0a18c2a179b5e1368998654ea58c421fdba01cbc14e0b0257c99455
+            command:
+              - /bin/sh
+              - -c
+              - |
+                if [ ! -f /config/slskd.yml ]; then
+                  echo "Initializing slskd.yml"
+                  cp /defaults/slskd.yml /config/slskd.yml
+                else
+                  echo "slskd.yml already exists, skipping init"
+                fi
+    defaultPodOptions:
+      securityContext:
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+        runAsGroup: 1000
+        runAsNonRoot: true
+        runAsUser: 1000
+    persistence:
+      config-file:
+        globalMounts:
+          - path: /defaults/slskd.yml
+            subPath: slskd.yml
+        identifier: config-defaults
+        type: configMap
+      media:
+        globalMounts:
+          - path: /media
+        path: /media-root
+        server: nas.internal
+        type: nfs
+      tmp:
+        type: emptyDir
+      config:
+        globalMounts:
+          - path: /config
+        storageClass: local-hostpath
+        size: 5Gi
+        accessMode: ReadWriteOnce
+        type: persistentVolumeClaim
+    route:
+      slskd:
+        annotations:
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/group: Downloads
+          gethomepage.dev/icon: slskd.png
+          gethomepage.dev/name: Slskd
+          gethomepage.dev/widget.key: "{{`{{HOMEPAGE_VAR_SLSKD_API_KEY}}`}}"
+          gethomepage.dev/widget.type: slskd
+          gethomepage.dev/widget.url: http://slskd.downloads.svc.cluster.local:80
+        hostnames: ["{{ .Release.Name }}.${SECRET_DOMAIN}"]
+        parentRefs:
+          - name: envoy-internal
+            namespace: network
+        rules:
+          - backendRefs:
+              - identifier: *app
+                port: *port
+    service:
+      slskd:
+        controller: *app
+        ports:
+          http:
+            port: *port

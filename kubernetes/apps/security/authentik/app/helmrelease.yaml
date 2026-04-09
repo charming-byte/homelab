@@ -1,0 +1,80 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/helm.toolkit.fluxcd.io/helmrelease_v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: authentik
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: authentik
+  interval: 30m
+  maxHistory: 3
+  uninstall:
+    keepHistory: false
+  values:
+    global:
+      deploymentAnnotations:
+        secret.reloader.stakater.com/reload: authentik-secret
+      env:
+        - name: TZ
+          value: Europe/Berlin
+      envFrom: &envFrom
+        - secretRef:
+            name: authentik-secret
+      volumeMounts:
+        - mountPath: /media
+          name: media
+      volumes:
+        - name: media
+          persistentVolumeClaim:
+            claimName: authentik-media
+    prometheus:
+      rules:
+        enabled: true
+    server:
+      initContainers:
+        - envFrom: *envFrom
+          image: ghcr.io/home-operations/postgres-init:18.3.0@sha256:6fa1f331cddd2eb0b6afa7b8d3685c864127a81ab01c3d9400bc3ff5263a51cf
+          name: init-db
+      metrics:
+        enabled: true
+        serviceMonitor:
+          enabled: true
+      replicas: 1
+      resources:
+        limits:
+          memory: 800Mi
+        requests:
+          cpu: 50m
+          memory: 128Mi
+      route:
+        main:
+          annotations:
+            gethomepage.dev/description: Centralized authentication and identity management.
+            gethomepage.dev/enabled: "true"
+            gethomepage.dev/group: Infrastructure
+            gethomepage.dev/icon: authentik.svg
+            gethomepage.dev/name: Authentik
+            gethomepage.dev/pod-selector: app.kubernetes.io/name=authentik
+            gethomepage.dev/widget.key: "{{HOMEPAGE_VAR_AUTHENTIK_TOKEN}}"
+            gethomepage.dev/widget.type: authentik
+            gethomepage.dev/widget.url: http://authentik-server.security
+            gethomepage.dev/widget.version: "2"
+          enabled: true
+          hostnames: ["id.${SECRET_DOMAIN}"]
+          parentRefs:
+            - name: envoy-external
+              namespace: network
+          rules:
+            - backendRefs:
+                - name: authentik-server
+                  port: 80
+    worker:
+      replicas: 1
+      resources:
+        limits:
+          memory: 1200Mi
+        requests:
+          cpu: 25m
+          memory: 256Mi

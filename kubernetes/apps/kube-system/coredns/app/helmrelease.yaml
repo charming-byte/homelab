@@ -1,0 +1,67 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: coredns
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: coredns
+  interval: 1h
+  values:
+    affinity:
+      nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+            - matchExpressions:
+                - key: node-role.kubernetes.io/control-plane
+                  operator: Exists
+    fullnameOverride: coredns
+    image:
+      repository: mirror.gcr.io/coredns/coredns
+    k8sAppLabelOverride: kube-dns
+    replicaCount: 2
+    servers:
+      - plugins:
+          - name: errors
+          - configBlock: |-
+              lameduck 5s
+            name: health
+          - name: ready
+          - configBlock: |-
+              pods verified
+              fallthrough in-addr.arpa ip6.arpa
+            name: kubernetes
+            parameters: cluster.local in-addr.arpa ip6.arpa
+          - name: autopath
+            parameters: "@kubernetes"
+          - name: forward
+            parameters: . /etc/resolv.conf
+          - configBlock: |-
+              prefetch 20
+              serve_stale
+            name: cache
+          - name: loop
+          - name: reload
+          - name: loadbalance
+          - name: prometheus
+            parameters: 0.0.0.0:9153
+          - configBlock: |-
+              class error
+            name: log
+        port: 53
+        zones:
+          - scheme: dns://
+            use_tcp: true
+            zone: .
+    service:
+      clusterIP: 10.43.0.10
+      name: kube-dns
+    serviceAccount:
+      create: true
+    tolerations:
+      - key: CriticalAddonsOnly
+        operator: Exists
+      - effect: NoSchedule
+        key: node-role.kubernetes.io/control-plane
+        operator: Exists

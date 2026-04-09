@@ -1,0 +1,21 @@
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  annotations:
+    gethomepage.dev/app: grafana
+    gethomepage.dev/description: Visualization and exploration of metrics, logs, and traces.
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/group: Infrastructure
+    gethomepage.dev/icon: grafana.svg
+    gethomepage.dev/name: Grafana
+  name: grafana
+spec:
+  hostnames: ["grafana.${SECRET_DOMAIN}"]
+  parentRefs:
+    - name: envoy-internal
+      namespace: network
+  rules:
+    - backendRefs:
+        - name: grafana-service
+          port: 3000

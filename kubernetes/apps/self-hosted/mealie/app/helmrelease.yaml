@@ -1,0 +1,118 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/refs/heads/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: mealie
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: app-template
+    namespace: flux-system
+  driftDetection:
+    mode: enabled
+  install:
+    remediation:
+      retries: -1
+  interval: 1h
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  values:
+    controllers:
+      mealie:
+        annotations:
+          reloader.stakater.com/auto: "true"
+        containers:
+          app:
+            env:
+              ALLOW_PASSWORD_LOGIN: "false"
+              ALLOW_SIGNUP: "false"
+              API_PORT: 9000
+              API_DOCS: "false"
+              BASE_URL: https://mealie.${SECRET_DDOMAIN}
+              DB_ENGINE: postgres
+              OIDC_ADMIN_GROUP: mealie Admins
+              OIDC_AUTH_ENABLED: "true"
+              OIDC_AUTO_REDIRECT: "true"
+              OIDC_PROVIDER_NAME: ${SECRET_DOMAIN}
+              OIDC_REMEMBER_ME: "true"
+              OIDC_SIGNUP_ENABLED: "true"
+              OIDC_USER_GROUP: mealie Users
+              SMTP_HOST: smtp.${SECRET_DOMAIN}
+              SMTP_PORT: 25
+              SMTP_AUTH_STRATEGY: NONE
+              SMTP_FROM_EMAIL: "noreply@mail.${SECRET_DOMAIN}"
+              TZ: Europe/Berlin
+            envFrom:
+              - secretRef:
+                  name: mealie-secret
+            image:
+              repository: ghcr.io/mealie-recipes/mealie
+              tag: v3.14.0@sha256:b9fac07e6daaabd8c29d0dc97965c2f500ce7d6b188b0c51f494627f23ad32f2
+            probes:
+              liveness: &probes
+                custom: true
+                enabled: true
+                spec:
+                  httpGet:
+                    path: /api/app/about
+                    port: 9000
+              readiness: *probes
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop: ["ALL"]
+              readOnlyRootFilesystem: true
+        initContainers:
+          init-db:
+            envFrom:
+              - secretRef:
+                  name: mealie-secret
+            image:
+              repository: ghcr.io/home-operations/postgres-init
+              tag: 18.3.0@sha256:6fa1f331cddd2eb0b6afa7b8d3685c864127a81ab01c3d9400bc3ff5263a51cf
+        pod:
+          securityContext:
+            fsGroup: 911
+            fsGroupChangePolicy: OnRootMismatch
+            runAsGroup: 911
+            runAsNonRoot: true
+            runAsUser: 911
+    persistence:
+      data:
+        advancedMounts:
+          mealie:
+            app:
+              - path: /app/data
+        size: 8Gi
+        storageClass: local-hostpath
+        accessMode: ReadWriteOnce
+    route:
+      mealie:
+        annotations:
+          gethomepage.dev/description: Recipe Manager and Meal Planner
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/group: Self-hosted
+          gethomepage.dev/icon: mealie.svg
+          gethomepage.dev/name: Mealie
+        hostnames:
+          - mealie.${SECRET_DOMAIN}
+        parentRefs:
+          - name: envoy-internal
+            namespace: network
+        rules:
+          - backendRefs:
+              - identifier: mealie
+                port: 9000
+            matches:
+              - path:
+                  type: PathPrefix
+                  value: /
+    service:
+      mealie:
+        controller: mealie
+        ports:
+          http:
+            port: 9000

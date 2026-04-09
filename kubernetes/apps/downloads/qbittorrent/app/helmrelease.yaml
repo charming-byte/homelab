@@ -1,0 +1,163 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: qbittorrent
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: qbittorrent
+  interval: 1h
+  values:
+    controllers:
+      qbittorrent:
+        annotations:
+          reloader.stakater.com/auto: "true"
+        initContainers:
+          gluetun:
+            env:
+              FIREWALL_INPUT_PORTS: "80,8000"
+              FIREWALL_OUTBOUND_SUBNETS: 10.42.0.0/16
+              SERVER_COUNTRIES: Netherlands
+              OPENVPN_PROTOCOL: tcp
+              VPN_PORT_FORWARDING_UP_COMMAND: |
+                {{`/bin/sh -c 'sed -i "s/^\([[:space:]]*\)listenPort:.*/\1listenPort: {{PORT}}/" /config/slskd.yml'`}}
+              VPN_PORT_FORWARDING: on
+              VPN_SERVICE_PROVIDER: protonvpn
+              PORT_FORWARD_ONLY: on
+              VPN_TYPE: openvpn
+              TZ: Europe/Berlin
+              UPDATER_PERIOD: 24h
+            envFrom: &envFrom
+              - secretRef:
+                  name: "{{ .Release.Name }}-secret"
+            image:
+              repository: ghcr.io/qdm12/gluetun
+              tag: v3.41@sha256:1a5bf4b4820a879cdf8d93d7ef0d2d963af56670c9ebff8981860b6804ebc8ab
+            ports:
+              - containerPort: 8000
+                name: controlport
+                protocol: TCP
+              - containerPort: 80
+                name: http
+                protocol: TCP
+            restartPolicy: Always
+            securityContext:
+              capabilities:
+                add: ["NET_ADMIN"]
+              privileged: true
+              runAsGroup: 0
+              runAsNonRoot: false
+              runAsUser: 0
+        containers:
+          app:
+            image:
+              repository: ghcr.io/home-operations/qbittorrent-libtorrentv1
+              tag: 5.1.4@sha256:f8ded91789511af07db8e47bcfde9440f3c2d235e85b7eee13c9d03a7a4107c9
+            env:
+              TZ: Europe/Berlin
+              QBT_WEBUI_PORT: &port 80
+              QBT_TORRENTING_PORT: 31288
+            probes:
+              liveness:
+                enabled: true
+                spec:
+                  periodSeconds: 30
+                  timeoutSeconds: 5
+                  failureThreshold: 5
+              readiness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /api/v2/app/version
+                    port: *port
+                  periodSeconds: 10
+                  timeoutSeconds: 5
+                  failureThreshold: 5
+              startup:
+                enabled: true
+                spec:
+                  failureThreshold: 30
+                  periodSeconds: 10
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: {drop: ["ALL"]}
+            resources:
+              requests:
+                cpu: 100m
+                memory: 128Mi
+              limits:
+                memory: 2Gi
+          qbittorrent-port-forward-gluetun-server:
+            image:
+              repository: ghcr.io/mjmeli/qbittorrent-port-forward-gluetun-server
+              tag: 2025.12.21.02@sha256:4e30826d2f46bdcf387b6c3a610478ab3856d55fff457f98196e4d48975eb1dd
+            env:
+              QBT_ADDR: http://localhost:80
+              GTN_ADDR: http://localhost:8000
+            envFrom: *envFrom
+    defaultPodOptions:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+    service:
+      app:
+        forceRename: "{{ .Release.Name }}"
+        primary: true
+        ports:
+          http:
+            port: *port
+    route:
+      app:
+        annotations:
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/group: Downloads
+          gethomepage.dev/icon: qbittorrent.png
+          gethomepage.dev/name: qBittorrent
+          gethomepage.dev/widget.username: admin
+          gethomepage.dev/widget.type: qbittorrent
+          gethomepage.dev/widget.url: http://qbittorrent.downloads.svc.cluster.local
+        hostnames:
+          - "{{ .Release.Name }}.${SECRET_DOMAIN}"
+        parentRefs:
+          - name: envoy-internal
+            namespace: network
+        rules:
+          - backendRefs:
+              - identifier: app
+                port: *port
+    persistence:
+      config:
+        accessMode: ReadWriteOnce
+        size: 5Gi
+        storageClass: local-hostpath
+        type: persistentVolumeClaim
+      incomplete:
+        type: custom
+        volumeSpec:
+          ephemeral:
+            volumeClaimTemplate:
+              spec:
+                accessModes:
+                  - ReadWriteOnce
+                resources:
+                  requests:
+                    storage: 1Mi # ignored
+                storageClassName: local-hostpath
+                volumeMode: Filesystem
+      media:
+        type: nfs
+        server: nas.internal
+        path: /media-root
+        advancedMounts:
+          qbittorrent:
+            app:
+              - path: /media
+      tmp:
+        type: emptyDir

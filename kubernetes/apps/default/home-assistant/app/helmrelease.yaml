@@ -1,0 +1,205 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: home-assistant
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: home-assistant
+  interval: 10m
+  values:
+    controllers:
+      home-assistant:
+        annotations:
+          reloader.stakater.com/auto: "true"
+        containers:
+          app:
+            image:
+              repository: ghcr.io/home-operations/home-assistant
+              tag: 2026.4.1@sha256:1000851ce4d5bf2f6790bfc8b9052daa2c33a84f92e0bad7d60e0a9333ff4dc2
+            env:
+              TZ: Europe/Berlin
+            envFrom: &envFrom
+              - secretRef:
+                  name: "{{ .Release.Name }}-secret"
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: {drop: ["ALL"]}
+            probes:
+              liveness: &probes
+                custom: true
+                enabled: true
+                spec:
+                  failureThreshold: 3
+                  httpGet:
+                    path: /
+                    port: 8123
+                  initialDelaySeconds: 10
+                  periodSeconds: 10
+                  timeoutSeconds: 1
+              readiness: *probes
+            resources:
+              requests:
+                cpu: 10m
+                memory: 512Mi
+              limits:
+                memory: 2Gi
+          code-server:
+            image:
+              repository: ghcr.io/coder/code-server
+              tag: 4.115.0@sha256:cbd5e05849367e521f774b760602cb9e0a8da1f159eaf89600490eec34129fe5
+            args:
+              [
+                "--auth",
+                "none",
+                "--disable-telemetry",
+                "--disable-update-check",
+                "--user-data-dir",
+                "/config/.vscode",
+                "--extensions-dir",
+                "/config/.vscode",
+                "--port",
+                "8080",
+                "/config"
+              ]
+            env:
+              TZ: "Europe/Berlin"
+            probes:
+              liveness: &probes
+                custom: true
+                enabled: true
+                spec:
+                  failureThreshold: 3
+                  httpGet:
+                    path: /
+                    port: 8080
+                  initialDelaySeconds: 10
+                  periodSeconds: 10
+                  timeoutSeconds: 1
+              readiness: *probes
+        initContainers:
+          init-hass-config:
+            image:
+              repository: ghcr.io/charming-byte/init-base
+              tag: sandbox@sha256:0b805ad4e7926ceff55b1cd725c3541e4a3637d9c219ed71c94de7ecb30fcd83
+            envFrom: *envFrom
+            command:
+              - /bin/bash
+              - -c
+              - |
+                if [ ! -s /config/configuration.yaml ]; then
+                  echo "Initializing configuration.yaml"
+                  envsubst < /defaults/configuration.yaml > /config/configuration.yaml
+                else
+                  echo "configuration.yaml already exists, skipping init"
+                fi
+          init-db:
+            envFrom: *envFrom
+            image:
+              repository: ghcr.io/home-operations/postgres-init
+              tag: 18.3.0@sha256:6fa1f331cddd2eb0b6afa7b8d3685c864127a81ab01c3d9400bc3ff5263a51cf
+    defaultPodOptions:
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+    service:
+      app:
+        ports:
+          http:
+            appProtocol: kubernetes.io/ws
+            port: 8123
+            primary: true
+          code-server:
+            port: 8080
+    route:
+      app:
+        annotations:
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/group: "Home Automation"
+          gethomepage.dev/name: "Home Assistant"
+          gethomepage.dev/icon: home-assistant.png
+          gethomepage.dev/app: home-assistant
+          gethomepage.dev/namespace: default
+          gethomepage.dev/description: "Open Source Home Automation"
+          gethomepage.dev/widget.type: homeassistant
+          gethomepage.dev/widget.url: http://home-assistant.default.svc.cluster.local:8123
+          gethomepage.dev/widget.key: "{{`{{HOMEPAGE_VAR_HASS_API_KEY}}`}}"
+          gethomepage.dev/widget.fields: "people_home, lights_on"
+        hostnames:
+          - "{{ .Release.Name }}.${SECRET_DOMAIN}"
+          - hass.${SECRET_DOMAIN}
+        parentRefs:
+          - name: envoy-internal
+            namespace: network
+        rules:
+          - backendRefs:
+              - identifier: app
+                port: 8123
+      code-server:
+        annotations:
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/group: "Home Automation"
+          gethomepage.dev/name: "Code Server"
+          gethomepage.dev/app: home-assistant
+          gethomepage.dev/namespace: default
+          gethomepage.dev/icon: code-server.png
+          gethomepage.dev/description: "Home Assistant Configuration Editor"
+        hostnames:
+          - "code-server.${SECRET_DOMAIN}"
+        parentRefs:
+          - name: envoy-internal
+            namespace: network
+        rules:
+          - backendRefs:
+              - identifier: app
+                port: 8080
+    persistence:
+      config:
+        globalMounts:
+          - path: /defaults/configuration.yaml
+            subPath: configuration.yaml
+        name: home-assistant-configmap
+        type: configMap
+      backups:
+        advancedMounts:
+          home-assistant:
+            app:
+              - path: /config/backups
+                subPath: backups
+        enabled: true
+        path: /home-assistant
+        server: nas.internal
+        type: nfs
+      app:
+        storageClass: local-hostpath
+        size: 5Gi
+        accessMode: ReadWriteOnce
+        globalMounts:
+          - path: /config
+      config-cache:
+        storageClass: local-hostpath
+        size: 5Gi
+        accessMode: ReadWriteOnce
+        globalMounts:
+          - path: /config/.venv
+      tmp:
+        type: emptyDir
+      sshkey:
+        enabled: true
+        type: secret
+        name: home-assistant-secret
+        items:
+          - key: id_rsa
+            path: id_rsa
+        defaultMode: 256
+        globalMounts:
+          - path: /root/.ssh
+            readOnly: true

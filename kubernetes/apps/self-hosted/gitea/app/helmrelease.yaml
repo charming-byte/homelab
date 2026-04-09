@@ -1,0 +1,163 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: gitea
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: gitea
+  install:
+    remediation:
+      retries: 3
+  interval: 1h
+  timeout: 15m
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+      strategy: rollback
+  values:
+    controllers:
+      gitea:
+        annotations:
+          reloader.stakater.com/auto: "true"
+        containers:
+          gitea:
+            env:
+              GITEA__OPENID__ENABLE_OPENID_SIGNUP: "true"
+              GITEA__REPOSITORY__ENABLE_PUSH_CREATE_USER: "true"
+              GITEA__SERVER__DOMAIN: git.${SECRET_DOMAIN}
+              GITEA__SERVER__HTTP_PORT: 80
+              GITEA__SERVER__ROOT_URL: https://git.${SECRET_DOMAIN}
+              GITEA__SERVER__SSH_DOMAIN: git.${SECRET_DOMAIN}
+              GITEA__SERVER__SSH_LISTEN_PORT: 2222
+              GITEA__SERVER__SSH_PORT: 22
+              GITEA__SERVER__START_SSH_SERVER: "true"
+              #GITEA__SECURITY__INSTALL_LOCK: "true"
+              GITEA__SERVICE__DISABLE_REGISTRATION: "true"
+              GITEA__DATABASE__DB_TYPE: postgres
+              GITEA__OAUTH2_CLIENT__OPENID_CONNECT_SCOPES: "avatar"
+              GITEA__OAUTH2_CLIENT__UPDATE_AVATAR: "true"
+              GITEA__OAUTH2_CLIENT__ENABLE_AUTO_REGISTRATION: "true"
+              GITEA__UI__META_AUTHOR: "thiago.world"
+              GITEA__UI__META_DESCRIPTION: ""
+              TZ: Europe/Berlin
+              USER_GID: 1000
+              USER_UID: 1000
+            envFrom: &envFrom
+              - secretRef:
+                  name: gitea-secret
+            image:
+              repository: ghcr.io/go-gitea/gitea
+              tag: 1.25.5-rootless
+            probes:
+              liveness: &probes
+                enabled: true
+              readiness: *probes
+              startup: *probes
+            resources:
+              limits:
+                memory: 1Gi
+              requests:
+                cpu: 500m
+                memory: 128Mi
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                add:
+                  - CHOWN
+                drop:
+                  - ALL
+              readOnlyRootFilesystem: true
+        initContainers:
+          init-db:
+            envFrom: *envFrom
+            image:
+              repository: ghcr.io/home-operations/postgres-init
+              tag: 18.3.0@sha256:6fa1f331cddd2eb0b6afa7b8d3685c864127a81ab01c3d9400bc3ff5263a51cf
+    defaultPodOptions:
+      automountServiceAccountToken: false
+      enableServiceLinks: false
+      securityContext:
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+        runAsGroup: 1000
+        runAsNonRoot: true
+        runAsUser: 1000
+        seccompProfile:
+          type: RuntimeDefault
+    persistence:
+      data:
+        accessMode: ReadWriteOnce
+        advancedMounts:
+          gitea:
+            gitea:
+              - path: /var/lib/gitea
+                subPath: data
+              - path: /etc/gitea
+                subPath: config
+        size: 4Gi
+        storageClass: local-hostpath
+        type: persistentVolumeClaim
+      tmp:
+        globalMounts:
+          - path: /tmp
+        type: emptyDir
+    route:
+      git:
+        enabled: true
+        kind: TCPRoute
+        parentRefs:
+          - name: envoy-internal
+            namespace: network
+            sectionName: git-ssh
+        rules:
+          - backendRefs:
+              - name: gitea-ssh
+                port: 22
+      gitea:
+        annotations:
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/group: Self-hosted
+          gethomepage.dev/icon: gitea.png
+          gethomepage.dev/name: Gitea
+          gethomepage.dev/widget.key: "{{`{{HOMEPAGE_VAR_GITEA_API_KEY}}`}}"
+          gethomepage.dev/widget.type: gitea
+          gethomepage.dev/widget.url: http://gitea.self-hosted.svc.cluster.local
+        enabled: true
+        hostnames: ["git.${SECRET_DOMAIN}"]
+        parentRefs:
+          - name: envoy-external
+            namespace: network
+            sectionName: https
+        rules:
+          - backendRefs:
+              - identifier: gitea
+                port: 80
+    service:
+      gitea:
+        controller: gitea
+        ports:
+          http:
+            port: 80
+      ssh:
+        annotations:
+          external-dns.alpha.kubernetes.io/hostname: git.${SECRET_DOMAIN}
+        controller: gitea
+        ports:
+          ssh:
+            port: 22
+            protocol: TCP
+            targetPort: 2222
+    serviceMonitor:
+      gitea:
+        endpoints:
+          - interval: 10s
+            port: http
+            scrapeTimeout: 3s
+        selector:
+          matchLabels:
+            app.kubernetes.io/instance: gitea
+            app.kubernetes.io/name: app

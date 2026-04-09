@@ -1,0 +1,67 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/helm.toolkit.fluxcd.io/helmrelease_v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: rfc2136-dns
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: rfc2136-dns
+  interval: 1h
+  values:
+    domainFilters:
+      - ${SECRET_DOMAIN}
+    env:
+      - name: EXTERNAL_DNS_RFC2136_TSIG_SECRET
+        valueFrom:
+          secretKeyRef:
+            key: tsig-secret
+            name: rfc2136-dns-secret
+      - name: EXTERNAL_DNS_RFC2136_TSIG_KEYNAME
+        valueFrom:
+          secretKeyRef:
+            key: tsig-keyname
+            name: rfc2136-dns-secret
+      - name: EXTERNAL_DNS_RFC2136_HOST
+        valueFrom:
+          secretKeyRef:
+            key: host
+            name: rfc2136-dns-secret
+      - name: EXTERNAL_DNS_RFC2136_PORT
+        valueFrom:
+          secretKeyRef:
+            key: port
+            name: rfc2136-dns-secret
+      - name: EXTERNAL_DNS_RFC2136_ZONE
+        valueFrom:
+          secretKeyRef:
+            key: zone
+            name: rfc2136-dns-secret
+      - name: EXTERNAL_DNS_INGRESS_CLASS
+        value: envoy
+      - name: EXTERNAL_DNS_RFC2136_MIN_TTL
+        value: 60s
+      - name: EXTERNAL_DNS_RFC2136_TSIG_SECRET_ALG
+        value: hmac-sha256
+      - name: EXTERNAL_DNS_LOG_LEVEL
+        value: debug
+    fullnameOverride: rfc2136-dns
+    podAnnotations:
+      secret.reloader.stakater.com/reload: rfc2136-dns-secret
+    policy: sync
+    provider:
+      name: rfc2136
+    rbac:
+      additionalPermissions: []
+      create: true
+    serviceAccount:
+      create: true
+      name: external-dns
+    serviceMonitor:
+      enabled: true
+    sources:
+      - gateway-httproute
+      - service
+      - crd
+    triggerLoopOnEvent: true

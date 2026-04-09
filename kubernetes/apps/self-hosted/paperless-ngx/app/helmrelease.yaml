@@ -1,0 +1,155 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/app-template-4.5.0/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: paperless-ngx
+  namespace: media
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: paperless-ngx
+  interval: 15m
+  values:
+    controllers:
+      paperless-ngx:
+        containers:
+          app:
+            env:
+              PAPERLESS_APPS: allauth.socialaccount.providers.openid_connect
+              PAPERLESS_BIND_ADDR: 0.0.0.0
+              PAPERLESS_CONSUMER_DELETE_DUPLICATES: true
+              PAPERLESS_CONSUMER_POLLING: 60
+              PAPERLESS_CONSUMER_RECURSIVE: true
+              PAPERLESS_CONSUMPTION_DIR: /paperless/consume
+              PAPERLESS_DATA_DIR: /paperless/data
+              PAPERLESS_DISABLE_REGULAR_LOGIN: false
+              PAPERLESS_FILENAME_FORMAT_REMOVE_NONE: true
+              PAPERLESS_MEDIA_ROOT: /paperless/media
+              PAPERLESS_OCR_LANGUAGE: deu
+              PAPERLESS_TIKA_ENABLED: "true"
+              PAPERLESS_TIKA_GOTENBERG_ENDPOINT: http://127.0.0.1:3000
+              PAPERLESS_TIKA_ENDPOINT: http://127.0.0.1:9998
+              PAPERLESS_REDIS: redis://dragonfly.dbms.svc.cluster.local:6379/7
+              PAPERLESS_REDIS_PREFIX: paperless-
+              PAPERLESS_TIME_ZONE: Europe/Berlin
+              PAPERLESS_URL: https://paperless.${SECRET_DOMAIN}
+              S6_READ_ONLY_ROOT: 1
+              S6_YES_I_WANT_A_WORLD_WRITABLE_RUN_BECAUSE_KUBERNETES: 1
+              USERMAP_UID: 1000
+            envFrom: &envFrom
+              - secretRef:
+                  name: paperless-ngx-secret
+            probes:
+              liveness: &probes
+                custom: true
+                enabled: true
+                spec:
+                  httpGet:
+                    path: /
+                    port: 8000
+                  initialDelaySeconds: 120
+                  failureThreshold: 3
+                  periodSeconds: 60
+                  timeoutSeconds: 10
+              readiness: *probes
+            resources:
+              limits:
+                memory: 2Gi
+              requests:
+                cpu: 25m
+                memory: 128Mi
+            image:
+              repository: ghcr.io/paperless-ngx/paperless-ngx
+              tag: 2.20.13@sha256:4b05bcd28e6923768000b5d247cbf2c66fd49bdc3f3b05955bd4f6790a638b01
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop: ["ALL"]
+              readOnlyRootFilesystem: true
+          tika:
+            image:
+              repository: apache/tika
+              tag: 3.3.0.0-full
+              pullPolicy: IfNotPresent
+            ports:
+              - containerPort: 9998
+          gotenberg:
+            image:
+              repository: gotenberg/gotenberg
+              tag: 8.30.1
+            command:
+              - "gotenberg"
+              - "--chromium-disable-javascript=true"
+              - "--chromium-allow-list=file:///tmp/.*"
+            ports:
+              - containerPort: 3000
+        initContainers:
+          init-db:
+            envFrom: *envFrom
+            image:
+              repository: ghcr.io/home-operations/postgres-init
+              tag: 18.3.0@sha256:6fa1f331cddd2eb0b6afa7b8d3685c864127a81ab01c3d9400bc3ff5263a51cf
+        pod:
+          annotations:
+            reloader.stakater.com/auto: "true"
+          securityContext:
+            fsGroup: 1000
+            fsGroupChangePolicy: OnRootMismatch
+            runAsGroup: 1000
+            runAsNonRoot: true
+            runAsUser: 1000
+            seccompProfile:
+              type: RuntimeDefault
+    persistence:
+      tmpfs:
+        globalMounts:
+          - path: /tmp
+            subPath: tmp
+          - path: /run
+        type: emptyDir
+      paperless-ngx:
+        advancedMounts:
+          paperless-ngx:
+            app:
+              - path: /paperless/consume
+                subPath: consume
+              - path: /paperless/media
+                subPath: media
+              # used for restore
+              #- path: /paperless/restore
+              #  subPath: restore
+        path: /paperless
+        server: nas.internal
+        type: nfs
+      data:
+        accessMode: ReadWriteOnce
+        globalMounts:
+          - path: /paperless/data
+        size: 20Gi
+        storageClass: local-hostpath
+    route:
+      app:
+        annotations:
+          gethomepage.dev/description: Document Management System
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/group: Self-hosted
+          gethomepage.dev/icon: paperless-ngx.svg
+          gethomepage.dev/name: Paperless-ngx
+          gethomepage.dev/widget.type: paperlessngx
+          gethomepage.dev/widget.url: http://paperless-ngx.self-hosted:8000
+          gethomepage.dev/widget.key: "{{`{{HOMEPAGE_VAR_PAPERLESS_TOKEN}}`}}"
+        hostnames: ["paperless.${SECRET_DOMAIN}"]
+        parentRefs:
+          - name: envoy-internal
+            namespace: network
+        rules:
+          - backendRefs:
+              - name: paperless-ngx
+                port: 8000
+    service:
+      app:
+        controller: paperless-ngx
+        ports:
+          http:
+            port: 8000

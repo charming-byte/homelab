@@ -1,0 +1,93 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: miniflux
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: miniflux
+  interval: 10m
+  values:
+    controllers:
+      miniflux:
+        annotations:
+          reloader.stakater.com/auto: "true"
+        containers:
+          app:
+            env:
+              TZ: Europe/Berlin
+              RUN_MIGRATIONS: "1"
+              POLLING_SCHEDULER: entry_frequency
+              CREATE_ADMIN: "0"
+              AUTH_PROXY_HEADER: x-authentik-username
+              TRUSTED_REVERSE_PROXY_NETWORKS: 10.42.0.0/16
+              AUTH_PROXY_USER_CREATION: "1"
+              DISABLE_LOCAL_AUTH: "true"
+            envFrom: &envFrom
+              - secretRef:
+                  name: miniflux-secret
+            image:
+              repository: ghcr.io/miniflux/miniflux
+              tag: 2.2.19@sha256:8810dfe7f4d9979f9dc1385607695c116f049daa586c635a9a1fb3c58936b074
+            probes:
+              liveness: &probes
+                custom: true
+                enabled: true
+                spec:
+                  failureThreshold: 3
+                  httpGet:
+                    path: /liveness
+                    port: 8080
+                  initialDelaySeconds: 10
+                  periodSeconds: 10
+                  timeoutSeconds: 1
+              readiness:
+                <<: *probes
+                path: /readiness
+            resources:
+              limits:
+                memory: 256Mi
+              requests:
+                cpu: 10m
+                memory: 128Mi
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop: ["ALL"]
+              readOnlyRootFilesystem: true
+        initContainers:
+          init-db:
+            envFrom: *envFrom
+            image:
+              repository: ghcr.io/home-operations/postgres-init
+              tag: 18.3.0@sha256:6fa1f331cddd2eb0b6afa7b8d3685c864127a81ab01c3d9400bc3ff5263a51cf
+        strategy: RollingUpdate
+    defaultPodOptions:
+      securityContext:
+        runAsGroup: 65534
+        runAsNonRoot: true
+        runAsUser: 65534
+    route:
+      app:
+        annotations:
+          gethomepage.dev/app: miniflux
+          gethomepage.dev/description: Feed Reader
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/group: Self-hosted
+          gethomepage.dev/icon: miniflux.svg
+          gethomepage.dev/name: Miniflux
+        hostnames: ["{{ .Release.Name }}.${SECRET_DOMAIN}"]
+        parentRefs:
+          - name: envoy-internal
+            namespace: network
+            sectionName: https
+        rules:
+          - backendRefs:
+              - identifier: app
+                port: 8080
+    service:
+      app:
+        ports:
+          http:
+            port: 8080

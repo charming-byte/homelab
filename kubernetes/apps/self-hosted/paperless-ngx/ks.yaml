@@ -1,0 +1,38 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: paperless-ngx
+  namespace: self-hosted
+spec:
+  components:
+    - ../../../../components/nfs-scaler
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: paperless-ngx
+  dependsOn:
+    - name: cloudnative-pg-cluster
+      namespace: dbms
+    - name: dragonfly-cluster
+      namespace: dbms
+    - name: onepassword-connect
+      namespace: kube-system
+    - name: openebs
+      namespace: openebs-system
+  interval: 1h
+  path: ./kubernetes/apps/self-hosted/paperless-ngx/app
+  postBuild:
+    substitute:
+      APP: paperless-ngx
+    substituteFrom:
+      - kind: Secret
+        name: cluster-secrets
+  prune: true
+  retryInterval: 2m
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+    namespace: flux-system
+  targetNamespace: self-hosted
+  timeout: 5m
+  wait: false
