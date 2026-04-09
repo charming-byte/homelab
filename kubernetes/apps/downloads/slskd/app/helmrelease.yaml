@@ -101,7 +101,7 @@ spec:
               SERVER_COUNTRIES: Netherlands
               OPENVPN_PROTOCOL: udp
               VPN_PORT_FORWARDING_UP_COMMAND: |
-                {{`/bin/sh -c 'wget -q -O- --method=PATCH --header="X-API-Key: ${SLSKD_API_KEY_GLUETUN}" --header="Content-Type: application/json" --body-data="{\"soulseek\":{\"listenPort\":{{PORT}}}}" http://localhost:80/api/v0/options'`}}
+                {{`/bin/sh -c 'wget -q -O- --method=PATCH --header="X-API-Key: $SLSKD_API_KEY_GLUETUN" --header="Content-Type: application/json" --body-data="{\"soulseek\":{\"listenPort\":{{PORT}}}}" http://localhost:80/api/v0/options'`}}
               #VPN_PORT_FORWARDING_UP_COMMAND: |
               #  {{`/bin/sh -c 'sed -i "s/^\([[:space:]]*\)listenPort:.*/\1listenPort: {{PORT}}/" /config/slskd.yml'`}}
               VPN_PORT_FORWARDING: on
