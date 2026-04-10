@@ -24,7 +24,7 @@ spec:
           app:
             args:
               - "--health-probe-bind-address=:8081"
-              - "--metrics-bind-address=:8080"
+              - "--metrics-bind-address=0.0.0.0:8080"
             command: [/manager]
             image:
               repository: ghcr.io/dragonflydb/operator
@@ -86,7 +86,6 @@ spec:
             port: 8081
           metrics:
             port: 8080
-            targetPort: 8080
     serviceAccount:
       dragonfly-operator: {}
     serviceMonitor:
