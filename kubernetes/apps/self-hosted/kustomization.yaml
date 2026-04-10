@@ -8,7 +8,6 @@ resources:
   - ./atuin/ks.yaml
   - ./bentopdf/ks.yaml
   - ./calibre-web-automated/ks.yaml
- # - ./gitea/ks.yaml
   - ./mealie/ks.yaml
   - ./miniflux/ks.yaml
   - ./namespace.yaml
