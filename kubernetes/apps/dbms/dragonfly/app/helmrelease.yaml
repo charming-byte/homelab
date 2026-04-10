@@ -97,3 +97,5 @@ spec:
             scheme: http
             scrapeTimeout: 10s
         serviceName: dragonfly-operator
+        labels:
+          monitoring: enabled

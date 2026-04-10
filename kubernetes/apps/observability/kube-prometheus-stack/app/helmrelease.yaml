@@ -117,6 +117,9 @@ spec:
           runAsNonRoot: true
           runAsUser: 64535
         serviceMonitorSelectorNilUsesHelmValues: false
+        serviceMonitorSelector:
+          matchLabels:
+            monitoring: enabled
         storageSpec:
           volumeClaimTemplate:
             spec:
