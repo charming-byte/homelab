@@ -86,6 +86,7 @@ spec:
             port: 8081
           metrics:
             port: 8080
+            targetPort: 8080
     serviceAccount:
       dragonfly-operator: {}
     serviceMonitor:
@@ -97,5 +98,3 @@ spec:
             scheme: http
             scrapeTimeout: 10s
         serviceName: dragonfly-operator
-        labels:
-          monitoring: enabled
