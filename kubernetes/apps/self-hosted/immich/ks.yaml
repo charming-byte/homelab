@@ -48,8 +48,6 @@ spec:
   dependsOn:
     - name: immich-server
       namespace: *namespace
-    - name: intel-gpu-resource-driver
-      namespace: kube-system
     - name: keda
       namespace: observability
   components:
@@ -81,8 +79,6 @@ spec:
   dependsOn:
     - name: immich-server
       namespace: *namespace
-    - name: intel-gpu-resource-driver
-      namespace: kube-system
     - name: keda
       namespace: observability
   components:
