@@ -106,6 +106,7 @@ spec:
         fsGroupChangePolicy: OnRootMismatch
     service:
       app:
+        controller: immich
         ports:
           http:
             port: *port
