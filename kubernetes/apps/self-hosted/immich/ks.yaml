@@ -18,7 +18,7 @@ spec:
       namespace: kube-system
   components:
     - ../../../../components/nfs-scaler
-  path: ./kubernetes/apps/default/self-hosted/app
+  path: ./kubernetes/apps/self-hosted/immich/app
   prune: true
   sourceRef:
     kind: GitRepository
