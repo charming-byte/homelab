@@ -55,7 +55,8 @@ spec:
         advancedMounts:
           sons-of-the-forest:
             app:
-              - path: /config
+              - path: /config/dedicatedserver.cfg
+                subPath: dedicatedserver.cfg
                 readOnly: true
     service:
       app:
