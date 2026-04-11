@@ -135,15 +135,15 @@ spec:
         path: /photos
         globalMounts:
           - path: /usr/src/app/upload
-    immich-config:
-      enabled: true
-      type: secret
-      name: immich-secret
-      items:
-        - key: config.json
-          path: config.json
-      advancedMounts:
-        immich:
-          app:
-            - path: /etc/immich
-              readOnly: true
+      immich-config:
+        enabled: true
+        type: secret
+        name: immich-secret
+        items:
+          - key: config.json
+            path: config.json
+        advancedMounts:
+          immich:
+            app:
+              - path: /etc/immich
+                readOnly: true
