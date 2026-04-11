@@ -3,7 +3,7 @@
 apiVersion: postgresql.cnpg.io/v1
 kind: Cluster
 metadata:
-  name: postgres-vector
+  name: postgres18-vector
   annotations:
     cnpg.io/skipEmptyWalArchiveCheck: "enabled"
 spec:
@@ -44,7 +44,7 @@ spec:
       isWALArchiver: true
       parameters: &parameters
         barmanObjectName: postgres18-vector-backup-store
-        serverName: postgres18-vector
+        serverName: postgres18-vector-v1
 #  bootstrap:
 #    recovery:
 #      source: source
