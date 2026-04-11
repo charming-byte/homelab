@@ -94,7 +94,7 @@ spec:
         annotations:
           gethomepage.dev/description: High performance self-hosted photo and video management solution
           gethomepage.dev/enabled: "true"
-          gethomepage.dev/group: Self-hosted
+          gethomepage.dev/group: Media
           gethomepage.dev/icon: immich.svg
           gethomepage.dev/name: Immich
         hostnames:

@@ -98,7 +98,7 @@ spec:
       app:
         annotations:
           gethomepage.dev/enabled: "true"
-          gethomepage.dev/group: Media
+          gethomepage.dev/group: Self-hosted
           gethomepage.dev/icon: overseerr.png
           gethomepage.dev/name: Requests
           gethomepage.dev/description: Media Request Manager
