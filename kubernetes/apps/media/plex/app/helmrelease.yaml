@@ -65,9 +65,6 @@ spec:
                 drop: ["ALL"]
               readOnlyRootFilesystem: true
     defaultPodOptions:
-      resourceClaims:
-        - name: gpu
-          resourceClaimTemplateName: plex
       securityContext:
         fsGroup: 1000
         fsGroupChangePolicy: OnRootMismatch
