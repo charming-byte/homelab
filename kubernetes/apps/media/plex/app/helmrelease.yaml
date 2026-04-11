@@ -14,6 +14,16 @@ spec:
       plex:
         annotations:
           reloader.stakater.com/auto: "true"
+          # pod: # Soft anti-affinity: prefer not to share node with other GPU apps
+          # affinity:
+          #   podAntiAffinity:
+          #     preferredDuringSchedulingIgnoredDuringExecution:
+          #       - weight: 100
+          #         podAffinityTerm:
+          #           labelSelector:
+          #             matchLabels:
+          #               app.kubernetes.io/name: immich
+          #           topologyKey: kubernetes.io/hostname
         containers:
           app:
             env:
@@ -42,9 +52,8 @@ spec:
                   failureThreshold: 30
                   periodSeconds: 10
             resources:
-              claims:
-                - name: gpu
               limits:
+                gpu.intel.com/i915: 1
                 memory: 14Gi
               requests:
                 cpu: 100m
