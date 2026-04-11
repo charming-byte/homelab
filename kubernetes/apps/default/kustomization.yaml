@@ -12,6 +12,5 @@ resources:
   - ./namespace.yaml
   - ./it-tools/ks.yaml
   - ./smtp-relay/ks.yaml
-  - ./landing-page/ks.yaml
   - ./zigbee2mqtt/ks.yaml
   - ./home-assistant/ks.yaml

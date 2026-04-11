@@ -1,0 +1,79 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: sons-of-the-forest
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: sons-of-the-forest
+  install:
+    remediation:
+      retries: -1
+  interval: 30m
+  upgrade:
+    remediation:
+      retries: 5
+  values:
+    controllers:
+      sons-of-the-forest:
+        annotations:
+          reloader.stakater.com/auto: "true"
+        containers:
+          app:
+            env:
+              TZ: Europe/Berlin
+            image:
+              repository: rouhim/sons-of-the-forest-server
+              tag: latest
+            resources:
+              limits:
+                memory: 8Gi
+              requests:
+                cpu: 15m
+                memory: 4Gi
+        replicas: 1
+        strategy: RollingUpdate
+    persistence:
+      data:
+        accessMode: ReadWriteOnce
+        type: persistentVolumeClaim
+        storageClass: local-hostpath
+        size: 3Gi
+      config:
+        accessMode: ReadWriteOnce
+        type: persistentVolumeClaim
+        storageClass: local-hostpath
+        size: 1Gi
+      server-cfg:
+        type: secret
+        name: sons-of-the-forest-secret
+        items:
+          - key: dedicatedserver.cfg
+            path: dedicatedserver.cfg
+        advancedMounts:
+          sons-of-the-forest:
+            app:
+              - path: /config/dedicatedserver.cfg
+                readOnly: true
+    service:
+      app:
+        annotations:
+          lbipam.cilium.io/ips: 192.168.178.132
+        externalTrafficPolicy: Local
+        type: LoadBalancer
+        controller: sons-of-the-forest
+        ports:
+          game:
+            port: 8766
+            targetPort: 8766
+            protocol: UDP
+          query:
+            port: 27016
+            targetPort: 27016
+            protocol: UDP
+          blob:
+            port: 9700
+            targetPort: 9700
+            protocol: UDP

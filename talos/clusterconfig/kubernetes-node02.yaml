@@ -43,6 +43,7 @@ machine:
       - init_on_alloc=0
       - init_on_free=0
       - intel_iommu=on
+      - video=efifb:off
       - iommu=pt
       - mitigations=off
       - security=none
