@@ -52,9 +52,9 @@ data:
         useEqualHeights: true
       Self-hosted:
         useEqualHeights: true
-        style: column
-        columns: 1
-        icon: mdi-server-network
+        style: row
+        columns: 3
+        icon: mdi-apps
       Infrastructure:
         useEqualHeights: true
         style: row
