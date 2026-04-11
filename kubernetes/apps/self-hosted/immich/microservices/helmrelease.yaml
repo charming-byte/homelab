@@ -33,16 +33,12 @@ spec:
                 cpu: 10m
                 memory: 512Mi
               limits:
-                gpu.intel.com/i915: 1
-                memory: 8000Mi
+                memory: 4Gi
             securityContext:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true
               capabilities: { drop: ["ALL"] }
     defaultPodOptions:
-      resourceClaims:
-        - name: gpu
-          resourceClaimTemplateName: immich-microservices-gpu
       securityContext:
         runAsNonRoot: true
         runAsUser: 1000
@@ -50,6 +46,11 @@ spec:
         fsGroup: 1000
         fsGroupChangePolicy: OnRootMismatch
     persistence:
+      dri:
+        type: hostPath
+        hostPath: /dev/dri
+        globalMounts:
+          - path: /dev/dri
       library:
         type: nfs
         server: nas.internal
