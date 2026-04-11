@@ -21,7 +21,7 @@ spec:
         annotations:
           reloader.stakater.com/auto: "true"
         initContainers:
-          seedConfig:
+          seed-config:
             image:
               repository: ghcr.io/home-operations/busybox
               tag: sandbox@sha256:441b70c7c0a18c2a179b5e1368998654ea58c421fdba01cbc14e0b0257c99455
