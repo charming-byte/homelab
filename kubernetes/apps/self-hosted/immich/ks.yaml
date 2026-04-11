@@ -54,6 +54,7 @@ spec:
       namespace: observability
   components:
     - ../../../../components/nfs-scaler
+    - ../../../../components/gpu
   path: ./kubernetes/apps/self-hosted/immich/machine-learning
   prune: true
   sourceRef:
@@ -87,6 +88,7 @@ spec:
       namespace: observability
   components:
     - ../../../../components/nfs-scaler
+    - ../../../../components/gpu
   path: ./kubernetes/apps/self-hosted/immich/microservices
   prune: true
   sourceRef:
