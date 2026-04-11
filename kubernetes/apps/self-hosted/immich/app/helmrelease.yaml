@@ -25,6 +25,26 @@ spec:
             envFrom:
               - secretRef:
                   name: immich-secret
+          init-extensions:
+            dependsOn: init-db
+            image:
+              repository: ghcr.io/home-operations/postgres-init
+              tag: 18.3.0@sha256:6fa1f331cddd2eb0b6afa7b8d3685c864127a81ab01c3d9400bc3ff5263a51cf
+            env:
+              PGHOST: postgres18-vector-rw.dbms.svc.cluster.local
+              PGUSER: postgres
+              PGPASSWORD:
+                valueFrom:
+                  secretKeyRef:
+                    name: immich-secret
+                    key: INIT_POSTGRES_SUPER_PASS
+              PGDATABASE: immich
+            command: ["/bin/bash", "-c"]
+            args:
+              - |
+                psql -c "CREATE EXTENSION IF NOT EXISTS vchord CASCADE;"
+                psql -c "CREATE EXTENSION IF NOT EXISTS cube CASCADE;"
+                psql -c "CREATE EXTENSION IF NOT EXISTS earthdistance CASCADE;"
         containers:
           app:
             image:
@@ -92,7 +112,7 @@ spec:
     route:
       app:
         annotations:
-          gethomepage.dev/description: High performance self-hosted photo and video management solution
+          gethomepage.dev/description: Photo and video management solution
           gethomepage.dev/enabled: "true"
           gethomepage.dev/group: Media
           gethomepage.dev/icon: immich.svg
