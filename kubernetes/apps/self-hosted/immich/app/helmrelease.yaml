@@ -1,3 +1,4 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
 ---
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
@@ -7,7 +8,7 @@ spec:
   interval: 1h
   chartRef:
     kind: OCIRepository
-    name: app-template
+    name: immich
   values:
     controllers:
       immich:
@@ -52,6 +53,7 @@ spec:
               tag: v2.7.3@sha256:00cd2d57e4d9310a4aeac3c23f249af1eadbc1802746e1178589ef0a49374cef
             env:
               TZ: Europe/Berlin
+              IMMICH_CONFIG_FILE: /etc/immich/config.json
               IMMICH_WORKERS_INCLUDE: api
               IMMICH_METRICS_INCLUDE: all
               IMMICH_HELMET_FILE: true
@@ -133,3 +135,15 @@ spec:
         path: /photos
         globalMounts:
           - path: /usr/src/app/upload
+    immich-config:
+      enabled: true
+      type: secret
+      name: immich-secret
+      items:
+        - key: config.json
+          path: config.json
+      advancedMounts:
+        immich:
+          app:
+            - path: /etc/immich
+              readOnly: true
