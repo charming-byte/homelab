@@ -1,0 +1,18 @@
+---
+# yaml-language-server: $schema=https://crd.movishell.pl/postgresql.cnpg.io/scheduledbackup_v1.json
+apiVersion: postgresql.cnpg.io/v1
+kind: ScheduledBackup
+metadata:
+  name: postgres18-vector
+  namespace: dbms
+spec:
+  backupOwnerReference: self
+  cluster:
+    name: postgres18-vector
+  immediate: true
+  method: plugin
+  pluginConfiguration:
+    name: barman-cloud.cloudnative-pg.io
+    parameters:
+      barmanObjectName: postgres18-vector-backup-store
+  schedule: "@weekly"

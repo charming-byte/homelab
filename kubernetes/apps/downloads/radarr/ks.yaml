@@ -18,6 +18,8 @@ spec:
       namespace: kube-system
     - name: authentik
       namespace: security
+    - name: keda
+      namespace: observability
   interval: 1h
   path: ./kubernetes/apps/downloads/radarr/app
   postBuild:

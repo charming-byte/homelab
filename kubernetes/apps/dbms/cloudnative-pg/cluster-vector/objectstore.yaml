@@ -1,0 +1,23 @@
+---
+apiVersion: barmancloud.cnpg.io/v1
+kind: ObjectStore
+metadata:
+  name: postgres18-vector-backup-store
+  namespace: dbms
+spec:
+  configuration:
+    data:
+      compression: bzip2
+    destinationPath: s3://t-node/postgres18-vector/
+    endpointURL: https://${S3_BACKUP_ENDPOINT}
+    s3Credentials:
+      accessKeyId:
+        key: AWS_ACCESS_KEY_ID
+        name: postgres18-vector-secret
+      secretAccessKey:
+        key: AWS_SECRET_ACCESS_KEY
+        name: postgres18-vector-secret
+    wal:
+      compression: bzip2
+      maxParallel: 4
+  retentionPolicy: 30d

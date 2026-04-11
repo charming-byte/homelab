@@ -19,6 +19,8 @@ spec:
       namespace: openebs-system
     - name: authentik
       namespace: security
+    - name: keda
+      namespace: observability
   interval: 1h
   path: ./kubernetes/apps/downloads/sabnzbd/app
   postBuild:

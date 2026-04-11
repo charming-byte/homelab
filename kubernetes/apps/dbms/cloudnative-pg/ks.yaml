@@ -48,6 +48,34 @@ spec:
   targetNamespace: dbms
   wait: true
 ---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/kustomization-kustomize-v1.json
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: cloudnative-pg-cluster-vector
+spec:
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: cloudnative-pg-cluster-vector
+  dependsOn:
+    - name: cloudnative-pg
+    - name: cloudnative-pg-plugin-barman-cloud
+    - name: openebs
+      namespace: openebs-system
+  interval: 1h
+  path: ./kubernetes/apps/dbms/cloudnative-pg/cluster-vector
+  postBuild:
+    substituteFrom:
+      - kind: Secret
+        name: cluster-secrets
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+    namespace: flux-system
+  targetNamespace: dbms
+  wait: true
+---
 # yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/kustomize.toolkit.fluxcd.io/kustomization_v1.json
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization

@@ -17,6 +17,8 @@ spec:
       namespace: openebs-system
     - name: cloudnative-pg-cluster
       namespace: dbms
+    - name: keda
+      namespace: observability
     - name: onepassword-connect
       namespace: kube-system
     - name: authentik
