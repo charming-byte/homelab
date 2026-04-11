@@ -64,7 +64,7 @@ spec:
             path: dedicatedserver.cfg
         advancedMounts:
           sons-of-the-forest:
-            seedConfig:
+            seed-config:
               - path: /etc/sotf
                 readOnly: true
     service:
