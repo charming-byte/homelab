@@ -56,9 +56,6 @@ spec:
               readOnlyRootFilesystem: true
               capabilities: { drop: ["ALL"] }
     defaultPodOptions:
-      resourceClaims:
-        - name: gpu
-          resourceClaimTemplateName: immich-machine-learning-gpu
       securityContext:
         runAsNonRoot: true
         runAsUser: 1000
