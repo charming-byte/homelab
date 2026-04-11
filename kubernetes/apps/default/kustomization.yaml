@@ -10,6 +10,7 @@ resources:
   - ./litellm/ks.yaml
   - ./mosquitto/ks.yaml
   - ./namespace.yaml
+  - ./it-tools/ks.yaml
   - ./smtp-relay/ks.yaml
   - ./landing-page/ks.yaml
   - ./zigbee2mqtt/ks.yaml
