@@ -20,6 +20,16 @@ spec:
       sons-of-the-forest:
         annotations:
           reloader.stakater.com/auto: "true"
+        initContainers:
+          seedConfig:
+            image:
+              repository: ghcr.io/home-operations/busybox
+              tag: sandbox@sha256:441b70c7c0a18c2a179b5e1368998654ea58c421fdba01cbc14e0b0257c99455
+            command:
+              - /bin/sh
+              - -c
+              - |
+                cp /etc/sotf/dedicatedserver.cfg /config/dedicatedserver.cfg
         containers:
           app:
             env:
@@ -54,9 +64,8 @@ spec:
             path: dedicatedserver.cfg
         advancedMounts:
           sons-of-the-forest:
-            app:
-              - path: /config/dedicatedserver.cfg
-                subPath: dedicatedserver.cfg
+            seedConfig:
+              - path: /etc/sotf
                 readOnly: true
     service:
       app:
