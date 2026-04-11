@@ -43,8 +43,6 @@ spec:
               requests:
                 cpu: 15m
                 memory: 4Gi
-        replicas: 1
-        strategy: RollingUpdate
     persistence:
       data:
         accessMode: ReadWriteOnce
