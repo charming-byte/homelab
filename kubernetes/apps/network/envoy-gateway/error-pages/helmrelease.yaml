@@ -21,7 +21,7 @@ spec:
               repository: ghcr.io/tarampampam/error-pages
               tag: 3.8.1@sha256:b8ded6f847df91075429cf79cb9491bfd7d96de69936555498a2ff0614e003e4
             env:
-              TEMPLATE_NAME: shuffle
+              TEMPLATE_NAME: connection
               TZ: Europe/Berlin
             probes:
               liveness:
@@ -58,23 +58,16 @@ spec:
             port: &port 8080
 
     route:
-      external:
+      app:
         parentRefs:
           - name: envoy-external
             namespace: network
             sectionName: https
-        hostnames:
-          - &host error-pages.${SECRET_DOMAIN}
-        rules:
-          - backendRefs:
-              - port: *port
-      internal:
-        parentRefs:
           - name: envoy-internal
             namespace: network
             sectionName: https
         hostnames:
-          - *host
+          - error-pages.${SECRET_DOMAIN}
         rules:
           - backendRefs:
               - port: *port
