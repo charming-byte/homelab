@@ -1,0 +1,66 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: resticprofile
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: resticprofile
+  interval: 1h
+  values:
+    controllers:
+      resticprofile:
+        annotations:
+          reloader.stakater.com/auto: "true"
+        containers:
+          app:
+            env:
+              TZ: Europe/Berlin
+            envFrom:
+              - secretRef:
+                  name: resticprofile-secret
+            image:
+              repository: ghcr.io/creativeprojects/resticprofile
+              tag: 0.33.0@sha256:a11a2791e281e26fc7beff57ab2852da11d56b4c122cc0d810ec7c92c533ee6e
+            command: ["/bin/sh", "-c", "resticprofile -c /run/secrets/profiles.yaml schedule --all && /usr/bin/supercronic /resticprofile/crontab"]
+            resources:
+              limits:
+                memory: 512Mi
+              requests:
+                memory: 64Mi
+                cpu: 10m
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop: ["ALL"]
+              readOnlyRootFilesystem: true
+        strategy: RollingUpdate
+    defaultPodOptions:
+      securityContext:
+        runAsGroup: 1000
+        runAsNonRoot: true
+        runAsUser: 1000
+    persistence:
+      backups:
+        advancedMounts:
+          resticprofile:
+            app:
+              - path: /backups/paperless
+                subPath: paperless
+              - path: /backups/home-assistant
+                subPath: home-assistant
+              - path: /backups/photos
+                subPath: photos
+        path: /nas
+        server: nas.internal
+        type: nfs
+      secrets:
+        type: secret
+        name: resticprofile-secret
+        globalMounts:
+          - path: /run/secrets
+            readOnly: true
+      resticprofile:
+        type: emptyDir
