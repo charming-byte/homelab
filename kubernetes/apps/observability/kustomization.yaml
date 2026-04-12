@@ -7,12 +7,13 @@ components:
   - ../../components/alerts
   - ../../components/common
 resources:
+  - ./alloy/ks.yaml
   - ./blackbox-exporter/ks.yaml
   - ./gatus/ks.yaml
   - ./grafana/ks.yaml
   - ./keda/ks.yaml
   - ./kromgo/ks.yaml
   - ./kube-prometheus-stack/ks.yaml
-  - ./namespace.yaml
   - ./loki/ks.yaml
-  - ./alloy/ks.yaml
+  - ./namespace.yaml
+  - ./pushgateway/ks.yaml

@@ -1,0 +1,31 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/helm.toolkit.fluxcd.io/helmrelease_v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: pushgateway
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: pushgateway
+  interval: 1h
+  values:
+    route:
+      main:
+        enabled: true
+        annotations:
+          gethomepage.dev/app: pushgateway
+          gethomepage.dev/description: Push acceptor for ephemeral and batch jobs
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/group: Infrastructure
+          gethomepage.dev/icon: prometheus.svg
+          gethomepage.dev/name: Prometheus Pushgateway
+        hostnames: ["{{ .Release.Name }}.${SECRET_DOMAIN}"]
+        parentRefs:
+          - name: envoy-internal
+            namespace: network
+            sectionName: https
+    serviceMonitor:
+      enabled: true
+      additionalLabels:
+        release: pushgateway
