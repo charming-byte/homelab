@@ -14,7 +14,7 @@ spec:
       main:
         enabled: true
         annotations:
-          gethomepage.dev/app: pushgateway
+          gethomepage.dev/app: prometheus-pushgateway
           gethomepage.dev/description: Push acceptor for ephemeral and batch jobs
           gethomepage.dev/enabled: "true"
           gethomepage.dev/group: Infrastructure
