@@ -9,6 +9,8 @@ spec:
   dependsOn:
     - name: openebs
       namespace: openebs-system
+    - name: onepassword-connect
+      namespace: kube-system
   interval: 1h
   path: ./kubernetes/apps/gaming/sons-of-the-forest/app
   postBuild:
