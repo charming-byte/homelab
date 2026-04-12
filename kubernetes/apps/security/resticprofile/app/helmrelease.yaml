@@ -14,6 +14,34 @@ spec:
       resticprofile:
         annotations:
           reloader.stakater.com/auto: "true"
+        initContainers:
+          init:
+            env:
+              TZ: Europe/Berlin
+            envFrom:
+              - secretRef:
+                  name: resticprofile-secret
+            image:
+              repository: ghcr.io/charming-byte/resticprofile
+              tag: 0.33.0@sha256:8c8a01e6aa07cc11e860f3c4ee148ae47387fa7553fa1e86da83d8ddca88ca00
+            command:
+              - "/bin/sh"
+              - "-c"
+              - |
+                  if ! resticprofile -c /run/secrets/profiles.yaml init; then
+                    echo "init failed (likely already exists), ignoring"
+                  fi
+            resources:
+              limits:
+                memory: 512Mi
+              requests:
+                memory: 64Mi
+                cpu: 10m
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop: ["ALL"]
+              readOnlyRootFilesystem: true
         containers:
           app:
             env:
@@ -24,7 +52,12 @@ spec:
             image:
               repository: ghcr.io/charming-byte/resticprofile
               tag: 0.33.0@sha256:8c8a01e6aa07cc11e860f3c4ee148ae47387fa7553fa1e86da83d8ddca88ca00
-            command: ["/bin/sh", "-c", "resticprofile -c /run/secrets/profiles.yaml schedule --all && supercronic /resticprofile/crontab"]
+            command:
+              - "/bin/sh"
+              - "-c"
+              - >
+                  resticprofile -c /run/secrets/profiles.yaml schedule --all &&
+                  supercronic /resticprofile/crontab
             resources:
               limits:
                 memory: 512Mi
