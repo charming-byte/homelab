@@ -31,7 +31,7 @@ spec:
               ALLOW_SIGNUP: "false"
               API_PORT: 9000
               API_DOCS: "false"
-              BASE_URL: https://mealie.${SECRET_DDOMAIN}
+              BASE_URL: https://mealie.${SECRET_DOMAIN}
               DB_ENGINE: postgres
               OIDC_ADMIN_GROUP: "mealie Admins"
               OIDC_AUTH_ENABLED: "true"
