@@ -23,7 +23,7 @@ spec:
                   name: resticprofile-secret
             image:
               repository: ghcr.io/charming-byte/resticprofile
-              tag: 0.33.0@sha256:a11a2791e281e26fc7beff57ab2852da11d56b4c122cc0d810ec7c92c533ee6e
+              tag: 0.33.0@sha256:8c8a01e6aa07cc11e860f3c4ee148ae47387fa7553fa1e86da83d8ddca88ca00
             command: ["/bin/sh", "-c", "resticprofile -c /run/secrets/profiles.yaml schedule --all && supercronic /resticprofile/crontab"]
             resources:
               limits:
