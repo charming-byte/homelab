@@ -6,4 +6,4 @@ components:
   - ../../components/common
 resources:
   - ./namespace.yaml
- # - ./sons-of-the-forest/ks.yaml
+  - ./sons-of-the-forest/ks.yaml
