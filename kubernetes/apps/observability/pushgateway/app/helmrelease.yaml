@@ -10,6 +10,7 @@ spec:
     name: pushgateway
   interval: 1h
   values:
+    fullnameOverride: pushgateway
     route:
       main:
         enabled: true
