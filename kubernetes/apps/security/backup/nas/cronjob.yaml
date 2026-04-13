@@ -30,7 +30,7 @@ spec:
                   value: Europe/Berlin
               envFrom:
                 - secretRef:
-                    name: resticprofile-secret
+                    name: backup-nas-secret
               volumeMounts:
                 - name: secrets
                   mountPath: /run/secrets
