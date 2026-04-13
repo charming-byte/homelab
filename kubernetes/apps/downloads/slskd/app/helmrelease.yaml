@@ -109,7 +109,7 @@ spec:
               VPN_TYPE: wireguard
               TZ: Europe/Berlin
               UPDATER_PERIOD: 24h
-              WIREGUARD_PERSISTENT_KEEPALIVE_INTERVAL: 25s
+              WIREGUARD_PERSISTENT_KEEPALIVE_INTERVAL: 15s
               HEALTH_SERVER_ADDRESS: 0.0.0.0:9999
             envFrom:
               - secretRef:
