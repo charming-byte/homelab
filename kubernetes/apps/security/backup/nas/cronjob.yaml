@@ -1,0 +1,65 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: backup-nas
+  namespace: security
+spec:
+  schedule: "0 0 * * 1"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 2
+  failedJobsHistoryLimit: 2
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          automountServiceAccountToken: false
+          securityContext:
+            runAsUser: 1000
+            runAsGroup: 1000
+            runAsNonRoot: true
+          containers:
+            - name: resticprofile
+              image: ghcr.io/charming-byte/resticprofile:0.33.0@sha256:8c8a01e6aa07cc11e860f3c4ee148ae47387fa7553fa1e86da83d8ddca88ca00
+              command:
+                - /bin/sh
+                - -c
+                - resticprofile -c /run/secrets/profiles.yaml backups.backup
+              env:
+                - name: TZ
+                  value: Europe/Berlin
+              envFrom:
+                - secretRef:
+                    name: resticprofile-secret
+              volumeMounts:
+                - name: secrets
+                  mountPath: /run/secrets
+                  readOnly: true
+                - name: backups
+                  mountPath: /backups/paperless
+                  subPath: paperless
+                - name: backups
+                  mountPath: /backups/home-assistant
+                  subPath: home-assistant
+                - name: backups
+                  mountPath: /backups/photos
+                  subPath: photos
+              resources:
+                requests:
+                  cpu: 10m
+                  memory: 64Mi
+                limits:
+                  memory: 256Mi
+              securityContext:
+                allowPrivilegeEscalation: false
+                readOnlyRootFilesystem: true
+                capabilities:
+                  drop: ["ALL"]
+          volumes:
+            - name: backups
+              nfs:
+                server: nas.internal
+                path: /nas
+            - name: secrets
+              secret:
+                secretName: backup-nas-secret

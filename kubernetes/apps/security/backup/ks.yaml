@@ -12,10 +12,10 @@ spec:
     - name: onepassword-connect
       namespace: kube-system
   interval: 1h
-  path: ./kubernetes/apps/security/resticprofile/app
+  path: ./kubernetes/apps/security/backup/nas
   postBuild:
     substitute:
-      APP: resticprofile
+      APP: backup
     substituteFrom:
       - kind: Secret
         name: cluster-secrets
