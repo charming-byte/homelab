@@ -163,9 +163,10 @@ spec:
         runAsNonRoot: true
         runAsUser: 1000
     persistence:
-      config:
+      config-file:
         globalMounts:
           - path: /config/slskd.yml
+            subPath: slskd.yml
         identifier: config
         type: configMap
       media:
