@@ -72,8 +72,7 @@ spec:
               - port: *port
       internal:
         annotations:
-          gatus.home-operations.com/endpoint: |-
-            guarded: false
+          gatus.home-operations.com/enabled: "false"
         parentRefs:
           - group: gateway.networking.k8s.io
             kind: Gateway
