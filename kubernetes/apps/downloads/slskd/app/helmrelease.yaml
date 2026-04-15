@@ -11,7 +11,7 @@ spec:
   interval: 1h
   values:
     configMaps:
-      config-defaults:
+      config:
         data:
           slskd.yml: |-
             web:
@@ -165,9 +165,8 @@ spec:
     persistence:
       config:
         globalMounts:
-          - path: /defaults/slskd.yml
-            subPath: slskd.yml
-        identifier: config-defaults
+          - path: /config/slskd.yml
+        identifier: config
         type: configMap
       media:
         globalMounts:
