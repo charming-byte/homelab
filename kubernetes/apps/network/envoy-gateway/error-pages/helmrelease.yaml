@@ -59,15 +59,15 @@ spec:
 
     route:
       app:
-        annotations:
-          gatus.home-operations.com/endpoint: |-
-            conditions: ["[STATUS] == 200"]
         parentRefs:
           - name: envoy-external
             namespace: network
             sectionName: https
+          - name: envoy-internal
+            namespace: network
+            sectionName: https
         hostnames:
-          - error-pages.${SECRET_DOMAIN}
+          - error.${SECRET_DOMAIN}
         rules:
           - backendRefs:
               - port: *port

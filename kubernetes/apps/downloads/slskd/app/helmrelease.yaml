@@ -127,11 +127,9 @@ spec:
                 enabled: true
                 custom: true
                 spec:
-                  exec:
-                    command:
-                      - "sh"
-                      - -c
-                      - "curl -sf localhost:8000/v1/vpn/status | grep -q 'status\":running'"
+                  httpGet:
+                    path: /
+                    port: 9999
                   initialDelaySeconds: 20
                   periodSeconds: 20
                   timeoutSeconds: 10
