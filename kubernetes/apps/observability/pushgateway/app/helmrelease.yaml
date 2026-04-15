@@ -11,6 +11,7 @@ spec:
   interval: 1h
   values:
     fullnameOverride: pushgateway
+    replicaCount: 2
     route:
       main:
         enabled: true

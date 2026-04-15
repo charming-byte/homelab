@@ -6,8 +6,6 @@ metadata:
   name: resticprofile
   namespace: security
 spec:
-  components:
-    - ../../../../components/nfs-scaler
   dependsOn:
     - name: onepassword-connect
       namespace: kube-system

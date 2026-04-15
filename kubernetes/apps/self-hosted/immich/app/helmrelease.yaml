@@ -12,9 +12,6 @@ spec:
   values:
     controllers:
       immich:
-        labels:
-          nfsMount: "true"
-          postgresVector: "true"
         annotations:
           reloader.stakater.com/auto: "true"
         strategy: RollingUpdate

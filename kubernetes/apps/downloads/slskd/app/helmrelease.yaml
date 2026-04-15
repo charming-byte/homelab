@@ -29,7 +29,7 @@ spec:
                 slots: 10
                 speed_limit: 1500
               download:
-                slots: 500
+                slots: 100
             directories:
               downloads: /media/downloads/soulseek/complete
               incomplete: /media/downloads/soulseek/incomplete
@@ -127,10 +127,13 @@ spec:
                 enabled: true
                 custom: true
                 spec:
-                  httpGet:
-                    path: /
-                    port: 9999
-                  periodSeconds: 60
+                  exec:
+                    command:
+                      - "sh"
+                      - -c
+                      - "curl -sf localhost:8000/v1/vpn/status | grep -q 'status\":running'"
+                  initialDelaySeconds: 20
+                  periodSeconds: 20
                   timeoutSeconds: 10
                   failureThreshold: 5
               startup:
@@ -147,8 +150,6 @@ spec:
             resources:
               limits:
                 squat.ai/tun: "1"
-              requests:
-                squat.ai/tun: "1"
             securityContext:
               capabilities:
                 add: ["NET_ADMIN", "NET_RAW"]
@@ -156,20 +157,6 @@ spec:
               runAsGroup: 0
               runAsNonRoot: false
               runAsUser: 0
-          init-slskd-config:
-            image:
-              repository: ghcr.io/home-operations/busybox
-              tag: sandbox@sha256:441b70c7c0a18c2a179b5e1368998654ea58c421fdba01cbc14e0b0257c99455
-            command:
-              - /bin/sh
-              - -c
-              - |
-                if [ ! -f /config/slskd.yml ]; then
-                  echo "Initializing slskd.yml"
-                  cp /defaults/slskd.yml /config/slskd.yml
-                else
-                  echo "slskd.yml already exists, skipping init"
-                fi
     defaultPodOptions:
       securityContext:
         fsGroup: 1000
@@ -178,7 +165,7 @@ spec:
         runAsNonRoot: true
         runAsUser: 1000
     persistence:
-      config-file:
+      config:
         globalMounts:
           - path: /defaults/slskd.yml
             subPath: slskd.yml
@@ -192,13 +179,6 @@ spec:
         type: nfs
       tmp:
         type: emptyDir
-      config:
-        globalMounts:
-          - path: /config
-        storageClass: local-hostpath
-        size: 5Gi
-        accessMode: ReadWriteOnce
-        type: persistentVolumeClaim
     route:
       slskd:
         annotations:
