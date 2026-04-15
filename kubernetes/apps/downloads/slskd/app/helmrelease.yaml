@@ -163,6 +163,10 @@ spec:
         runAsNonRoot: true
         runAsUser: 1000
     persistence:
+      config:
+        accessMode: ReadWriteOnce
+        size: 5Gi
+        storageClass: local-path
       config-file:
         globalMounts:
           - path: /config/slskd.yml
