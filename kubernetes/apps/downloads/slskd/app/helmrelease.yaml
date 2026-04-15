@@ -166,7 +166,7 @@ spec:
       config:
         accessMode: ReadWriteOnce
         size: 5Gi
-        storageClass: local-path
+        storageClass: local-hostpath
       config-file:
         globalMounts:
           - path: /config/slskd.yml
