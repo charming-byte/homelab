@@ -7,7 +7,13 @@ spec:
   extAuth:
     failOpen: false
     headersToExtAuth:
+      - authorization
       - cookie
+      - accept
+      - proxy-authorization
+      - x-forwarded-proto
+      - x-forwarded-for
+      - x-real-ip
     http:
       backendRefs:
         - name: authentik-outpost-proxy
@@ -27,6 +33,7 @@ spec:
         - x-authentik-uid
         - x-authentik-username
         - x-forwarded-host
+        - x-forwarded-proto
       path: /outpost.goauthentik.io/auth/envoy
   targetRefs:
     - group: ${EXT_AUTH_TARGET_GROUP:-gateway.networking.k8s.io}

@@ -70,6 +70,14 @@ spec:
             - backendRefs:
                 - name: authentik-server
                   port: 80
+          additionalRules:
+            - backendRefs:
+                - name: authentik-outpost-proxy
+                  port: 9000
+            - matches:
+              - path:
+                  type: PathPrefix
+                  value: /outpost.goauthentik.io
     worker:
       replicas: 1
       resources:
