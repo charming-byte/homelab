@@ -24,12 +24,10 @@ spec:
                     key: ${SLSKD_API_KEY_HOMEPAGE}
                     role: ReadOnly
                     cidr: 10.42.0.0/16
-            global:
+            transfers:
               upload:
                 slots: 10
                 speed_limit: 1500
-              download:
-                slots: 100
             directories:
               downloads: /media/downloads/soulseek/complete
               incomplete: /media/downloads/soulseek/incomplete
@@ -45,7 +43,7 @@ spec:
                 - \.DS_Store$
             soulseek:
               listenPort: 50429
-            integration:
+            integrations:
               vpn:
                 enabled: true
                 port_forwarding: true
