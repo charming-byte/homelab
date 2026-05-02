@@ -7,7 +7,7 @@ metadata:
   namespace: downloads
 spec:
   components:
-    - ../../../../components/ext-auth
+    - ../../../../components/ext-auth/internal
     - ../../../../components/nfs-scaler
   dependsOn:
     - name: openebs
@@ -23,6 +23,7 @@ spec:
       APP: prowlarr
       EXT_AUTH_APP: prowlarr
       EXT_AUTH_TARGET_NAME: prowlarr
+      EXT_AUTH_HOSTNAME: prowlarr.${SECRET_DOMAIN}
     substituteFrom:
       - kind: Secret
         name: cluster-secrets

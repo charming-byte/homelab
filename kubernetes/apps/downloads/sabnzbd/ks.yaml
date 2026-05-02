@@ -10,7 +10,7 @@ spec:
     labels:
       app.kubernetes.io/name: sabnzbd
   components:
-    - ../../../../components/ext-auth
+    - ../../../../components/ext-auth/internal
     - ../../../../components/nfs-scaler
   dependsOn:
     - name: onepassword-connect
@@ -28,6 +28,7 @@ spec:
       APP: sabnzbd
       EXT_AUTH_APP: sabnzbd
       EXT_AUTH_TARGET_NAME: sabnzbd
+      EXT_AUTH_HOSTNAME: sabnzbd.${SECRET_DOMAIN}
     substituteFrom:
       - kind: Secret
         name: cluster-secrets

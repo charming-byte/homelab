@@ -28,6 +28,7 @@ spec:
       APP: slskd
       EXT_AUTH_APP: slskd
       EXT_AUTH_TARGET_NAME: slskd
+      EXT_AUTH_HOSTNAME: slskd.${SECRET_DOMAIN}
     substituteFrom:
       - kind: Secret
         name: cluster-secrets

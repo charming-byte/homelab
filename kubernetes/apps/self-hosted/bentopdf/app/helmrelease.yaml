@@ -18,7 +18,7 @@ spec:
               repository: ghcr.io/alam00000/bentopdf
               tag: 2.8.4@sha256:f54b9ed9c56b767e0098b525468206689b666323c2b500b9686c3cf41cdfa348
             probes:
-              liveness: &ref_0
+              liveness: &probes
                 custom: true
                 enabled: true
                 spec:
@@ -29,7 +29,7 @@ spec:
                   initialDelaySeconds: 10
                   periodSeconds: 10
                   timeoutSeconds: 1
-              readiness: *ref_0
+              readiness: *probes
             resources:
               limits:
                 memory: 256Mi
