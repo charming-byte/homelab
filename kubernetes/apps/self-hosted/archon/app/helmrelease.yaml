@@ -1,0 +1,102 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: archon
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: archon
+  interval: 1h
+  values:
+    controllers:
+      archon:
+        initContainers:
+          init-db:
+            image:
+              repository: ghcr.io/home-operations/postgres-init
+              tag: 18.3.0@sha256:6fa1f331cddd2eb0b6afa7b8d3685c864127a81ab01c3d9400bc3ff5263a51cf
+            envFrom: &envFrom
+              - secretRef:
+                  name: "archon-secret"
+        containers:
+          app:
+            image:
+              repository: ghcr.io/charming-byte/archon
+              tag: 0.3.10@sha256:1ffd646f23af08b711fe8c2cb2cc29cfd92b0a40423e7a6cf5e6b5ec7615edf4
+            env:
+              ARCHON_DATA: "/.archon"
+              ARCHON_DOCKER: "true"
+              DOMAIN: "archon.${SECRET_DOMAIN}"
+              DEFAULT_AI_ASSISTANT: "codex"
+              PORT: &port 3000
+              TELEGRAM_STREAMING_MODE: "stream"
+              DISCORD_STREAMING_MODE: "stream"
+            envFrom: *envFrom
+            probes:
+              liveness: &probes
+                custom: true
+                enabled: true
+                spec:
+                  failureThreshold: 5
+                  httpGet:
+                    path: /api/health
+                    port: *port
+                  initialDelaySeconds: 10
+                  periodSeconds: 10
+                  timeoutSeconds: 1
+              readiness: *probes
+            resources:
+              limits:
+                memory: 2Gi
+              requests:
+                cpu: 10m
+                memory: 256Mi
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop: ["ALL"]
+              readOnlyRootFilesystem: true
+        strategy: RollingUpdate
+    defaultPodOptions:
+      securityContext:
+        runAsGroup: 1001
+        runAsNonRoot: true
+        runAsUser: 1001
+    persistence:
+      tmpfs:
+        globalMounts:
+          - path: /tmp
+        type: emptyDir
+      data:
+        advancedMounts:
+          archon:
+            app:
+              - path: /.archon
+        enabled: true
+        storageClass: local-hostpath
+        accessMode: ReadWriteOnce
+        size: 20Gi
+    route:
+      app:
+        annotations:
+          gethomepage.dev/description: AI coding agent
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/group: Ai
+          gethomepage.dev/icon: mdi:console-line
+          gethomepage.dev/name: Archon
+        hostnames: ["archon.${SECRET_DOMAIN}"]
+        parentRefs:
+          - name: envoy-internal
+            namespace: network
+            sectionName: https
+        rules:
+          - backendRefs:
+              - identifier: app
+                port: *port
+    service:
+      app:
+        ports:
+          http:
+            port: *port
