@@ -20,6 +20,7 @@ spec:
       APP: archon
       EXT_AUTH_APP: archon
       EXT_AUTH_TARGET_NAME: archon
+      EXT_AUTH_HOSTNAME: archon.${SECRET_DOMAIN}
     substituteFrom:
       - kind: Secret
         name: cluster-secrets
