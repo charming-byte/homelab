@@ -2,6 +2,8 @@
 # yaml-language-server: $schema=https://json.schemastore.org/kustomization
 apiVersion: kustomize.config.k8s.io/v1alpha1
 kind: Component
+metadata:
+  name: ${EXT_AUTH_APP:-${APP}}-httproute-patch
 patches:
   - patch: |-
       - op: add
