@@ -68,6 +68,7 @@ spec:
       tmpfs:
         globalMounts:
           - path: /tmp
+          - path: /home/appuser
         type: emptyDir
       data:
         advancedMounts:
