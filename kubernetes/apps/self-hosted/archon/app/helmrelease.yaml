@@ -20,6 +20,19 @@ spec:
             envFrom: &envFrom
               - secretRef:
                   name: "archon-secret"
+          init-archon-schema:
+            image:
+              repository: ghcr.io/charming-byte/archon
+              tag: 0.3.10@sha256:1ffd646f23af08b711fe8c2cb2cc29cfd92b0a40423e7a6cf5e6b5ec7615edf4
+            envFrom: *envFrom
+            command:
+              - /bin/sh
+              - -c
+              - |
+                set -euo pipefail
+
+                echo "Applying Archon database migrations..."
+                psql "$DATABASE_URL" < /app/migrations/000_combined.sql
         containers:
           app:
             image:
