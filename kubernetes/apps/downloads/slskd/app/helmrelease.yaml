@@ -197,6 +197,21 @@ spec:
           - backendRefs:
               - identifier: *app
                 port: *port
+      authentik-callback:
+        enabled: true
+        hostnames: ["{{ .Release.Name }}.${SECRET_DOMAIN}"]
+        parentRefs:
+          - name: envoy-internal
+            namespace: network
+        rules:
+          - matches:
+              - path:
+                  type: PathPrefix
+                  value: /outpost.goauthentik.io
+            backendRefs:
+              - name: authentik-outpost-proxy
+                namespace: security
+                port: 9000
     service:
       slskd:
         controller: *app

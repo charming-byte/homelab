@@ -6,7 +6,7 @@ metadata:
   namespace: self-hosted
 spec:
   components:
-    - ../../../../components/ext-auth/internal
+    - ../../../../components/ext-auth
   interval: 1h
   path: ./kubernetes/apps/self-hosted/miniflux/app
   postBuild:

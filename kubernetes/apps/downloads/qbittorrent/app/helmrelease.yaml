@@ -123,8 +123,7 @@ spec:
           gethomepage.dev/widget.username: admin
           gethomepage.dev/widget.type: qbittorrent
           gethomepage.dev/widget.url: http://qbittorrent.downloads.svc.cluster.local
-        hostnames:
-          - "{{ .Release.Name }}.${SECRET_DOMAIN}"
+        hostnames: ["{{ .Release.Name }}.${SECRET_DOMAIN}"]
         parentRefs:
           - name: envoy-internal
             namespace: network
@@ -132,6 +131,21 @@ spec:
           - backendRefs:
               - identifier: app
                 port: *port
+      authentik-callback:
+        enabled: true
+        hostnames: ["{{ .Release.Name }}.${SECRET_DOMAIN}"]
+        parentRefs:
+          - name: envoy-internal
+            namespace: network
+        rules:
+          - matches:
+              - path:
+                  type: PathPrefix
+                  value: /outpost.goauthentik.io
+            backendRefs:
+              - name: authentik-outpost-proxy
+                namespace: security
+                port: 9000
     persistence:
       config:
         accessMode: ReadWriteOnce

@@ -10,7 +10,7 @@ spec:
     labels:
       app.kubernetes.io/name: sonarr
   components:
-    - ../../../../components/ext-auth/internal
+    - ../../../../components/ext-auth
     - ../../../../components/nfs-scaler
   dependsOn:
     - name: openebs
