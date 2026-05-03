@@ -49,7 +49,7 @@ spec:
           app:
             image:
               repository: seafileltd/seafile-mc
-              tag: 13.0.20
+              tag: 13.0.21
             #ref: https://github.com/haiwen/seafile-helm-chart/blob/main/values/13.0/pro.yaml
             env:
               TZ: Europe/Berlin
