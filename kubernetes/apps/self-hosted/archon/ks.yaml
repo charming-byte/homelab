@@ -7,7 +7,7 @@ metadata:
   namespace: self-hosted
 spec:
   components:
-    - ../../../../components/ext-auth/internal
+    - ../../../../components/ext-auth/external
   dependsOn:
     - name: onepassword-connect
       namespace: kube-system
