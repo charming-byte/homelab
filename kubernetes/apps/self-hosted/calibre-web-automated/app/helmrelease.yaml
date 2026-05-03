@@ -111,7 +111,6 @@ spec:
           gethomepage.dev/widget.type: calibreweb
           gethomepage.dev/widget.url: http://calibre-web-automated.self-hosted:8083
           gethomepage.dev/widget.username: "{{`{{HOMEPAGE_VAR_CALIBRE_USERNAME}}`}}"
-          hajimari.io/icon: mdi:chart-bar
         hostnames: ["books.${SECRET_DOMAIN}"]
         parentRefs:
           - name: envoy-internal

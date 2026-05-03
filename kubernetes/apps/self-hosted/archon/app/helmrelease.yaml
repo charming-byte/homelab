@@ -97,8 +97,8 @@ spec:
         annotations:
           gethomepage.dev/description: AI coding agent
           gethomepage.dev/enabled: "true"
-          gethomepage.dev/group: Ai
-          gethomepage.dev/icon: mdi:console-line
+          gethomepage.dev/group: AI
+          gethomepage.dev/icon: mdi-console-line
           gethomepage.dev/name: Archon
         hostnames: ["archon.${SECRET_DOMAIN}"]
         parentRefs:
