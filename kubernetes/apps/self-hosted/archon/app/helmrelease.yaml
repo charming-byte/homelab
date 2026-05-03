@@ -93,7 +93,7 @@ spec:
         accessMode: ReadWriteOnce
         size: 20Gi
     route:
-      app:
+      archon:
         annotations:
           gethomepage.dev/description: AI coding agent
           gethomepage.dev/enabled: "true"
@@ -111,7 +111,7 @@ spec:
                 port: *port
       authentik-callback:
         enabled: true
-        hostnames: ["{{ .Release.Name }}.${SECRET_DOMAIN}"]
+        hostnames: ["archon.${SECRET_DOMAIN}"]
         parentRefs:
           - name: envoy-external
             namespace: network

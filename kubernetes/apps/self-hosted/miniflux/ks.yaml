@@ -13,7 +13,6 @@ spec:
     substitute:
       EXT_AUTH_APP: miniflux
       EXT_AUTH_TARGET_NAME: miniflux
-      EXT_AUTH_HOSTNAME: miniflux.${SECRET_DOMAIN}
     substituteFrom:
       - kind: Secret
         name: cluster-secrets

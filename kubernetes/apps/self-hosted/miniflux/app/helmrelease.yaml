@@ -70,7 +70,7 @@ spec:
         runAsNonRoot: true
         runAsUser: 65534
     route:
-      app:
+      miniflux:
         annotations:
           gethomepage.dev/app: miniflux
           gethomepage.dev/description: Feed Reader
