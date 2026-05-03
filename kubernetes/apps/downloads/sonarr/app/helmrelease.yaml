@@ -91,7 +91,7 @@ spec:
       tmp:
         type: emptyDir
     route:
-      app:
+      sonarr:
         annotations:
           gethomepage.dev/enabled: "true"
           gethomepage.dev/group: Downloads

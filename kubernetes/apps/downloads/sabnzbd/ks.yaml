@@ -28,7 +28,6 @@ spec:
       APP: sabnzbd
       EXT_AUTH_APP: sabnzbd
       EXT_AUTH_TARGET_NAME: sabnzbd
-      EXT_AUTH_HOSTNAME: sabnzbd.${SECRET_DOMAIN}
     substituteFrom:
       - kind: Secret
         name: cluster-secrets

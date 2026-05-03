@@ -30,7 +30,6 @@ spec:
       APP: sonarr
       EXT_AUTH_APP: sonarr
       EXT_AUTH_TARGET_NAME: sonarr
-      EXT_AUTH_HOSTNAME: sonarr.${SECRET_DOMAIN}
     substituteFrom:
       - kind: Secret
         name: cluster-secrets

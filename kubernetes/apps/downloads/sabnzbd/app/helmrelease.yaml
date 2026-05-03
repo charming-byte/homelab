@@ -80,7 +80,7 @@ spec:
                 subPath: tmp
         type: emptyDir
     route:
-      app:
+      sabnzbd:
         annotations:
           gethomepage.dev/enabled: "true"
           gethomepage.dev/group: Downloads
@@ -99,7 +99,7 @@ spec:
                 port: 8080
       authentik-callback:
         enabled: true
-        hostnames: ["{{ .Release.Name }}.${SECRET_DOMAIN}"]
+        hostnames: ["sabnzbd.${SECRET_DOMAIN}"]
         parentRefs:
           - name: envoy-internal
             namespace: network

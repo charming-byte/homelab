@@ -77,7 +77,7 @@ spec:
       tmp:
         type: emptyDir
     route:
-      app:
+      prowlarr:
         annotations:
           gethomepage.dev/enabled: "true"
           gethomepage.dev/group: Downloads

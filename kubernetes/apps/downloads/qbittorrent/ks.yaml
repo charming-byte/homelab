@@ -23,7 +23,6 @@ spec:
       APP: qbittorrent
       EXT_AUTH_APP: qbittorrent
       EXT_AUTH_TARGET_NAME: qbittorrent
-      EXT_AUTH_HOSTNAME: qbittorrent.${SECRET_DOMAIN}
     substituteFrom:
       - kind: Secret
         name: cluster-secrets

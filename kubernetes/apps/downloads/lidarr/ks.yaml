@@ -27,7 +27,6 @@ spec:
       APP: lidarr
       EXT_AUTH_APP: lidarr
       EXT_AUTH_TARGET_NAME: lidarr
-      EXT_AUTH_HOSTNAME: lidarr.${SECRET_DOMAIN}
     substituteFrom:
       - kind: Secret
         name: cluster-secrets

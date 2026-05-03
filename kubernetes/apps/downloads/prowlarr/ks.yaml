@@ -23,7 +23,6 @@ spec:
       APP: prowlarr
       EXT_AUTH_APP: prowlarr
       EXT_AUTH_TARGET_NAME: prowlarr
-      EXT_AUTH_HOSTNAME: prowlarr.${SECRET_DOMAIN}
     substituteFrom:
       - kind: Secret
         name: cluster-secrets
