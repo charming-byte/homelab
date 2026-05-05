@@ -103,14 +103,13 @@ spec:
               - --port
               - "8002"
             securityContext: #tmp
-               securityContext:
-                allowPrivilegeEscalation: true
-                seccompProfile:
-                  type: Unconfined
-                capabilities:
-                  add:
-                    - SYS_ADMIN
-                    - SYS_CHROOT
+              allowPrivilegeEscalation: true
+              seccompProfile:
+                type: Unconfined
+              capabilities:
+                add:
+                  - SYS_ADMIN
+                  - SYS_CHROOT
             envFrom: *envFrom
           open-terminal:
             image:
