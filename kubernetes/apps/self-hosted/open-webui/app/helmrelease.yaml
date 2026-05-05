@@ -102,6 +102,13 @@ spec:
               - "0.0.0.0"
               - --port
               - "8002"
+            securityContext: #tmp
+               securityContext:
+                allowPrivilegeEscalation: true
+                capabilities:
+                  add:
+                    - SYS_ADMIN
+                    - SYS_CHROOT
             envFrom: *envFrom
           open-terminal:
             image:
