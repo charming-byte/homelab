@@ -52,7 +52,7 @@ nodes:
                   - rw
     machineSpec:
       secureboot: false
-    talosImageURL: factory.talos.dev/metal-installer/81b19949e67d7cc1d8ddc427eda7c4fb4cecac6e3e53958f316d13581029de08
+    talosImageURL: factory.talos.dev/metal-installer/95541dd4514786b16304bf471347f1d18230433638140143236ef4589b2522ea
     schematic:
       customization:
         extraKernelArgs:
@@ -76,7 +76,9 @@ nodes:
             - siderolabs/iscsi-tools
             - siderolabs/mei
             - siderolabs/util-linux-tools
-    controlPlane: true
+            - siderolabs/kata-containers
+            - siderolabs/gvisor
+    controlPlane: false
     networkInterfaces:
       - deviceSelector:
           hardwareAddr: "e8:6a:64:f4:8b:6d"
@@ -124,7 +126,7 @@ nodes:
                   - rw
     machineSpec:
       secureboot: false
-    talosImageURL: factory.talos.dev/metal-installer/837d5b9d7b4c339eaca0ff7cb596534f726ad81fe0afb59a9ecb769f92bbde7d
+    talosImageURL: factory.talos.dev/metal-installer/7a81fabba91c3dbdb0568d99436efa51afdb13104074a2fec50e56f28ebebbad
     schematic:
       customization:
         extraKernelArgs:
@@ -147,6 +149,8 @@ nodes:
                 - siderolabs/iscsi-tools
                 - siderolabs/mei
                 - siderolabs/nfs-utils
+                - siderolabs/kata-containers
+                - siderolabs/gvisor
     controlPlane: true
     networkInterfaces:
       - deviceSelector:

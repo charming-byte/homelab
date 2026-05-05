@@ -1,0 +1,33 @@
+apiVersion: extensions.agents.x-k8s.io/v1alpha1
+kind: SandboxTemplate
+metadata:
+  name: sandbox-template
+  namespace: sandbox
+spec:
+  podTemplate:
+    spec:
+      runtimeClassName: kata
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 3000
+        fsGroup: 2000
+        runAsNonRoot: true
+      containers:
+      - name: sandboxed-container
+        image: busybox
+        command: ["/bin/sh", "-c", "sleep 36000"]
+        ports:
+        - containerPort: 8888
+          protocol: TCP
+        volumeMounts:
+        - name: workspace
+          mountPath: /workspace
+  volumeClaimTemplates:
+  - metadata:
+      name: workspace
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      resources:
+        requests:
+          storage: 1Gi
+      storageClassName: local-hostpath

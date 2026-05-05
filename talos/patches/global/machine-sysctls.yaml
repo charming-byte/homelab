@@ -6,6 +6,8 @@ machine:
       - name: nbd
       - name: iscsi_tcp
       - name: configfs
+      - name: vhost_net
+      - name: vhost_vsock
   sysctls:
     fs.inotify.max_user_watches: "1048576" # Watchdog
     fs.inotify.max_user_instances: "8192" # Watchdog
