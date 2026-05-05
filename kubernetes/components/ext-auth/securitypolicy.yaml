@@ -11,9 +11,12 @@ spec:
       - cookie
       - accept
       - proxy-authorization
+      - x-forwarded-host
       - x-forwarded-proto
       - x-forwarded-for
+      - x-forwarded-uri
       - x-real-ip
+      - user-agent
     http:
       backendRefs:
         - name: authentik-outpost-proxy
