@@ -83,6 +83,21 @@ spec:
               pullPolicy: IfNotPresent
             ports:
               - containerPort: 9998
+          anthropic-proxy:
+            image:
+              repository: ghcr.io/charming-byte/openwebui-claude-code/anthropic-proxy
+              tag: v1.0.0@sha256:8b2654f30aa4cb095dcd275d944c44357baa2f5aff194cf6f82bf3ed50b3d578
+            ports:
+              - containerPort: 8081
+          claude-sandbox:
+            image:
+              repository: ghcr.io/charming-byte/openwebui-claude-code/sandbox
+              tag: v1.0.0@sha256:1303f91cb9f02513e6e8c697d847ff0434a6deb008ceebe1b4b73286b3140f9e
+            ports:
+              - containerPort: 8002
+            args:
+              - --port
+              - "8002"
           open-terminal:
             image:
               repository: ghcr.io/open-webui/open-terminal
