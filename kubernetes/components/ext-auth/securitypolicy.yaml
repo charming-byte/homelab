@@ -19,7 +19,7 @@ spec:
       - user-agent
     http:
       backendRefs:
-        - name: authentik-outpost-proxy
+        - name: ak-outpost-authentik-embedded-outpost
           namespace: security
           port: 9000
       headersToBackend:
