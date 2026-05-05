@@ -102,8 +102,9 @@ spec:
               - "0.0.0.0"
               - --port
               - "8002"
-            securityContext: #tmp
+            securityContext:
               allowPrivilegeEscalation: true
+              privileged: true #tmp
               seccompProfile:
                 type: Unconfined
               capabilities:
