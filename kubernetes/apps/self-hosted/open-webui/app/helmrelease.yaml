@@ -105,6 +105,8 @@ spec:
             securityContext: #tmp
                securityContext:
                 allowPrivilegeEscalation: true
+                seccompProfile:
+                  type: Unconfined
                 capabilities:
                   add:
                     - SYS_ADMIN
