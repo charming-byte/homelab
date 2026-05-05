@@ -47,6 +47,8 @@ spec:
                 memory: 128Mi
         replicas: 1
         strategy: RollingUpdate
+        pod:
+          automountServiceAccountToken: true
     persistence:
       config:
         enabled: true
