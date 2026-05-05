@@ -65,6 +65,7 @@ spec:
                 drop: [ALL]
               readOnlyRootFilesystem: true
         pod:
+          automountServiceAccountToken: true
           labels:
             control-plane: controller-manager
           securityContext:
