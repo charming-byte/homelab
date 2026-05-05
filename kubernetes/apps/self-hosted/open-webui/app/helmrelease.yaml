@@ -85,7 +85,7 @@ spec:
               - containerPort: 9998
           open-terminal:
             image:
-              repository: hcr.io/open-webui/open-terminal
+              repository: ghcr.io/open-webui/open-terminal
               tag: 0.11.34@sha256:5e040fe357ce4fbd3d5e59c40247dd32172fa10c51c22ded3a7843e739d06a0e
               pullPolicy: IfNotPresent
             ports:
