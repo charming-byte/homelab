@@ -6,7 +6,6 @@ components:
   - ../../components/common
 resources:
   - ./atuin/ks.yaml
- # - ./archon/ks.yaml
   - ./bentopdf/ks.yaml
   - ./calibre-web-automated/ks.yaml
   - ./immich/ks.yaml
