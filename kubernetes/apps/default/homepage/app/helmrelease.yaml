@@ -16,6 +16,8 @@ spec:
     remediation:
       retries: 5
   values:
+    global:
+      createDefaultServiceAccount: false
     controllers:
       homepage:
         annotations:
