@@ -18,6 +18,8 @@ spec:
       retries: 3
       strategy: rollback
   values:
+    global:
+      createDefaultServiceAccount: false
     controllers:
       dragonfly-operator:
         containers:
