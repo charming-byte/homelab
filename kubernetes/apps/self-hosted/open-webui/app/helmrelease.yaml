@@ -24,6 +24,7 @@ spec:
               DATABASE_TYPE: postgresql
               DEFAULT_LOCALE: de
               DEFAULT_USER_ROLE: user
+              ENABLE_EVALUATION_ARENA_MODELS: false
               ENABLE_LOGIN_FORM: false
               ENABLE_OAUTH_GROUP_CREATION: true
               ENABLE_OAUTH_GROUP_MANAGEMENT: true
