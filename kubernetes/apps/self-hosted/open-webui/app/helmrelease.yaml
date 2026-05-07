@@ -136,7 +136,7 @@ spec:
         enabled: true
         globalMounts:
           - path: /app/backend/data
-        size: 2G
+        size: 2Gi
         storageClass: local-hostpath
         type: persistentVolumeClaim
       tmpfs:
@@ -146,6 +146,16 @@ spec:
               - path: /tmp
                 subPath: tmp
         type: emptyDir
+      terminal:
+        accessMode: ReadWriteOnce
+        storageClass: local-hostpath
+        type: persistentVolumeClaim
+        size: 2Gi
+        enabled: true
+        advancedMounts:
+          open-webui:
+            claude-sandbox:
+              - path: /home/user
     route:
       app:
         annotations:
