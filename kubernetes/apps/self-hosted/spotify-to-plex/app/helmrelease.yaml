@@ -25,7 +25,7 @@ spec:
             probes:
               liveness: &probes
                 custom: true
-                enabled: true
+                enabled: false
                 spec:
                   failureThreshold: 3
                   httpGet:
