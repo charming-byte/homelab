@@ -47,6 +47,9 @@ spec:
                 drop: ["ALL"]
               readOnlyRootFilesystem: true
         strategy: RollingUpdate
+    defaultPodOptions:
+      securityContext:
+        runAsNonRoot: false
     route:
       app:
         annotations:
@@ -69,6 +72,7 @@ spec:
         globalMounts:
           - path: /tmp
           - path: /app/config
+          - path: /var/log
         type: emptyDir
     service:
       app:
