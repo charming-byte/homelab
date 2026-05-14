@@ -15,7 +15,7 @@ spec:
         containers:
           app:
             env:
-              PORT: 80
+              PORT: 4090
             envFrom:
               - secretRef:
                   name: spotify-to-plex-secret
@@ -30,7 +30,7 @@ spec:
                   failureThreshold: 3
                   httpGet:
                     path: /
-                    port: 80
+                    port: 4090
                   initialDelaySeconds: 0
                   periodSeconds: 10
                   timeoutSeconds: 1
@@ -66,7 +66,7 @@ spec:
         rules:
           - backendRefs:
               - identifier: app
-                port: 80
+                port: 4090
     persistence:
       tmpfs:
         globalMounts:
@@ -79,4 +79,4 @@ spec:
       app:
         ports:
           http:
-            port: 80
+            port: 4090
