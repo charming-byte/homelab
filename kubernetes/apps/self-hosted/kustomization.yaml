@@ -14,4 +14,5 @@ resources:
   - ./namespace.yaml
   - ./open-webui/ks.yaml
   - ./paperless-ngx/ks.yaml
+  - ./spotify-to-plex/ks.yaml
   - ./youtube-dl/ks.yaml
