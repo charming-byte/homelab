@@ -73,6 +73,7 @@ spec:
           - path: /tmp
           - path: /app/config
           - path: /var/log/supervisor
+          - path: /var/run
         type: emptyDir
     service:
       app:
