@@ -42,22 +42,18 @@ spec:
                 memory: 128Mi
                 cpu: 10m
             securityContext:
-              allowPrivilegeEscalation: false
+              allowPrivilegeEscalation: true
               capabilities:
                 drop: ["ALL"]
               readOnlyRootFilesystem: true
         strategy: RollingUpdate
-    defaultPodOptions:
-      securityContext:
-        runAsGroup: 1000
-        runAsNonRoot: true
-        runAsUser: 1000
     route:
       app:
         annotations:
           gethomepage.dev/description: Sync your Spotify playlists to Plex.
           gethomepage.dev/enabled: "true"
           gethomepage.dev/group: Self-hosted
+          gethomepage.dev/icon: spotify.png
           gethomepage.dev/name: Spotify to Plex
         hostnames: ["spotify-sync.${SECRET_DOMAIN}"]
         parentRefs:
