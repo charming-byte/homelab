@@ -25,6 +25,13 @@ spec:
                     role: ReadOnly
                     cidr: 10.42.0.0/16
             transfers:
+              download:
+                slots: 100
+                retry:
+                  incomplete: resume
+                  attempts: 3
+                  delay: 5000
+                  max_delay: 60000
               upload:
                 slots: 10
                 speed_limit: 1500
