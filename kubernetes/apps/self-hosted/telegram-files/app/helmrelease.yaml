@@ -1,0 +1,87 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: telegram-files
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: telegram-files
+  install:
+    remediation:
+      retries: 5
+  interval: 5m
+  upgrade:
+    remediation:
+      retries: 5
+  values:
+    controllers:
+      telegram-files:
+        containers:
+          app:
+            env:
+              APP_ENV: prod
+              APP_ROOT: /app/data
+              TZ: Europe/Berlin
+            envFrom:
+              - secretRef:
+                  name: "{{ .Release.Name }}-secret"
+            image:
+              repository: ghcr.io/jarvis2f/telegram-files
+              tag: 0.3.0@sha256:6f2e45dbe8eb1bf8700253a27f0fa2e1bc7331b65aaf45434b4aca7837269060
+            probes:
+              liveness: &probes
+                custom: true
+                enabled: true
+                spec:
+                  failureThreshold: 3
+                  httpGet:
+                    path: /
+                    port: 80
+                  initialDelaySeconds: 0
+                  periodSeconds: 10
+                  timeoutSeconds: 1
+              readiness: *probes
+            resources:
+              limits:
+                memory: 512Mi
+              requests:
+                cpu: 10m
+                memory: 64Mi
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop: ["ALL"]
+              readOnlyRootFilesystem: true
+    defaultPodOptions:
+      securityContext:
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+        runAsGroup: 1000
+        runAsNonRoot: true
+        runAsUser: 1000
+    persistence:
+      tmpfs:
+        globalMounts:
+          - path: /tmp
+        enabled: true
+        type: emptyDir
+      data:
+        enabled: true
+        type: persistentVolumeClaim
+        accessMode: "ReadWriteOnce"
+        size: 50Gi
+        globalMounts:
+          - path: /app/data
+    route:
+      app:
+        hostnames: ["{{ .Release.Name }}.${SECRET_DOMAIN}"]
+        parentRefs:
+          - name: envoy-internal
+            namespace: network
+    service:
+      app:
+        ports:
+          http:
+            port: 80
