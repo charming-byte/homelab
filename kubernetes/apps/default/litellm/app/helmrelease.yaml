@@ -36,7 +36,7 @@ spec:
                   name: "{{ .Release.Name }}-secret"
             image:
               repository: ghcr.io/berriai/litellm-non_root
-              tag: v1.84.0@sha256:aa665b0cf9cfa247c6e5e9ce63aa19ff33b71860662d08407675dfb6ca32ce6b
+              tag: v1.85.0@sha256:62007a403e378246104ce3daa1fadd6ae0928173127df147c86c354940a0aa72
             probes:
               liveness:
                 custom: true
