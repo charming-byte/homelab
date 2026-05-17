@@ -71,6 +71,7 @@ spec:
         enabled: true
         type: persistentVolumeClaim
         accessMode: "ReadWriteOnce"
+        storageClass: local-hostpath
         size: 50Gi
         globalMounts:
           - path: /app/data
