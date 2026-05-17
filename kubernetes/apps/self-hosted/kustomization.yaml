@@ -14,5 +14,4 @@ resources:
   - ./namespace.yaml
   - ./open-webui/ks.yaml
   - ./paperless-ngx/ks.yaml
-  - ./telegram-files/ks.yaml
   - ./youtube-dl/ks.yaml
