@@ -65,6 +65,7 @@ spec:
       tmpfs:
         globalMounts:
           - path: /tmp
+          - path: /etc/nginx
         enabled: true
         type: emptyDir
       data:
