@@ -20,7 +20,7 @@ spec:
               OUTPUT_TEMPLATE: "%(playlist_title&Playlist |)S%(playlist_title|)S%(playlist_uploader& by |)S%(playlist_uploader|)S%(playlist_autonumber& - |)S%(playlist_autonumber|)S%(playlist_count& of |)S%(playlist_count|)S%(playlist_autonumber& - |)S%(uploader,creator|UNKNOWN_AUTHOR)S - %(title|UNKNOWN_TITLE)S - %(release_date>%Y-%m-%d,upload_date>%Y-%m-%d|UNKNOWN_DATE)S.%(ext)s"
             image:
               repository: ghcr.io/alexta69/metube
-              tag: 2026.05.29@sha256:eba7a85e71f9b49f1a699e7fd90f3cef855af25fa2395c1c241af39ec48e4b1a
+              tag: 2026.05.30@sha256:c5ed53d2e9f3aff3982a599aac74388d36879722b1a553a9ae0200346a321ec9
             probes:
               liveness: &probes
                 custom: true
