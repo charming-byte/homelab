@@ -14,9 +14,8 @@
 kubeconfig
 talosconfig
 # Misc.
-.private/
 .task/
 .venv/
 .DS_Store
 Thumbs.db
-.tmp
+docs
