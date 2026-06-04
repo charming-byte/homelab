@@ -54,6 +54,7 @@ spec:
               vpn:
                 enabled: true
                 port_forwarding: true
+                api_key: ${SLSKD_VPN_GLUETUN_API_KEY}
                 polling_interval: 2500
                 gluetun:
                   url: http://localhost:8000
@@ -114,6 +115,7 @@ spec:
               VPN_TYPE: wireguard
               TZ: Europe/Berlin
               UPDATER_PERIOD: 24h
+              WIREGUARD_MTU: 1280
               WIREGUARD_PERSISTENT_KEEPALIVE_INTERVAL: 15s
               HEALTH_SERVER_ADDRESS: 0.0.0.0:9999
             envFrom:
