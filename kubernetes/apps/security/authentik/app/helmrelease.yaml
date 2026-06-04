@@ -55,6 +55,7 @@ spec:
             gethomepage.dev/enabled: "true"
             gethomepage.dev/group: Infrastructure
             gethomepage.dev/icon: authentik.svg
+            gethomepage.dev/href: https://sso.${SECRET_DOMAIN}
             gethomepage.dev/name: Authentik
             gethomepage.dev/pod-selector: app.kubernetes.io/name=authentik
             gethomepage.dev/widget.key: "{{HOMEPAGE_VAR_AUTHENTIK_TOKEN}}"
