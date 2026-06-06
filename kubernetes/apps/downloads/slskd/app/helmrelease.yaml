@@ -108,7 +108,7 @@ spec:
             env:
               FIREWALL_INPUT_PORTS: "80,9999"
               FIREWALL_OUTBOUND_SUBNETS: 10.42.0.0/16
-              SERVER_COUNTRIES: Netherlands
+              SERVER_COUNTRIES: Switzerland
               VPN_PORT_FORWARDING: on
               VPN_SERVICE_PROVIDER: protonvpn
               PORT_FORWARD_ONLY: on
