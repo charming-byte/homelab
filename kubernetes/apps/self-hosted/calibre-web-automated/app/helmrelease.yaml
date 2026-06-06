@@ -38,6 +38,8 @@ spec:
                 custom: true
                 enabled: true
                 spec:
+                  failureThreshold: 5
+                  periodSeconds: 10
                   httpGet:
                     path: /login
                     port: 8083
