@@ -112,6 +112,7 @@ spec:
               VPN_PORT_FORWARDING: on
               VPN_SERVICE_PROVIDER: protonvpn
               PORT_FORWARD_ONLY: on
+              LOG_LEVEL: debug
               VPN_TYPE: wireguard
               TZ: Europe/Berlin
               UPDATER_PERIOD: 24h
