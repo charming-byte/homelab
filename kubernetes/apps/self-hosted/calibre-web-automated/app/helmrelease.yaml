@@ -115,7 +115,7 @@ spec:
           gethomepage.dev/widget.username: "{{`{{HOMEPAGE_VAR_CALIBRE_USERNAME}}`}}"
         hostnames: ["books.${SECRET_DOMAIN}"]
         parentRefs:
-          - name: envoy-internal
+          - name: envoy-external
             namespace: network
         rules:
           - backendRefs:
