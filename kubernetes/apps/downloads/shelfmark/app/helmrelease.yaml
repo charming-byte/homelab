@@ -1,0 +1,138 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: shelfmark
+spec:
+  interval: 1h
+  chartRef:
+    kind: OCIRepository
+    name: shelfmark
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      strategy: rollback
+      retries: 3
+  values:
+    controllers:
+      shelfmark:
+        annotations:
+          reloader.stakater.com/auto: "true"
+        pod:
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
+            fsGroup: 1000
+            fsGroupChangePolicy: OnRootMismatch
+        containers:
+          app:
+            image:
+              repository: ghcr.io/calibrain/shelfmark
+              tag: v1.3.0@sha256:e891eda444b261da48a839db652034bce4e20ac09c167f14adf939dedf96b572
+            command:
+              - gunicorn
+            args:
+              - --access-logfile=-
+              - --error-logfile=-
+              - --worker-class=geventwebsocket.gunicorn.workers.GeventWebSocketWorker
+              - --workers=1
+              - -t
+              - "300"
+              - -b
+              - 0.0.0.0:8084
+              - shelfmark.main:app
+            env:
+              TZ: Europe/Berlin
+              AUTH_METHOD: oidc
+              OIDC_DISCOVERY_URL: https://sso.${SECRET_DOMAIN}/application/o/shelfmark/.well-known/openid-configuration
+              OIDC_CLIENT_ID: shelfmark
+              OIDC_ADMIN_GROUP: shelfmark Admins
+              OIDC_AUTO_PROVISION: "true"
+              OIDC_AUTO_REDIRECT: "true"
+              HIDE_LOCAL_AUTH: "true"
+            envFrom:
+              - secretRef:
+                  name: shelfmark
+            probes:
+              liveness:
+                enabled: true
+                spec:
+                  periodSeconds: 30
+                  timeoutSeconds: 5
+                  failureThreshold: 5
+              readiness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /api/health
+                    port: &port 8084
+                  periodSeconds: 10
+                  timeoutSeconds: 5
+                  failureThreshold: 5
+              startup:
+                enabled: true
+                spec:
+                  failureThreshold: 30
+                  periodSeconds: 10
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: {drop: ["ALL"]}
+            resources:
+              requests:
+                cpu: 10m
+                memory: 128Mi
+              limits:
+                memory: 512Mi
+    service:
+      app:
+        controller: shelfmark
+        ports:
+          http:
+            port: *port
+    route:
+      app:
+        annotations:
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/group: Downloads
+          gethomepage.dev/icon: shelfmark.png
+          gethomepage.dev/name: Shelfmark
+        hostnames:
+          - shelfmark.${SECRET_DOMAIN}
+        parentRefs:
+          - name: envoy-internal
+            namespace: network
+        rules:
+          - backendRefs:
+              - name: shelfmark
+                port: *port
+    persistence:
+      config:
+        accessMode: ReadWriteOnce
+        globalMounts:
+          - path: /config
+        size: 2Gi
+        storageClass: local-hostpath
+      media:
+        globalMounts:
+          - path: /media/books
+            subPath: books
+          - path: /media/audiobooks
+            subPath: audiobooks
+        path: /media
+        server: nas.internal
+        type: nfs
+      tmpfs:
+        globalMounts:
+          - path: /tmp
+            subPath: tmp
+          - path: /var/log
+            subPath: var-log
+        sizeLimit: 1Gi
+        type: emptyDir
