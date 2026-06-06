@@ -57,7 +57,7 @@ spec:
               HIDE_LOCAL_AUTH: "true"
             envFrom:
               - secretRef:
-                  name: shelfmark
+                  name: shelfmark-secret
             probes:
               liveness:
                 enabled: true
