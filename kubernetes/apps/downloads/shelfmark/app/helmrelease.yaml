@@ -49,6 +49,7 @@ spec:
             env:
               TZ: Europe/Berlin
               AUTH_METHOD: oidc
+              INGEST_DIR: /media/media/books/ingest
               OIDC_DISCOVERY_URL: https://sso.${SECRET_DOMAIN}/application/o/shelfmark/.well-known/openid-configuration
               OIDC_CLIENT_ID: shelfmark
               OIDC_ADMIN_GROUP: shelfmark Admins
@@ -121,11 +122,8 @@ spec:
         storageClass: local-hostpath
       media:
         globalMounts:
-          - path: /media/books
-            subPath: books
-          - path: /media/audiobooks
-            subPath: audiobooks
-        path: /media
+          - path: /media
+        path: /media-root
         server: nas.internal
         type: nfs
       tmpfs:
