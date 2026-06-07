@@ -1,0 +1,63 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: nas-backup
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: nas-backup
+  interval: 1h
+  values:
+    controllers:
+      nas-backup:
+        type: cronjob
+        cronjob:
+          schedule: 0 0 * * 1
+          backoffLimit: 0
+          concurrencyPolicy: Forbid
+          successfulJobsHistory: 1
+          failedJobsHistory: 1
+          ttlSecondsAfterFinished: 18000
+        containers:
+          app:
+            image:
+              repository: ghcr.io/creativeprojects/resticprofile
+              tag: 0.33.1@sha256:d4a05d2bf11344acd52652021125785998c3f8182f81d6bcdc51533580cfd4e7
+            envFrom:
+              - secretRef:
+                  name: nas-backup-secret
+            env:
+              TZ: Europe/Berlin
+            args:
+              - /bin/sh
+              - -c
+              - resticprofile -c /resticprofile/profiles.yaml --profile nas backup
+        pod:
+          restartPolicy: Never
+    persistence:
+      key-file:
+        type: secret
+        name: nas-backup-secret
+        globalMounts:
+          - path: /resticprofile/backup-key
+            subPath: backup-key
+      profiles-file:
+        type: secret
+        name: nas-backup-secret
+        globalMounts:
+          - path: /resticprofile/profiles.yaml
+            subPath: profiles.yaml
+      nas:
+        type: nfs
+        server: nas.internal
+        path: /nas
+        globalMounts:
+          - path: /nas/home-assistant
+            subPath: home-assistant
+          - path: /nas/photos
+            subPath: photos
+          - path: /nas/paperless
+            subPath: paperless
+
