@@ -12,6 +12,6 @@ resources:
   - ./mealie/ks.yaml
   - ./miniflux/ks.yaml
   - ./namespace.yaml
-  - ./open-webui/ks.yaml
   - ./paperless-ngx/ks.yaml
+  - ./searxng/ks.yaml
   - ./youtube-dl/ks.yaml
