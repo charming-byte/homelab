@@ -20,6 +20,7 @@ spec:
           successfulJobsHistory: 1
           failedJobsHistory: 1
           ttlSecondsAfterFinished: 18000
+          timeZone: Europe/Berlin
         containers:
           app:
             image:
