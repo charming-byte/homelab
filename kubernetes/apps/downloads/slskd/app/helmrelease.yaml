@@ -8,7 +8,17 @@ spec:
   chartRef:
     kind: OCIRepository
     name: *app
+  install:
+    remediation:
+      retries: 3
+    timeout: 20m
   interval: 1h
+  timeout: 20m
+  upgrade:
+    remediation:
+      retries: 3
+      strategy: rollback
+    timeout: 20m
   values:
     configMaps:
       config:
