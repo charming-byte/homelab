@@ -7,7 +7,6 @@ components:
 resources:
   - ./echo/ks.yaml
   - ./homepage/ks.yaml
-  - ./litellm/ks.yaml
   - ./mosquitto/ks.yaml
   - ./namespace.yaml
   - ./it-tools/ks.yaml
