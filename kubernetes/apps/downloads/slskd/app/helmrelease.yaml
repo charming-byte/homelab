@@ -81,15 +81,25 @@ spec:
               repository: ghcr.io/slskd/slskd
               tag: 0.25.1@sha256:ab9ed50e028b524cefdb7c1dd8ebca368a076e18441ee8ac2326473eb850b4c3
             probes:
+              startup:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    port: 80
+                    path: /
+                  initialDelaySeconds: 10
+                  timeoutSeconds: 10
+                  periodSeconds: 10
+                  failureThreshold: 90
               liveness: &probes
                 custom: true
                 enabled: true
                 spec:
-                  failureThreshold: 8
+                  failureThreshold: 3
                   httpGet:
                     port: 80
                     path: /
-                  initialDelaySeconds: 600 # delay probes to account for initial share scan
                   periodSeconds: 60
                   timeoutSeconds: 10
               readiness: *probes
