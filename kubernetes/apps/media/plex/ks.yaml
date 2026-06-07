@@ -34,7 +34,7 @@ metadata:
   name: plex-tools
 spec:
   interval: 1h
-  path: ./kubernetes/apps/default/plex/tools
+  path: ./kubernetes/apps/media/plex/tools
   postBuild:
     substituteFrom:
       - kind: Secret
