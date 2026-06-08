@@ -40,14 +40,14 @@ spec:
         type: secret
         name: plextraktsync-secret
         globalMounts:
-          - path: /app/config/config.yaml
-            subPath: config.yaml
+          - path: /app/config/config.yml
+            subPath: config.yml
       servers-file:
         type: secret
         name: plextraktsync-secret
         globalMounts:
-          - path: /app/config/servers.yaml
-            subPath: servers.yaml
+          - path: /app/config/servers.yml
+            subPath: servers.yml
       pytrakt-file:
         type: secret
         name: plextraktsync-secret
