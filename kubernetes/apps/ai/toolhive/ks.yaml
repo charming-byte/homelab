@@ -59,6 +59,9 @@ spec:
   postBuild:
     substitute:
       APP: toolhive
+    substituteFrom:
+      - kind: Secret
+        name: cluster-secrets
   commonMetadata:
     labels:
       app.kubernetes.io/name: toolhive-config
