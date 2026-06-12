@@ -155,13 +155,16 @@ spec:
                 enabled: true
                 custom: true
                 spec:
-                  httpGet:
-                    path: /
-                    port: 9999
-                  initialDelaySeconds: 20
-                  periodSeconds: 20
-                  timeoutSeconds: 10
-                  failureThreshold: 5
+                  exec:
+                    command:
+                      - sh
+                      - -c
+                      - |
+                        test -s /tmp/gluetun/forwarded_port
+                  failureThreshold: 3
+                  initialDelaySeconds: 180
+                  periodSeconds: 30
+                  timeoutSeconds: 5
               startup:
                 enabled: true
                 custom: true
