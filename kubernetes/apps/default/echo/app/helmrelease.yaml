@@ -21,7 +21,7 @@ spec:
               PROMETHEUS_ENABLED: true
             image:
               repository: ghcr.io/mendhak/http-https-echo
-              tag: 40
+              tag: 41
             probes:
               liveness: &probes
                 custom: true
