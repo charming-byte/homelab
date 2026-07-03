@@ -1,5 +1,5 @@
 ---
-# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/dragonflydb.io/dragonfly_v1alpha1.json
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/dragonflydb.io/dragonfly_v1alpha1.json
 apiVersion: dragonflydb.io/v1alpha1
 kind: Dragonfly
 metadata:
@@ -10,6 +10,7 @@ spec:
     - "--default_lua_flags=allow-undeclared-keys"
     - "--maxmemory=$(MAX_MEMORY)Mi"
     - "--proactor_threads=2"
+  networkPolicyEnabled: false
   env:
     - name: MAX_MEMORY
       valueFrom:
