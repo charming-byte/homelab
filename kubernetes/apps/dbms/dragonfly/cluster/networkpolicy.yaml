@@ -9,5 +9,7 @@ spec:
       app.kubernetes.io/name: dragonfly
   ingress:
     - ports:
+        - port: 6379
+          protocol: TCP
         - port: 9999
           protocol: TCP
