@@ -18,7 +18,7 @@ spec:
         initContainers:
           gluetun:
             env:
-              FIREWALL_INPUT_PORTS: "80,8000"
+              FIREWALL_INPUT_PORTS: "80,8000,9999"
               FIREWALL_OUTBOUND_SUBNETS: 10.42.0.0/16
               SERVER_COUNTRIES: Switzerland
               VPN_PORT_FORWARDING: on
@@ -28,6 +28,7 @@ spec:
               TZ: Europe/Berlin
               UPDATER_PERIOD: 24h
               WIREGUARD_PERSISTENT_KEEPALIVE_INTERVAL: 15s
+              HEALTH_SERVER_ADDRESS: 0.0.0.0:9999
             envFrom: &envFrom
               - secretRef:
                   name: "{{ .Release.Name }}-secret"
