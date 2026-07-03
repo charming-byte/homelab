@@ -24,7 +24,7 @@ spec:
           seed-config:
             image:
               repository: ghcr.io/home-operations/busybox
-              tag: sandbox@sha256:55bb92a2b74e3c0c0b1234a8d18a25c60a905d251ff80e33e9721f1aaafec742
+              tag: sandbox@sha256:0445abeba6777e980f4b35dfda61b227a8e93294c75c671fc1fc18e48baf371b
             command:
               - /bin/sh
               - -c
