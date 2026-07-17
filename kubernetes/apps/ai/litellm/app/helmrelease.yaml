@@ -35,8 +35,8 @@ spec:
               - secretRef:
                   name: "{{ .Release.Name }}-secret"
             image:
-              repository: ghcr.io/berriai/litellm-non_root
-              tag: v1.92.0@sha256:4e8b7e8e978907fce0270de3e8b4c5ab022a215630b8e1534ac42e3a8a67694e
+              repository: ghcr.io/berriai/litellm
+              tag: v1.92.0@sha256:9ef6f45bc0104940571765e610c52a1d761b5ec85efcd193795281086ee61277
             probes:
               liveness:
                 custom: true
@@ -70,7 +70,7 @@ spec:
               allowPrivilegeEscalation: false
               capabilities:
                 drop: ["ALL"]
-              readOnlyRootFilesystem: true
+              readOnlyRootFilesystem: false
         initContainers:
           init-db:
             envFrom: *envFrom
