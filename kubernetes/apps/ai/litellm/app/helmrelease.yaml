@@ -25,8 +25,6 @@ spec:
               - "--port"
               - "4000"
             env:
-              LITELLM_NON_ROOT: "true"
-              LITELLM_MIGRATION_DIR: "/app/migrations"
               LITELLM_DONT_SHOW_FEEDBACK_BOX: "true"
               LITELLM_MODE: PRODUCTION
               REDIS_HOST: dragonfly.dbms.svc.cluster.local
@@ -93,6 +91,8 @@ spec:
             subPath: cache
           - path: /tmp
             subPath: tmp
+          - path: /app/migrations
+            subPath: migrations
         type: emptyDir
       config:
         globalMounts:
