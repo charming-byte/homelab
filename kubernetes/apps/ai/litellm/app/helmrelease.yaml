@@ -25,12 +25,14 @@ spec:
               - "--port"
               - "4000"
             env:
-              LITELLM_DONT_SHOW_FEEDBACK_BOX: "True"
+              LITELLM_NON_ROOT: "true"
+              LITELLM_MIGRATION_DIR: "/app/migrations"
+              LITELLM_DONT_SHOW_FEEDBACK_BOX: "true"
               LITELLM_MODE: PRODUCTION
               REDIS_HOST: dragonfly.dbms.svc.cluster.local
               STORE_MODEL_IN_DB: true
               TZ: Europe/Berlin
-              USE_PRISMA_MIGRATE: "True"
+              USE_PRISMA_MIGRATE: "true"
             envFrom: &envFrom
               - secretRef:
                   name: "{{ .Release.Name }}-secret"
@@ -95,6 +97,8 @@ spec:
             subPath: tmp
           - path: /app/.cache
             subPath: app-cache
+          - path: /app/migrations
+            subPath: migrations
         type: emptyDir
       config:
         globalMounts:
