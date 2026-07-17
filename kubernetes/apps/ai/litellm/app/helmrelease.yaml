@@ -93,6 +93,8 @@ spec:
             subPath: npm
           - path: /tmp
             subPath: tmp
+          - path: /app/.cache
+            subPath: app-cache
         type: emptyDir
       config:
         globalMounts:
