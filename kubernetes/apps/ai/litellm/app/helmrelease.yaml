@@ -92,11 +92,13 @@ spec:
           - path: /.cache
             subPath: cache
           - path: /.npm
-            subPath: npm
+            subPath: .npm
           - path: /tmp
             subPath: tmp
           - path: /app/.cache
-            subPath: app-cache
+            subPath: .cache
+          - path: /app/cache
+            subPath: cache
           - path: /app/migrations
             subPath: migrations
         type: emptyDir
