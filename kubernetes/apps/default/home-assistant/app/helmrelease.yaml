@@ -92,7 +92,7 @@ spec:
               - |
                 if [ ! -s /config/configuration.yaml ]; then
                   echo "Initializing configuration.yaml"
-                  envsubst < /defaults/configuration.yaml > /config/configuration.yaml
+                  cp /defaults/configuration.yaml /config/configuration.yaml
                 else
                   echo "configuration.yaml already exists, skipping init"
                 fi
