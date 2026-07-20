@@ -163,9 +163,11 @@ spec:
       slskd-config:
         type: secret
         name: slskd-secret
-        globalMounts:
-          - path: /config/slskd.yml
-            subPath: slskd.yml
+        advancedMounts:
+          slskd:
+            app:
+              - path: /config/slskd.yml
+                subPath: slskd.yml
       media:
         globalMounts:
           - path: /media
