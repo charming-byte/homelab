@@ -166,8 +166,8 @@ spec:
         globalMounts:
           - path: /defaults/configuration.yaml
             subPath: configuration.yaml
-        name: home-assistant-configmap
-        type: configMap
+        name: home-assistant-secret
+        type: secret
       backups:
         advancedMounts:
           home-assistant:
