@@ -97,7 +97,7 @@ spec:
         image:
           registry: docker.io
           repository: prompp/prompp
-          tag: 0.8.5@sha256:158f5ae64e58df5f128b4a7650f8f16ecfa96d3e4a6609465a5858c0eb464634
+          tag: 0.8.6@sha256:14371dfa3bf3a11efae78e7682cfacaa01d96e317dec045c65549eeb98e7666d
         podMetadata:
           app.kubernetes.io/name: prometheus
         podMonitorSelectorNilUsesHelmValues: false
