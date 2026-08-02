@@ -44,7 +44,7 @@ spec:
       replicas: 1
       resources:
         limits:
-          memory: 800Mi
+          memory: 1024Mi
         requests:
           cpu: 50m
           memory: 128Mi
