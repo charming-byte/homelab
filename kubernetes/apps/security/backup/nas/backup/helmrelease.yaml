@@ -24,7 +24,7 @@ spec:
           app:
             image:
               repository: ghcr.io/creativeprojects/resticprofile
-              tag: 0.33.1@sha256:d3f2da9061eb3ed5019795d06885946fab2387943d74aaf82c4f9a5c1bb60363
+              tag: 0.33.1@sha256:ee1ba3ef1631a3572a44e8b6bcf05947e2f60bfa54c4451891477fb1f4f73ad5
             envFrom:
               - secretRef:
                   name: nas-backup-secret
