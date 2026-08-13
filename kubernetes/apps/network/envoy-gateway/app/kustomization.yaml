@@ -8,3 +8,4 @@ resources:
   - ./observability.yaml
   - ./ocirepository.yaml
   - ./grafanadashboard.yaml
+  - ./grafanadashboard-access-logs.yaml

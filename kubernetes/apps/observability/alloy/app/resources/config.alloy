@@ -55,6 +55,14 @@ discovery.relabel "pod_logs" {
     target_label = "app"
   }
 
+  // Label creation - "gateway" field from "__meta_kubernetes_pod_label_gateway_networking_k8s_io_gateway_name"
+  // Distinguishes envoy-external vs envoy-internal Gateway API pods
+  rule {
+    source_labels = ["__meta_kubernetes_pod_label_gateway_networking_k8s_io_gateway_name"]
+    action = "replace"
+    target_label = "gateway"
+  }
+
   // Label creation -  "job" field from "__meta_kubernetes_namespace" and "__meta_kubernetes_pod_container_name"
   // Concatenate values __meta_kubernetes_namespace/__meta_kubernetes_pod_container_name
   rule {
@@ -98,6 +106,24 @@ loki.process "pod_logs" {
       values = {
         cluster = "main",
       }
+  }
+
+  // Extract the ":authority" (request host) field from Envoy's JSON access logs
+  // as a "host" label, so dashboards can filter/select by hostname.
+  stage.match {
+    selector = "{app=\"envoy\"}"
+
+    stage.json {
+      expressions = {
+        authority = "\":authority\"",
+      }
+    }
+
+    stage.labels {
+      values = {
+        host = "authority",
+      }
+    }
   }
 
   forward_to = [loki.write.default.receiver]
