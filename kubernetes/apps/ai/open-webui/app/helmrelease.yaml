@@ -116,7 +116,7 @@ spec:
           open-terminal:
             image:
               repository: ghcr.io/open-webui/open-terminal
-              tag: 0.11.34@sha256:5e040fe357ce4fbd3d5e59c40247dd32172fa10c51c22ded3a7843e739d06a0e
+              tag: 0.11.35@sha256:8df3a502a5d35435547d037fa50b5f55323fc5fd0e1b97d2d3d2b5cb42538452
               pullPolicy: IfNotPresent
             ports:
               - containerPort: 8000
