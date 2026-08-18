@@ -63,13 +63,16 @@ spec:
           "type": "piechart",
           "gridPos": {"x": 12, "y": 0, "w": 12, "h": 8},
           "datasource": {"type": "loki", "uid": "$${DS_LOKI}"},
+          "options": {
+            "reduceOptions": {"values": true, "calcs": ["lastNotNull"], "fields": ""}
+          },
           "targets": [
             {
               "refId": "A",
               "datasource": {"type": "loki", "uid": "$${DS_LOKI}"},
               "expr": "sum by (response_code) (count_over_time({gateway=\"envoy-external\", host=~\"$host\"} | json response_code=\"response_code\", downstream_remote_address=\"downstream_remote_address\" | __error__=\"\" | downstream_remote_address !~ `^(10\\.|192\\.168\\.|127\\.|172\\.(1[6-9]|2[0-9]|3[01])\\.)` [$__range]))",
-              "legendFormat": "{{response_code}}",
-              "instant": true
+              "instant": true,
+              "format": "table"
             }
           ]
         },
