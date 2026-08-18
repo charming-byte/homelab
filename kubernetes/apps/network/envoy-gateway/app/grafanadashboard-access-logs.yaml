@@ -204,6 +204,12 @@ spec:
           "type": "bargauge",
           "gridPos": {"x": 12, "y": 24, "w": 12, "h": 10},
           "datasource": {"type": "loki", "uid": "$${DS_LOKI}"},
+          "options": {
+            "reduceOptions": {"values": true, "calcs": ["lastNotNull"], "fields": ""},
+            "orientation": "horizontal",
+            "displayMode": "gradient",
+            "showUnfilled": true
+          },
           "targets": [
             {
               "refId": "A",
