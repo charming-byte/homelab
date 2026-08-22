@@ -21,6 +21,8 @@ spec:
               DEEMIX_DATA_DIR: /config
               DEEMIX_MUSIC_DIR: /media/downloads/deemix
               DISABLE_OWNERSHIP_CHECK: "true"
+              S6_READ_ONLY_ROOT: 1
+              S6_YES_I_WANT_A_WORLD_WRITABLE_RUN_BECAUSE_KUBERNETES: 1
               TZ: Europe/Berlin
             image:
               repository: ghcr.io/bambanah/deemix
