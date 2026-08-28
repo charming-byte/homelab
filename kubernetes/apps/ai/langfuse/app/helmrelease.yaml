@@ -18,6 +18,7 @@ spec:
           app:
             env: &langfuseEnv
               AUTH_DISABLE_USERNAME_PASSWORD: "true"
+              CLICKHOUSE_CLUSTER_ENABLED: "false"
               CLICKHOUSE_MIGRATION_URL: clickhouse://localhost:9000
               CLICKHOUSE_URL: http://localhost:8123
               LANGFUSE_ENABLE_EXPERIMENTAL_FEATURES: "false"
