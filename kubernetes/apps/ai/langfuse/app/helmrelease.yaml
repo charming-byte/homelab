@@ -26,10 +26,13 @@ spec:
               LANGFUSE_S3_BATCH_EXPORT_ENABLED: "true"
               LANGFUSE_S3_BATCH_EXPORT_ENDPOINT: http://127.0.0.1:8333
               LANGFUSE_S3_BATCH_EXPORT_FORCE_PATH_STYLE: "true"
+              LANGFUSE_S3_BATCH_EXPORT_REGION: us-east-1
               LANGFUSE_S3_EVENT_UPLOAD_ENDPOINT: http://127.0.0.1:8333
               LANGFUSE_S3_EVENT_UPLOAD_FORCE_PATH_STYLE: "true"
+              LANGFUSE_S3_EVENT_UPLOAD_REGION: us-east-1
               LANGFUSE_S3_MEDIA_UPLOAD_ENDPOINT: http://127.0.0.1:8333
               LANGFUSE_S3_MEDIA_UPLOAD_FORCE_PATH_STYLE: "true"
+              LANGFUSE_S3_MEDIA_UPLOAD_REGION: us-east-1
               NEXTAUTH_URL: https://{{ .Release.Name }}.${SECRET_DOMAIN}
               PORT: "3000"
               SMTP_CONNECTION_URL: smtp://smtp-relay
