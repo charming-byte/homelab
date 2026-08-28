@@ -20,15 +20,15 @@ spec:
               AUTH_AUTHENTIK_ALLOW_ACCOUNT_LINKING: "true"
               AUTH_DISABLE_USERNAME_PASSWORD: "true"
               CLICKHOUSE_CLUSTER_ENABLED: "false"
-              CLICKHOUSE_MIGRATION_URL: clickhouse://localhost:9000
-              CLICKHOUSE_URL: http://localhost:8123
+              CLICKHOUSE_MIGRATION_URL: clickhouse://127.0.0.1:9000
+              CLICKHOUSE_URL: http://127.0.0.1:8123
               LANGFUSE_ENABLE_EXPERIMENTAL_FEATURES: "false"
               LANGFUSE_S3_BATCH_EXPORT_ENABLED: "true"
-              LANGFUSE_S3_BATCH_EXPORT_ENDPOINT: http://localhost:8333
+              LANGFUSE_S3_BATCH_EXPORT_ENDPOINT: http://127.0.0.1:8333
               LANGFUSE_S3_BATCH_EXPORT_FORCE_PATH_STYLE: "true"
-              LANGFUSE_S3_EVENT_UPLOAD_ENDPOINT: http://localhost:8333
+              LANGFUSE_S3_EVENT_UPLOAD_ENDPOINT: http://127.0.0.1:8333
               LANGFUSE_S3_EVENT_UPLOAD_FORCE_PATH_STYLE: "true"
-              LANGFUSE_S3_MEDIA_UPLOAD_ENDPOINT: http://localhost:8333
+              LANGFUSE_S3_MEDIA_UPLOAD_ENDPOINT: http://127.0.0.1:8333
               LANGFUSE_S3_MEDIA_UPLOAD_FORCE_PATH_STYLE: "true"
               NEXTAUTH_URL: https://{{ .Release.Name }}.${SECRET_DOMAIN}
               PORT: "3000"
