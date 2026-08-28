@@ -17,6 +17,7 @@ spec:
         containers:
           app:
             env: &langfuseEnv
+              AUTH_AUTHENTIK_ALLOW_ACCOUNT_LINKING: "true"
               AUTH_DISABLE_USERNAME_PASSWORD: "true"
               CLICKHOUSE_CLUSTER_ENABLED: "false"
               CLICKHOUSE_MIGRATION_URL: clickhouse://localhost:9000
