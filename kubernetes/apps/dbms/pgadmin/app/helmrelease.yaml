@@ -32,10 +32,10 @@ spec:
                 memory: 300Mi
         pod:
           securityContext:
-            fsGroup: 1000
+            fsGroup: 5050
             fsGroupChangePolicy: OnRootMismatch
-            runAsGroup: 1000
-            runAsUser: 1000
+            runAsGroup: 5050
+            runAsUser: 5050
     configMaps:
       servers:
         data:
@@ -82,14 +82,14 @@ spec:
           pgadmin:
             app:
               - path: /var/lib/pgadmin
-     # backups:
-     #   enabled: false
-     #   type: nfs
-      #  server: nas.internal
-     #   path: /backups
-     #   globalMounts:
-     #     - path: /pgadmin4/backups
-      #      subPath: postgres
+      backups:
+        enabled: true
+        globalMounts:
+          - path: /pgadmin4/backups
+            subPath: backups/postgres
+        path: /nas
+        server: nas.internal
+        type: nfs
       oauth:
         enabled: true
         type: secret
