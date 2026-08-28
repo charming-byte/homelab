@@ -156,18 +156,24 @@ spec:
               - /bin/sh
               - "-ec"
               - |
-                echo "Waiting for SeaweedFS bucket $${S3_BUCKET}..."
+                echo "Waiting for SeaweedFS S3 endpoint $${S3_ENDPOINT}..."
 
                 until aws \
                   --endpoint-url "$${S3_ENDPOINT}" \
-                  s3api head-bucket \
-                  --bucket "$${S3_BUCKET}" \
+                  s3api list-buckets \
                   >/dev/null 2>&1
                 do
                   sleep 5
                 done
 
-                echo "Bucket $${S3_BUCKET} is available"
+                echo "Ensuring bucket $${S3_BUCKET} exists..."
+
+                aws \
+                  --endpoint-url "$${S3_ENDPOINT}" \
+                  s3api create-bucket \
+                  --bucket "$${S3_BUCKET}" \
+                  >/dev/null 2>&1 \
+                  || echo "Bucket $${S3_BUCKET} already present"
 
                 aws \
                   --endpoint-url "$${S3_ENDPOINT}" \
@@ -185,7 +191,7 @@ spec:
               AWS_DEFAULT_REGION: us-east-1
               AWS_EC2_METADATA_DISABLED: "true"
               RETENTION_DAYS: "90"
-              S3_ENDPOINT: http://langfuse-seaweedfs:8333
+              S3_ENDPOINT: http://langfuse:8333
             envFrom: *envFrom
             image:
               repository: amazon/aws-cli
@@ -285,4 +291,8 @@ spec:
         ports:
           http:
             port: 80
+            primary: true
             targetPort: 3000
+          s3:
+            port: 8333
+            targetPort: 8333
