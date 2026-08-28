@@ -41,18 +41,39 @@ spec:
               repository: ghcr.io/langfuse/langfuse
               tag: 4.24@sha256:d9be058ee32564854bf54ff24a46603701bef96badecd95dab89c17b1d62171b
             probes:
-              liveness: &langfuseProbes
+              liveness:
+                custom: true
+                enabled: true
+                spec:
+                  failureThreshold: 5
+                  httpGet:
+                    path: /api/public/health
+                    port: 3000
+                  initialDelaySeconds: 0
+                  periodSeconds: 30
+                  timeoutSeconds: 5
+              readiness:
                 custom: true
                 enabled: true
                 spec:
                   failureThreshold: 3
                   httpGet:
-                    path: /
+                    path: /api/public/ready
                     port: 3000
                   initialDelaySeconds: 0
                   periodSeconds: 10
-                  timeoutSeconds: 1
-              readiness: *langfuseProbes
+                  timeoutSeconds: 5
+              startup:
+                custom: true
+                enabled: true
+                spec:
+                  failureThreshold: 30
+                  httpGet:
+                    path: /api/public/health
+                    port: 3000
+                  initialDelaySeconds: 10
+                  periodSeconds: 5
+                  timeoutSeconds: 5
             resources:
               limits:
                 memory: 4Gi
