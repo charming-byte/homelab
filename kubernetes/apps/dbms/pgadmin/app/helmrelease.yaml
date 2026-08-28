@@ -82,14 +82,14 @@ spec:
           pgadmin:
             app:
               - path: /var/lib/pgadmin
-      backups:
-        enabled: false
-        type: nfs
-        server: nas.internal
-        path: /backups
-        globalMounts:
-          - path: /pgadmin4/backups
-            subPath: postgres
+     # backups:
+     #   enabled: false
+     #   type: nfs
+      #  server: nas.internal
+     #   path: /backups
+     #   globalMounts:
+     #     - path: /pgadmin4/backups
+      #      subPath: postgres
       oauth:
         enabled: true
         type: secret
