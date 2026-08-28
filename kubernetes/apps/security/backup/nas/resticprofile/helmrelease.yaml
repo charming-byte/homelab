@@ -3,18 +3,19 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: nas-backup
+  name: nas-resticprofile
 spec:
   chartRef:
     kind: OCIRepository
-    name: nas-backup
+    name: nas-resticprofile
   interval: 1h
   values:
     controllers:
-      nas-backup:
+      backup:
         type: cronjob
         cronjob:
-          schedule: 0 0 * * 1
+          schedule: 0 1 * * 6
+          timeZone: Europe/Berlin
           backoffLimit: 0
           concurrencyPolicy: Forbid
           successfulJobsHistory: 1
@@ -25,9 +26,9 @@ spec:
             image:
               repository: ghcr.io/creativeprojects/resticprofile
               tag: 0.33.1@sha256:f79c8f40def120973cbf76a388989d04c7cc3a47425ed5153e4e91308a2ef1ea
-            envFrom:
+            envFrom: &envFrom
               - secretRef:
-                  name: nas-backup-secret
+                  name: nas-resticprofile-secret
             env:
               TZ: Europe/Berlin
             args:
@@ -36,16 +37,40 @@ spec:
               - resticprofile -c /resticprofile/profiles.yaml --profile nas backup
         pod:
           restartPolicy: Never
+      check:
+        type: cronjob
+        cronjob:
+          schedule: 0 3 1 * *
+          timeZone: Europe/Berlin
+          backoffLimit: 0
+          concurrencyPolicy: Forbid
+          successfulJobsHistory: 1
+          failedJobsHistory: 1
+          ttlSecondsAfterFinished: 18000
+        containers:
+          app:
+            image:
+              repository: ghcr.io/creativeprojects/resticprofile
+              tag: 0.33.1@sha256:f79c8f40def120973cbf76a388989d04c7cc3a47425ed5153e4e91308a2ef1ea
+            envFrom: *envFrom
+            env:
+              TZ: Europe/Berlin
+            args:
+              - /bin/sh
+              - -c
+              - resticprofile -c /resticprofile/profiles.yaml --profile nas check
+        pod:
+          restartPolicy: Never
     persistence:
       key-file:
         type: secret
-        name: nas-backup-secret
+        name: nas-resticprofile-secret
         globalMounts:
           - path: /resticprofile/backup-key
             subPath: backup-key
       profiles-file:
         type: secret
-        name: nas-backup-secret
+        name: nas-resticprofile-secret
         globalMounts:
           - path: /resticprofile/profiles.yaml
             subPath: profiles.yaml
