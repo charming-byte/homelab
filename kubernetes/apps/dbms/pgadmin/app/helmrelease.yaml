@@ -83,10 +83,10 @@ spec:
             app:
               - path: /var/lib/pgadmin
       backups:
-        enabled: true
+        enabled: false
         type: nfs
         server: nas.internal
-        path: /nas
+        path: /backups
         globalMounts:
           - path: /pgadmin4/backups
             subPath: postgres
