@@ -210,6 +210,12 @@ spec:
         defaultMode: 493
         name: langfuse-clickhouse-configmap
         type: configMap
+      clickhouse-users:
+        type: emptyDir
+        advancedMounts:
+          langfuse:
+            clickhouse:
+              - path: /etc/clickhouse-server/users.d
       clickhouse-logs:
         type: emptyDir
         advancedMounts:
