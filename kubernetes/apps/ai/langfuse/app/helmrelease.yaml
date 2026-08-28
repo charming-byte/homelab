@@ -108,11 +108,11 @@ spec:
                 custom: true
                 enabled: true
                 spec:
-                  failureThreshold: 3
+                  failureThreshold: 6
                   httpGet:
-                    path: /
+                    path: /healthz
                     port: 8333
-                  initialDelaySeconds: 10
+                  initialDelaySeconds: 20
                   periodSeconds: 10
                   timeoutSeconds: 5
               readiness: *seeweedfsProbes
