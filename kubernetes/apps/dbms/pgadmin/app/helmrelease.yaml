@@ -36,14 +36,77 @@ spec:
             fsGroupChangePolicy: OnRootMismatch
             runAsGroup: 5050
             runAsUser: 5050
-        strategy: Recreate
+    configMaps:
+      servers:
+        data:
+          servers.json: |
+            {
+              "Servers": {
+                "1": {
+                  "Name": "postgres18",
+                  "Group": "Servers",
+                  "Host": "postgres18.dbms.svc.cluster.local",
+                  "Port": 5432,
+                  "MaintenanceDB": "postgres",
+                  "Username": "postgres",
+                  "PassFile": "/pgadmin4/pgpass",
+                  "SSLMode": "prefer",
+                  "SSLCompression": 0,
+                  "Timeout": 10,
+                  "UseSSHTunnel": 0,
+                  "TunnelPort": "22",
+                  "TunnelAuthentication": 0
+                },
+                "2": {
+                  "Name": "immich",
+                  "Group": "Servers",
+                  "Host": "postgres18-vector-rw.dbms.svc.cluster.local",
+                  "Port": 5432,
+                  "MaintenanceDB": "postgres",
+                  "Username": "postgres",
+                  "PassFile": "/pgadmin4/pgpass",
+                  "SSLMode": "prefer",
+                  "SSLCompression": 0,
+                  "Timeout": 10,
+                  "UseSSHTunnel": 0,
+                  "TunnelPort": "22",
+                  "TunnelAuthentication": 0
+                }
+              }
+            }
     persistence:
-      config:
+      data:
         enabled: true
-        accessMode: ReadWriteOnce
-        size: 5Gi
-        storageClass: local-hostpath
-        type: persistentVolumeClaim
+        existingClaim: pgadmin-v2
+        advancedMounts:
+          pgadmin:
+            app:
+              - path: /var/lib/pgadmin
+      backups:
+        enabled: true
+        type: nfs
+        server: nas.internal
+        path: /backups
+        globalMounts:
+          - path: /pgadmin4/backups
+            subPath: postgres
+      oauth:
+        enabled: true
+        type: secret
+        name: pgadmin-secret-auth
+        advancedMounts:
+          pgadmin:
+            app:
+              - path: /pgadmin4/config_local.py
+                subPath: config_local.py
+              - path: /pgadmin4/pgpass
+                subPath: pgpass
+      servers:
+        type: configMap
+        name: pgadmin
+        globalMounts:
+          - path: /pgadmin4/servers.json
+            subPath: servers.json
     route:
       app:
         annotations:
