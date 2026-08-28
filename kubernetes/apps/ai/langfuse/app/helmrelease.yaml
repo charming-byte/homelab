@@ -323,7 +323,7 @@ spec:
           gethomepage.dev/namespace: ai
           gethomepage.dev/description: Open-source observability platform for AI applications.
           gethomepage.dev/group: AI
-          gethomepage.dev/icon: langfuse.png
+          gethomepage.dev/icon: sh-langfuse
           gethomepage.dev/name: Langfuse
         hostnames: ["{{ .Release.Name }}.${SECRET_DOMAIN}"]
         parentRefs:
