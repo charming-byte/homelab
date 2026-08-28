@@ -152,6 +152,29 @@ spec:
             image:
               repository: ghcr.io/langfuse/langfuse-worker
               tag: 4.24@sha256:d4cbfe486b0eaaead437f8c5f626420b0275557bf7f89229e4edc8fc6683f01e
+            probes:
+              liveness:
+                custom: true
+                enabled: true
+                spec:
+                  failureThreshold: 5
+                  httpGet:
+                    path: /api/health
+                    port: 3030
+                  initialDelaySeconds: 0
+                  periodSeconds: 30
+                  timeoutSeconds: 5
+              startup:
+                custom: true
+                enabled: true
+                spec:
+                  failureThreshold: 30
+                  httpGet:
+                    path: /api/health
+                    port: 3030
+                  initialDelaySeconds: 10
+                  periodSeconds: 5
+                  timeoutSeconds: 5
             resources:
               limits:
                 memory: 4Gi
