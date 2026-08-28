@@ -18,6 +18,7 @@ spec:
           app:
             env:
               TZ: Europe/Berlin
+              PGADMIN_REPLACE_SERVERS_ON_STARTUP: "True"
             envFrom:
               - secretRef:
                   name: pgadmin-secret
