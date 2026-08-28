@@ -25,7 +25,7 @@ spec:
           app:
             image:
               repository: ghcr.io/creativeprojects/resticprofile
-              tag: 0.33.1@sha256:f79c8f40def120973cbf76a388989d04c7cc3a47425ed5153e4e91308a2ef1ea
+              tag: 0.33.1@sha256:c34d15a2a2c5a88029f05d941c518680d8a29d474f70b6d7eb5379996dac1424
             envFrom: &envFrom
               - secretRef:
                   name: nas-resticprofile-secret
@@ -51,7 +51,7 @@ spec:
           app:
             image:
               repository: ghcr.io/creativeprojects/resticprofile
-              tag: 0.33.1@sha256:f79c8f40def120973cbf76a388989d04c7cc3a47425ed5153e4e91308a2ef1ea
+              tag: 0.33.1@sha256:c34d15a2a2c5a88029f05d941c518680d8a29d474f70b6d7eb5379996dac1424
             envFrom: *envFrom
             env:
               TZ: Europe/Berlin
