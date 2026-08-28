@@ -319,6 +319,8 @@ spec:
       app:
         annotations:
           gethomepage.dev/app: langfuse
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/namespace: ai
           gethomepage.dev/description: Open-source observability platform for AI applications.
           gethomepage.dev/group: AI
           gethomepage.dev/icon: langfuse.svg
