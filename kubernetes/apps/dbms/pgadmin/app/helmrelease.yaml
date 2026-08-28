@@ -19,6 +19,7 @@ spec:
             env:
               TZ: Europe/Berlin
               PGADMIN_REPLACE_SERVERS_ON_STARTUP: "True"
+              PGPASS_FILE: /pgadmin4/pgpass
             envFrom:
               - secretRef:
                   name: pgadmin-secret
@@ -50,7 +51,7 @@ spec:
                   "Port": 5432,
                   "MaintenanceDB": "postgres",
                   "Username": "postgres",
-                  "PassFile": "/pgadmin4/pgpass",
+                  "PassFile": "/.pgpass",
                   "Shared": true,
                   "SharedUsername": "postgres",
                   "SSLMode": "prefer",
@@ -67,7 +68,7 @@ spec:
                   "Port": 5432,
                   "MaintenanceDB": "postgres",
                   "Username": "postgres",
-                  "PassFile": "/pgadmin4/pgpass",
+                  "PassFile": "/.pgpass",
                   "Shared": true,
                   "SharedUsername": "postgres",
                   "SSLMode": "prefer",
