@@ -152,31 +152,31 @@ spec:
               - /bin/sh
               - "-ec"
               - |
-                echo "Waiting for SeaweedFS bucket ${S3_BUCKET}..."
+                echo "Waiting for SeaweedFS bucket $${S3_BUCKET}..."
 
                 until aws \
-                  --endpoint-url "${S3_ENDPOINT}" \
+                  --endpoint-url "$${S3_ENDPOINT}" \
                   s3api head-bucket \
-                  --bucket "${S3_BUCKET}" \
+                  --bucket "$${S3_BUCKET}" \
                   >/dev/null 2>&1
                 do
                   sleep 5
                 done
 
-                echo "Bucket ${S3_BUCKET} is available"
+                echo "Bucket $${S3_BUCKET} is available"
 
                 aws \
-                  --endpoint-url "${S3_ENDPOINT}" \
+                  --endpoint-url "$${S3_ENDPOINT}" \
                   s3api put-bucket-lifecycle-configuration \
-                  --bucket "${S3_BUCKET}" \
+                  --bucket "$${S3_BUCKET}" \
                   --lifecycle-configuration file:///config/lifecycle.json
 
                 echo "Lifecycle configuration applied"
 
                 aws \
-                  --endpoint-url "${S3_ENDPOINT}" \
+                  --endpoint-url "$${S3_ENDPOINT}" \
                   s3api get-bucket-lifecycle-configuration \
-                  --bucket "${S3_BUCKET}"
+                  --bucket "$${S3_BUCKET}"
             env:
               AWS_DEFAULT_REGION: us-east-1
               AWS_EC2_METADATA_DISABLED: "true"
