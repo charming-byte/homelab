@@ -86,9 +86,10 @@ spec:
         enabled: true
         type: nfs
         server: nas.internal
-        path: /backups/postgres
+        path: /nas
         globalMounts:
           - path: /pgadmin4/backups
+            subPath: postgres
       oauth:
         enabled: true
         type: secret
