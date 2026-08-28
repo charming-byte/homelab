@@ -1,0 +1,277 @@
+---
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: langfuse
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: langfuse
+  interval: 1h
+  values:
+    controllers:
+      langfuse:
+        annotations:
+          reloader.stakater.com/auto: "true"
+        containers:
+          app:
+            env: &langfuseEnv
+              AUTH_DISABLE_USERNAME_PASSWORD: "true"
+              CLICKHOUSE_MIGRATION_URL: clickhouse://localhost:9000
+              CLICKHOUSE_URL: http://localhost:8123
+              LANGFUSE_ENABLE_EXPERIMENTAL_FEATURES: "false"
+              LANGFUSE_S3_BATCH_EXPORT_ENABLED: "true"
+              LANGFUSE_S3_BATCH_EXPORT_ENDPOINT: http://localhost:8333
+              LANGFUSE_S3_BATCH_EXPORT_FORCE_PATH_STYLE: "true"
+              LANGFUSE_S3_EVENT_UPLOAD_ENDPOINT: http://localhost:8333
+              LANGFUSE_S3_EVENT_UPLOAD_FORCE_PATH_STYLE: "true"
+              LANGFUSE_S3_MEDIA_UPLOAD_ENDPOINT: http://localhost:8333
+              LANGFUSE_S3_MEDIA_UPLOAD_FORCE_PATH_STYLE: "true"
+              NEXTAUTH_URL: https://{{ .Release.Name }}.${SECRET_DOMAIN}
+              PORT: "3000"
+              SMTP_CONNECTION_URL: smtp://smtp-relay
+              TELEMETRY_ENABLED: "false"
+            envFrom: &envFrom
+              - secretRef:
+                  name: "{{ .Release.Name }}-secret"
+            image:
+              repository: ghcr.io/langfuse/langfuse
+              tag: 4.24@sha256:d9be058ee32564854bf54ff24a46603701bef96badecd95dab89c17b1d62171b
+            probes:
+              liveness: &langfuseProbes
+                custom: true
+                enabled: true
+                spec:
+                  failureThreshold: 3
+                  httpGet:
+                    path: /
+                    port: 3000
+                  initialDelaySeconds: 0
+                  periodSeconds: 10
+                  timeoutSeconds: 1
+              readiness: *langfuseProbes
+            resources:
+              limits:
+                memory: 4Gi
+              requests:
+                cpu: 10m
+                memory: 1Gi
+            securityContext: &securityContext
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop: ["ALL"]
+              readOnlyRootFilesystem: true
+          clickhouse:
+            envFrom: *envFrom
+            image:
+              repository: clickhouse/clickhouse-server
+              tag: 26.3.24@sha256:a98e1614cb9ad74bff6b22faa37a2452c6dd445beef27012cd5b0a449d24ba9e
+            ports:
+              - containerPort: 8123
+              - containerPort: 9000
+            probes:
+              liveness: &clickhouseProbes
+                custom: true
+                enabled: true
+                spec:
+                  failureThreshold: 3
+                  httpGet:
+                    path: /ping
+                    port: 8123
+                  initialDelaySeconds: 10
+                  periodSeconds: 10
+                  timeoutSeconds: 5
+              readiness: *clickhouseProbes
+            resources:
+              limits:
+                memory: 8Gi
+              requests:
+                memory: 2Gi
+            securityContext: *securityContext
+          seaweedfs:
+            command:
+              - "weed"
+              - "server"
+              - "-dir=/data"
+              - "-s3"
+              - "-s3.port=8333"
+            envFrom: *envFrom
+            image:
+              repository: ghcr.io/seaweedfs/seaweedfs
+              tag: 4.44.0@sha256:7b26b7ed5a01d0d5b02d398e7cdefe342bbb57d019b2705ac627df4806165f7d
+            ports:
+              - containerPort: 8333
+            probes:
+              liveness: &seeweedfsProbes
+                custom: true
+                enabled: true
+                spec:
+                  failureThreshold: 3
+                  httpGet:
+                    path: /
+                    port: 8333
+                  initialDelaySeconds: 10
+                  periodSeconds: 10
+                  timeoutSeconds: 5
+              readiness: *seeweedfsProbes
+            resources:
+              limits:
+                memory: 4Gi
+              requests:
+                memory: 1Gi
+            securityContext: *securityContext
+          worker:
+            env: *langfuseEnv
+            envFrom: *envFrom
+            image:
+              repository: ghcr.io/langfuse/langfuse
+              tag: 4.24@sha256:d9be058ee32564854bf54ff24a46603701bef96badecd95dab89c17b1d62171b
+            resources:
+              limits:
+                memory: 4Gi
+              requests:
+                cpu: 10m
+                memory: 1Gi
+            securityContext: *securityContext
+        initContainers:
+          init-db:
+            envFrom: *envFrom
+            image:
+              repository: ghcr.io/home-operations/postgres-init
+              tag: 18.6.0@sha256:b6d3af974df781c673d37e49bdddfa14a6f5be28b18d2cb7713f0449bea4057b
+            securityContext: *securityContext
+        strategy: RollingUpdate
+      seaweedfs-lifecycle:
+        annotations:
+          helm.sh/hook: post-install,post-upgrade
+          helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
+        containers:
+          main:
+            command:
+              - /bin/sh
+              - "-ec"
+              - |
+                echo "Waiting for SeaweedFS bucket ${S3_BUCKET}..."
+
+                until aws \
+                  --endpoint-url "${S3_ENDPOINT}" \
+                  s3api head-bucket \
+                  --bucket "${S3_BUCKET}" \
+                  >/dev/null 2>&1
+                do
+                  sleep 5
+                done
+
+                echo "Bucket ${S3_BUCKET} is available"
+
+                aws \
+                  --endpoint-url "${S3_ENDPOINT}" \
+                  s3api put-bucket-lifecycle-configuration \
+                  --bucket "${S3_BUCKET}" \
+                  --lifecycle-configuration file:///config/lifecycle.json
+
+                echo "Lifecycle configuration applied"
+
+                aws \
+                  --endpoint-url "${S3_ENDPOINT}" \
+                  s3api get-bucket-lifecycle-configuration \
+                  --bucket "${S3_BUCKET}"
+            env:
+              AWS_DEFAULT_REGION: us-east-1
+              AWS_EC2_METADATA_DISABLED: "true"
+              RETENTION_DAYS: "90"
+              S3_ENDPOINT: http://langfuse-seaweedfs:8333
+            envFrom: *envFrom
+            image:
+              repository: amazon/aws-cli
+              tag: 2.36.33@sha256:4a48238a344c36bdb37922c00f5364941c9decc6efe9cef70fa45c260278024b
+            resources:
+              limits:
+                memory: 128Mi
+              requests:
+                cpu: 10m
+                memory: 32Mi
+            securityContext: *securityContext
+        type: job
+    defaultPodOptions:
+      securityContext:
+        runAsGroup: 65534
+        runAsNonRoot: true
+        runAsUser: 65534
+    persistence:
+      clickhouse-config:
+        advancedMounts:
+          langfuse:
+            clickhouse:
+              - path: /etc/clickhouse-server/config.d/99-disable-system-logs.xml
+                readOnly: true
+                subPath: 99-disable-system-logs.xml
+        defaultMode: 493
+        name: langfuse-clickhouse-configmap
+        type: configMap
+      clickhouse-logs:
+        type: emptyDir
+        advancedMounts:
+          langfuse:
+            clickhouse:
+              - path: /var/log/clickhouse-server
+                subPath: clickhouse-server
+      clickhouse-data:
+        accessMode: ReadWriteOnce
+        advancedMounts:
+          langfuse:
+            clickhouse:
+              - path: /var/lib/clickhouse
+                subPath: clickhouse
+        size: 50Gi
+        storageClass: local-hostpath
+        type: persistentVolumeClaim
+      seaweedfs-lifecycle-config:
+        advancedMounts:
+          seaweedfs-lifecycle:
+            main:
+              - path: /config/lifecycle.json
+                readOnly: true
+                subPath: lifecycle.json
+        defaultMode: 493
+        name: langfuse-seaweedfs-configmap
+        type: configMap
+      seeweedfs-data:
+        accessMode: ReadWriteOnce
+        advancedMounts:
+          langfuse:
+            seaweedfs:
+              - path: /data
+                subPath: data
+        size: 50Gi
+        storageClass: local-hostpath
+        type: persistentVolumeClaim
+      tmpfs:
+        globalMounts:
+          - path: /tmp
+            subPath: tmp
+        type: emptyDir
+    route:
+      app:
+        annotations:
+          gethomepage.dev/app: langfuse
+          gethomepage.dev/description: Open-source observability platform for AI applications.
+          gethomepage.dev/group: AI
+          gethomepage.dev/icon: langfuse.svg
+          gethomepage.dev/name: Langfuse
+        hostnames: ["{{ .Release.Name }}.${SECRET_DOMAIN}"]
+        parentRefs:
+          - name: envoy-internal
+            namespace: network
+            sectionName: https
+        rules:
+          - backendRefs:
+              - identifier: app
+                port: 80
+    service:
+      app:
+        ports:
+          http:
+            port: 80
+            targetPort: 3000
