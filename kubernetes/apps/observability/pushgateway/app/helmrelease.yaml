@@ -10,6 +10,8 @@ spec:
     name: pushgateway
   interval: 1h
   values:
+    extraVars:
+      - TZ: Europe/Berlin
     fullnameOverride: pushgateway
     replicaCount: 2
     route:
