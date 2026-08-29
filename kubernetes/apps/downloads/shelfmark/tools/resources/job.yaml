@@ -1,0 +1,116 @@
+---
+# Rendered and created at runtime by create-job.sh. Placeholders __SUFFIX__,
+# __SOURCE_PATH_B64__, __TITLE_B64__, __AUTHOR_B64__ are substituted (base64,
+# sed-safe charset). This file is NOT applied by Flux - it is the Job template.
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: audiobook-m4b-__SUFFIX__
+  namespace: downloads
+  labels:
+    app.kubernetes.io/name: audiobook-m4b
+spec:
+  backoffLimit: 1
+  activeDeadlineSeconds: 7200
+  ttlSecondsAfterFinished: 86400
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: audiobook-m4b
+    spec:
+      restartPolicy: Never
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+      initContainers:
+        - name: asin-lookup
+          image: docker.io/library/python:3.12-alpine@sha256:d09d15e60962ca365d1cd544a48773bac9d33f2fb1b00f2aa0deec78ade7dc31
+          command: ["python3", "/scripts/asin_lookup.py"]
+          env:
+            - { name: SOURCE_PATH_B64, value: "__SOURCE_PATH_B64__" }
+            - { name: TITLE_B64, value: "__TITLE_B64__" }
+            - { name: AUTHOR_B64, value: "__AUTHOR_B64__" }
+            - { name: ASIN_OUT, value: "/work/asin" }
+          volumeMounts:
+            - { name: work, mountPath: /work }
+            - { name: media, mountPath: /media, readOnly: true }
+            - { name: scripts, mountPath: /scripts, readOnly: true }
+          resources:
+            requests: { cpu: 50m, memory: 64Mi }
+            limits: { memory: 256Mi }
+        - name: merge
+          image: ghcr.io/djdembeck/m4b-merge:1.0.0@sha256:cc61635ca687ed12eb57f7d733b1e47de1427f7f3b4b8d17a8f42b950c2b867b
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              set -e
+              SRC="$(printf '%s' "$SOURCE_PATH_B64" | base64 -d)"
+              ASIN=""
+              [ -s /work/asin ] && ASIN="$(cut -d' ' -f1 /work/asin)"
+              mkdir -p /work/merged /work/tmp
+              echo "merging: $SRC  (asin=${ASIN:-none})"
+              exec m4b-merge -i "$SRC" ${ASIN:+-a "$ASIN"} \
+                -o /work/merged -p "{title}" --num-cpus 4
+          env:
+            - { name: SOURCE_PATH_B64, value: "__SOURCE_PATH_B64__" }
+            - { name: HOME, value: "/work" }
+            - { name: TMPDIR, value: "/work/tmp" }
+          volumeMounts:
+            - { name: work, mountPath: /work }
+            - { name: media, mountPath: /media }
+            - { name: tmp, mountPath: /tmp }
+          resources:
+            requests: { cpu: "1", memory: 512Mi }
+            limits: { cpu: "4", memory: 1Gi }
+      containers:
+        - name: beets
+          image: ghcr.io/neopterygii/beets-audible:latest@sha256:583c2839a5cbe27a8f215e8f157a65f3c924f88c327001d0cdd4acae55fabef0
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              set -e
+              export HOME=/config BEETSDIR=/config
+              ASIN=""
+              [ -s /work/asin ] && ASIN="$(cut -d' ' -f1 /work/asin)"
+              BOOK="$(find /work/merged -mindepth 1 -maxdepth 1 -type d | head -n1)"
+              if [ -z "$BOOK" ]; then
+                echo "no merged book directory in /work/merged - nothing to import"
+                exit 0
+              fi
+              echo "importing: $BOOK  (asin=${ASIN:-none})"
+              if ! /lsiopy/bin/beet -c /cfg/config.yaml import -q ${ASIN:+--search-id "$ASIN"} "$BOOK"; then
+                echo "beet import failed - moving merged output to _unsorted"
+                mkdir -p /media/media/audiobooks/library/_unsorted
+                mv "$BOOK"/* /media/media/audiobooks/library/_unsorted/
+              fi
+          volumeMounts:
+            - { name: work, mountPath: /work }
+            - { name: media, mountPath: /media }
+            - { name: beets-config, mountPath: /cfg, readOnly: true }
+            - { name: beets-home, mountPath: /config }
+            - { name: tmp, mountPath: /tmp }
+          resources:
+            requests: { cpu: 250m, memory: 256Mi }
+            limits: { cpu: "1", memory: 512Mi }
+      volumes:
+        - name: work
+          emptyDir: { sizeLimit: 12Gi }
+        - name: tmp
+          emptyDir: { sizeLimit: 4Gi }
+        - name: beets-home
+          emptyDir: {}
+        - name: media
+          nfs:
+            server: nas.internal
+            path: /media-root
+        - name: scripts
+          configMap:
+            name: audiobook-m4b-scripts
+            defaultMode: 0755
+        - name: beets-config
+          configMap:
+            name: audiobook-m4b-beets

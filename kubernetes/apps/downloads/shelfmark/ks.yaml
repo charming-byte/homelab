@@ -33,3 +33,32 @@ spec:
     namespace: flux-system
   targetNamespace: downloads
   wait: false
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/kustomize.toolkit.fluxcd.io/kustomization_v1.json
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: shelfmark-tools
+  namespace: downloads
+spec:
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: shelfmark-tools
+  dependsOn:
+    - name: shelfmark
+      namespace: downloads
+    - name: onepassword-connect
+      namespace: kube-system
+  interval: 1h
+  path: ./kubernetes/apps/downloads/shelfmark/tools
+  postBuild:
+    substituteFrom:
+      - kind: Secret
+        name: cluster-secrets
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+    namespace: flux-system
+  targetNamespace: downloads
+  wait: false

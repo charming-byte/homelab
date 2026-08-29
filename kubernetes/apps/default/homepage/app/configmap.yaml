@@ -24,45 +24,54 @@ data:
       searchDescriptions: true
       hideInternetSearch: true
     layout:
-      Calendar:
-        style: row
-        header: false
       Home:
+        tab: Home
         style: row
         columns: 2
         icon: mdi-home-analytics
       AI:
+        tab: Home
         style: row
         columns: 2
         icon: si-openapiinitiative
       Media:
+        tab: Home
         useEqualHeights: true
         style: row
         columns: 3
         icon: mdi-play-circle
       Downloads:
+        tab: Home
         style: row
         columns: 3
         icon: mdi-download-circle
         useEqualHeights: true
       Home Automation:
+        tab: Home
         style: column
         columns: 3
         icon: mdi-home-automation
         useEqualHeights: true
       Self-hosted:
+        tab: Home
         useEqualHeights: true
         style: row
         columns: 3
         icon: mdi-apps
       Infrastructure:
+        tab: Home
         useEqualHeights: true
         style: row
         columns: 3
         icon: mdi-server-network
       Storage:
+        tab: Home
         style: column
         icon: mdi-database
+      Calendar:
+        tab: Calendar
+        style: row
+        header: false
   custom.css: ""
   custom.js: ""
   bookmarks.yaml: |

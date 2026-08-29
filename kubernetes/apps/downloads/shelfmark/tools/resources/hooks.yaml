@@ -1,0 +1,22 @@
+---
+# adnanh/webhook hook definition. Loaded automatically from /config/hooks.yaml.
+# Shelfmark's notify-webhook.py POSTs an HMAC-signed JSON body; on a valid
+# signature this runs create-job.sh which creates the conversion Job.
+- id: request-audiobook-m4b-conversion
+  execute-command: /config/create-job.sh
+  command-working-directory: /tmp
+  include-command-output-in-response: true
+  pass-arguments-to-command:
+    - source: payload
+      name: source_path # base64
+    - source: payload
+      name: title # base64
+    - source: payload
+      name: author # base64
+  trigger-rule:
+    match:
+      type: payload-hmac-sha256
+      secret: '{{ getenv "SHELFMARK_WEBHOOK_SECRET" }}'
+      parameter:
+        source: header
+        name: X-Signature

@@ -1,0 +1,23 @@
+---
+# yaml-language-server: $schema=https://json.schemastore.org/kustomization
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ./webhook
+configMapGenerator:
+  # Consumed by the webhook Deployment (mounted at /config).
+  - name: webhook-config
+    files:
+      - resources/hooks.yaml
+      - resources/create-job.sh
+      - resources/job.yaml
+  # Consumed by the audiobook-m4b conversion Job (created at runtime by the
+  # webhook). Mounted read-only into the Job pods.
+  - name: audiobook-m4b-scripts
+    files:
+      - resources/asin_lookup.py
+  - name: audiobook-m4b-beets
+    files:
+      - config.yaml=resources/beets-config.yaml
+generatorOptions:
+  disableNameSuffixHash: true

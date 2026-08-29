@@ -56,6 +56,13 @@ spec:
               OIDC_AUTO_PROVISION: "true"
               OIDC_AUTO_REDIRECT: "true"
               HIDE_LOCAL_AUTH: "true"
+              # Post-download hook: notify the audiobook-m4b webhook, which
+              # creates a Job that converts non-m4b audiobooks to a tagged m4b.
+              CUSTOM_SCRIPT: /scripts/notify-webhook.py
+              CUSTOM_SCRIPT_PATH_MODE: absolute
+              CUSTOM_SCRIPT_JSON_PAYLOAD: "true"
+              AUDIOBOOK_WEBHOOK_URL: http://webhook.downloads.svc.cluster.local:8080/hooks/request-audiobook-m4b-conversion
+              PYTHONDONTWRITEBYTECODE: "1"
             envFrom:
               - secretRef:
                   name: shelfmark-secret
@@ -120,6 +127,13 @@ spec:
           - path: /config
         size: 2Gi
         storageClass: local-hostpath
+      scripts:
+        type: configMap
+        name: shelfmark-scripts
+        defaultMode: 0755
+        globalMounts:
+          - path: /scripts
+            readOnly: true
       media:
         globalMounts:
           - path: /media
