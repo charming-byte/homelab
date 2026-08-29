@@ -11,7 +11,8 @@ spec:
   interval: 1h
   values:
     extraVars:
-      - TZ: Europe/Berlin
+      - name: TZ
+        value: Europe/Berlin
     fullnameOverride: pushgateway
     replicaCount: 2
     route:
