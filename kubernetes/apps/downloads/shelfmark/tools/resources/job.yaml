@@ -28,7 +28,7 @@ spec:
         fsGroupChangePolicy: OnRootMismatch
       initContainers:
         - name: asin-lookup
-          image: docker.io/library/python:3.12-alpine@sha256:d09d15e60962ca365d1cd544a48773bac9d33f2fb1b00f2aa0deec78ade7dc31
+          image: docker.io/library/python:3.14-alpine@sha256:05b2b8b732ecd268fee8727a369f936f022d1321b59befd13c30ede22769dcdc
           command: ["python3", "/scripts/asin_lookup.py"]
           env:
             - { name: SOURCE_PATH_B64, value: "__SOURCE_PATH_B64__" }
