@@ -41,7 +41,7 @@ spec:
               startup: *probes
             resources:
               limits:
-                memory: 512Mi
+                memory: 756Mi
               requests:
                 cpu: 15m
                 memory: 128Mi
