@@ -175,8 +175,8 @@ spec:
             - { name: beets-home, mountPath: /config }
             - { name: tmp, mountPath: /tmp }
           resources:
-            requests: { cpu: 250m, memory: 256Mi }
-            limits: { cpu: "1", memory: 512Mi }
+            requests: { cpu: 250m, memory: 512Mi }
+            limits: { cpu: "1", memory: 2Gi }
       volumes:
         - name: work
           emptyDir: { sizeLimit: 12Gi }
