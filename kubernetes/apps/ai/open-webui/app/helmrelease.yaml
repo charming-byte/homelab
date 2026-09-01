@@ -49,8 +49,6 @@ spec:
               RAG_WEB_SEARCH_ENGINE: tavily
               RAG_EMBEDDING_ENGINE: openai
               RAG_EMBEDDING_MODEL: text-embedding-ada-002
-              WEBSOCKET_MANAGER: redis
-              WEBSOCKET_REDIS_URL: redis://dragonfly.dbms.svc.cluster.local:6379/6
               WEBUI_URL: https://aichat.${SECRET_DOMAIN}
             envFrom: &envFrom
               - secretRef:
@@ -84,35 +82,35 @@ spec:
               pullPolicy: IfNotPresent
             ports:
               - containerPort: 9998
-          anthropic-proxy:
-            image:
-              repository: ghcr.io/charming-byte/openwebui-claude-code/anthropic-proxy
-              tag: v1.0.0@sha256:8b2654f30aa4cb095dcd275d944c44357baa2f5aff194cf6f82bf3ed50b3d578
-            ports:
-              - containerPort: 8081
-            envFrom: *envFrom
-          claude-sandbox:
-            image:
-              repository: ghcr.io/charming-byte/openwebui-claude-code/sandbox
-              tag: v1.0.0@sha256:1303f91cb9f02513e6e8c697d847ff0434a6deb008ceebe1b4b73286b3140f9e
-            ports:
-              - containerPort: 8002
-            args:
-              - run
-              - --host
-              - "0.0.0.0"
-              - --port
-              - "8002"
-            securityContext:
-              allowPrivilegeEscalation: true
-              privileged: true #tmp
-              seccompProfile:
-                type: Unconfined
-              capabilities:
-                add:
-                  - SYS_ADMIN
-                  - SYS_CHROOT
-            envFrom: *envFrom
+          # anthropic-proxy:
+          #   image:
+          #     repository: ghcr.io/charming-byte/openwebui-claude-code/anthropic-proxy
+          #     tag: v1.0.0@sha256:8b2654f30aa4cb095dcd275d944c44357baa2f5aff194cf6f82bf3ed50b3d578
+          #   ports:
+          #     - containerPort: 8081
+          #   envFrom: *envFrom
+          # claude-sandbox:
+          #   image:
+          #     repository: ghcr.io/charming-byte/openwebui-claude-code/sandbox
+          #     tag: v1.0.0@sha256:1303f91cb9f02513e6e8c697d847ff0434a6deb008ceebe1b4b73286b3140f9e
+          #   ports:
+          #     - containerPort: 8002
+          #   args:
+          #     - run
+          #     - --host
+          #     - "0.0.0.0"
+          #     - --port
+          #     - "8002"
+          #   securityContext:
+          #     allowPrivilegeEscalation: true
+          #     privileged: true #tmp
+          #     seccompProfile:
+          #       type: Unconfined
+          #     capabilities:
+          #       add:
+          #         - SYS_ADMIN
+          #         - SYS_CHROOT
+          #   envFrom: *envFrom
           open-terminal:
             image:
               repository: ghcr.io/open-webui/open-terminal
