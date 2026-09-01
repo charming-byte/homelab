@@ -6,14 +6,23 @@ Inputs (env):
   SOURCE_PATH_B64         - base64 of the downloaded file or folder path
   ASIN_OUT               - file to write the result to (default /work/asin)
   CHAPTERS_OUT          - ffmetadata chapter file to write (default /work/chapters.ffmeta)
+  METADATA_OUT         - beets-audible metadata.yml to write (default /work/metadata.yml)
+  COVER_OUT            - cover image to download to (default /work/cover.jpg)
+  TAGS_OUT             - ffmetadata global-tag file to write (default /work/tags.ffmeta)
   MIN_SCORE             - minimum match score to accept (default 0.75)
 
-Output: writes "<ASIN> <region>" to ASIN_OUT when a confident match is found,
-otherwise writes nothing. On a match it also fetches that region's chapters from
-Audnex and writes them to CHAPTERS_OUT in ffmetadata form - m4b-merge's own
-Audnex client sends no region and 404s on any non-us ASIN, so the merge step
-embeds this file instead. Always exits 0 - a missing ASIN just means the merge
-runs without Audible enrichment, which is far better than the wrong book.
+Output: writes "<ASIN> <region>" to ASIN_OUT when a confident match is found.
+On a match it is the single metadata resolver for the pipeline: it fetches the
+region's book + chapters from Audnex and writes CHAPTERS_OUT (ffmetadata),
+METADATA_OUT (a beets-audible metadata.yml so beets tags deterministically
+without a fuzzy Audible lookup), COVER_OUT (cover art) and TAGS_OUT (ffmetadata
+global tags the merge step embeds as a floor). m4b-merge is never handed an ASIN
+- its own Audnex client sends no region and 404s on any non-us book.
+
+With no confident match it still writes TAGS_OUT from the Shelfmark-provided
+title / author so the merged file is at least named and shelved correctly.
+Always exits 0 - a missing ASIN just means no Audible enrichment, which is far
+better than the wrong book.
 
 Matching strategy:
   * query Audible's catalog with the dedicated `title` filter, NOT a keyword
@@ -183,10 +192,153 @@ def write_chapters(asin: str, region: str, path: str) -> None:
         log(f"could not write {path}: {exc}")
 
 
+def fetch_book(asin: str, region: str) -> dict | None:
+    """Fetch the region's book record from Audnex."""
+    url = f"{AUDNEX}/books/{asin}?region={region}"
+    try:
+        req = urllib.request.Request(
+            url, headers={"User-Agent": UA, "Accept": "application/json"}
+        )
+        with urllib.request.urlopen(req, timeout=TIMEOUT) as resp:
+            return json.load(resp)
+    except Exception as exc:  # noqa: BLE001
+        log(f"book fetch failed for {asin} ({region}): {exc}")
+        return None
+
+
+def _ffmeta_escape(value: str) -> str:
+    """Backslash-escape the ffmetadata reserved characters."""
+    return re.sub(r"([=;#\n\\])", r"\\\1", value or "")
+
+
+def write_tags_ffmeta(path: str, title: str, authors: str, **extra: str) -> None:
+    """Write FFMETADATA1 global tags the merge step embeds into the .m4b.
+
+    beets should overwrite these; they exist so a book still carries a real
+    title / author when beets falls back to an as-is import.
+    """
+    if not title:
+        return
+    tags = {
+        "title": title,
+        "album": title,
+        "artist": authors,
+        "album_artist": authors,
+        "sort_album": title,
+    }
+    tags.update({k: v for k, v in extra.items() if v})
+    lines = [";FFMETADATA1"]
+    lines += [f"{k}={_ffmeta_escape(str(v))}" for k, v in tags.items() if v]
+    try:
+        with open(path, "w") as fh:
+            fh.write("\n".join(lines) + "\n")
+        log(f"wrote global tags -> {path}")
+    except OSError as exc:
+        log(f"could not write {path}: {exc}")
+
+
+def write_metadata_yml(book: dict, path: str) -> None:
+    """Emit a beets-audible metadata.yml so beets tags without an Audible lookup.
+
+    Every key get_album_from_yaml_metadata() reads is populated. Scalars and
+    lists go through json.dumps (valid YAML flow syntax, handles quoting and
+    newlines); releaseDate stays an unquoted date so PyYAML yields a date obj.
+    """
+    authors = [a.get("name", "") for a in book.get("authors") or [] if a.get("name")]
+    narrators = [n.get("name", "") for n in book.get("narrators") or [] if n.get("name")]
+    genres = [
+        g.get("name", "")
+        for g in book.get("genres") or []
+        if g.get("name") and g.get("type") == "genre"
+    ] or [g.get("name", "") for g in book.get("genres") or [] if g.get("name")]
+    # YYYY-MM-DD from the ISO string; beets does release_date.year unconditionally
+    release = (book.get("releaseDate") or "")[:10]
+    if not re.match(r"^\d{4}-\d{2}-\d{2}$", release):
+        release = "1970-01-01"
+    description = book.get("summary") or book.get("description") or ""
+    language = (book.get("language") or "english").capitalize()
+    series = book.get("seriesPrimary") or {}
+
+    def j(value) -> str:
+        return json.dumps(value, ensure_ascii=False)
+
+    lines = [
+        f"title: {j(book.get('title') or '')}",
+        f"authors: {j(authors)}",
+        f"narrators: {j(narrators)}",
+        f"description: {j(description)}",
+        f"genres: {j(genres)}",
+        f"publisher: {j(book.get('publisherName') or '')}",
+        f"language: {j(language)}",
+        f"releaseDate: {release}",
+    ]
+    if book.get("subtitle"):
+        lines.append(f"subtitle: {j(book['subtitle'])}")
+    if series.get("name"):
+        lines.append(f"series: {j(series['name'])}")
+        if series.get("position"):
+            lines.append(f"seriesPosition: {j(str(series['position']))}")
+    try:
+        with open(path, "w") as fh:
+            fh.write("\n".join(lines) + "\n")
+        log(f"wrote metadata.yml -> {path}")
+    except OSError as exc:
+        log(f"could not write {path}: {exc}")
+
+
+def write_cover(url: str, path: str) -> None:
+    """Best-effort cover download; a miss just means no cover.jpg in the folder."""
+    if not url:
+        return
+    try:
+        req = urllib.request.Request(url, headers={"User-Agent": UA})
+        with urllib.request.urlopen(req, timeout=TIMEOUT) as resp:
+            data = resp.read()
+        with open(path, "wb") as fh:
+            fh.write(data)
+        log(f"wrote cover ({len(data)} bytes) -> {path}")
+    except Exception as exc:  # noqa: BLE001
+        log(f"cover fetch failed from {url}: {exc}")
+
+
 def emit(asin: str, region: str) -> None:
     with open(os.environ.get("ASIN_OUT", "/work/asin"), "w") as fh:
         fh.write(f"{asin} {region}")
     write_chapters(asin, region, os.environ.get("CHAPTERS_OUT", "/work/chapters.ffmeta"))
+
+    book = fetch_book(asin, region)
+    if not book:
+        # No book record - fall back to whatever Shelfmark told us.
+        write_tags_ffmeta(
+            os.environ.get("TAGS_OUT", "/work/tags.ffmeta"),
+            b64("TITLE_B64"),
+            b64("AUTHOR_B64"),
+        )
+        return
+
+    authors = ", ".join(a.get("name", "") for a in book.get("authors") or [] if a.get("name"))
+    write_metadata_yml(book, os.environ.get("METADATA_OUT", "/work/metadata.yml"))
+    write_cover(book.get("image") or "", os.environ.get("COVER_OUT", "/work/cover.jpg"))
+    write_tags_ffmeta(
+        os.environ.get("TAGS_OUT", "/work/tags.ffmeta"),
+        book.get("title") or b64("TITLE_B64"),
+        authors or b64("AUTHOR_B64"),
+        date=(book.get("releaseDate") or "")[:4],
+        genre=next(
+            (g.get("name", "") for g in book.get("genres") or [] if g.get("type") == "genre"),
+            "",
+        ),
+    )
+
+
+def emit_fallback_tags() -> None:
+    """No confident ASIN: still give the merge step a real title / author."""
+    title = b64("TITLE_B64")
+    if not title:
+        return
+    write_tags_ffmeta(
+        os.environ.get("TAGS_OUT", "/work/tags.ffmeta"), title, b64("AUTHOR_B64")
+    )
 
 
 def main() -> None:
@@ -247,6 +399,7 @@ def main() -> None:
         emit(asin, region)
     else:
         log(f"no confident match (best score={ratio:.2f}) - continuing without ASIN")
+        emit_fallback_tags()
 
 
 if __name__ == "__main__":

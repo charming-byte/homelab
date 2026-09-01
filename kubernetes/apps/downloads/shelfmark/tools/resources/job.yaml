@@ -49,10 +49,10 @@ spec:
             - |
               set -e
 
-              # One [CHAPTER] per source file, offsets from real durations.
-              # m4b-merge only chapterizes when its Audnex lookup succeeds, and
-              # its client sends no region so any non-us ASIN 404s - without this
-              # a multi-file source would merge into one chapterless blob.
+              # One [CHAPTER] per source file, offsets from real durations. Used
+              # only as a fallback: m4b-merge is never handed an ASIN (its Audnex
+              # client sends no region and 404s on non-us books), and Audnex
+              # chapters may not line up with a different / abridged edition.
               build_file_chapters() {
                 _list=/work/tmp/flist
                 find "$1" -type f \( -iname '*.mp3' -o -iname '*.m4a' \
@@ -83,61 +83,102 @@ spec:
                   "$1" 2>/dev/null | grep -c . || true
               }
 
+              # Last END= offset (ms) in an ffmetadata chapter file.
+              ffmeta_span() { awk -F= '/^END=/ { v = $2 } END { print v + 0 }' "$1"; }
+
+              file_duration_ms() {
+                _d="$(ffprobe -v error -show_entries format=duration \
+                  -of default=nw=1:nk=1 "$1" 2>/dev/null || true)"
+                awk -v d="$_d" 'BEGIN { printf "%d", d * 1000 }'
+              }
+
               SRC="$(printf '%s' "$SOURCE_PATH_B64" | base64 -d)"
-              ASIN=""; REGION=""
-              if [ -s /work/asin ]; then
-                ASIN="$(cut -d' ' -f1 /work/asin)"
-                REGION="$(cut -d' ' -f2 /work/asin)"
-              fi
+              TITLE="$(printf '%s' "${TITLE_B64:-}" | base64 -d 2>/dev/null || true)"
               mkdir -p /work/merged /work/tmp
 
-              # m4b-merge can only resolve us-region ASINs; asin_lookup has
-              # already written the correct-region chapters to
-              # /work/chapters.ffmeta for every other case.
-              MERGE_ASIN=""
-              [ "$REGION" = "us" ] && MERGE_ASIN="$ASIN"
-
-              echo "merging: $SRC (asin=${ASIN:-none} region=${REGION:-none} m4b-merge-a=${MERGE_ASIN:-none})"
-              m4b-merge -i "$SRC" ${MERGE_ASIN:+-a "$MERGE_ASIN"} \
-                -o /work/merged -p "{title}" --num-cpus 4
+              # m4b-merge only concatenates / transcodes here; all tagging, cover
+              # and chapters come from asin_lookup -> Audnex (/work/{metadata.yml,
+              # chapters.ffmeta,tags.ffmeta,cover.jpg}).
+              echo "merging: $SRC"
+              m4b-merge -i "$SRC" -o /work/merged -p "{title}" --num-cpus 4
 
               BOOK="$(find /work/merged -name '*.m4b' -type f | head -n1)"
               [ -n "$BOOK" ] || { echo "m4b-merge produced no .m4b" >&2; exit 1; }
 
-              # beets imports a directory as an album; m4b-merge writes the .m4b
-              # straight into -o when no metadata is applied (no us ASIN), so nest
-              # it under its own folder: /work/merged/<title>/<title>.m4b
+              # beets imports a directory as an album. Nest the loose .m4b under
+              # its own folder, named from the real Audnex title when we have it,
+              # else the Shelfmark title, else m4b-merge's guess.
+              FOLDER=""
+              [ -s /work/metadata.yml ] && FOLDER="$(sed -n 's/^title: "\(.*\)"$/\1/p' /work/metadata.yml | head -n1)"
+              [ -z "$FOLDER" ] && FOLDER="$TITLE"
+              [ -z "$FOLDER" ] && FOLDER="$(basename "$BOOK" .m4b)"
+              FOLDER="$(printf '%s' "$FOLDER" | tr '/\\\n\r\t' '     ' | sed 's/  */ /g; s/^ *//; s/ *$//')"
+              [ -n "$FOLDER" ] || FOLDER="audiobook"
+              DEST="/work/merged/$FOLDER"
               if [ "$(dirname "$BOOK")" = "/work/merged" ]; then
-                BASE="$(basename "$BOOK" .m4b)"
-                mkdir -p "/work/merged/$BASE"
-                mv "$BOOK" "/work/merged/$BASE/$BASE.m4b"
-                BOOK="/work/merged/$BASE/$BASE.m4b"
+                mkdir -p "$DEST"
+                mv "$BOOK" "$DEST/$FOLDER.m4b"
+                BOOK="$DEST/$FOLDER.m4b"
+              else
+                DEST="$(dirname "$BOOK")"
               fi
 
-              if [ "$(chapter_count "$BOOK")" -lt 2 ]; then
+              # Choose a chapter source: prefer Audnex (region-correct titles),
+              # fall back to source-file boundaries when Audnex chapters are
+              # missing or their total span disagrees with the merged file by
+              # more than 10% (different / abridged edition).
+              CH=""
+              DUR_MS="$(file_duration_ms "$BOOK")"
+              if [ -s /work/chapters.ffmeta ]; then
+                SPAN="$(ffmeta_span /work/chapters.ffmeta)"
+                if [ "${DUR_MS:-0}" -gt 0 ] && [ "${SPAN:-0}" -gt 0 ] \
+                  && [ "$SPAN" -ge $((DUR_MS * 90 / 100)) ] \
+                  && [ "$SPAN" -le $((DUR_MS * 110 / 100)) ]; then
+                  CH=/work/chapters.ffmeta
+                  echo "chapters: Audnex (span ${SPAN}ms vs file ${DUR_MS}ms)"
+                else
+                  echo "chapters: Audnex span ${SPAN:-0}ms off from file ${DUR_MS}ms - trying source files"
+                fi
+              fi
+              if [ -z "$CH" ]; then
                 NFILES="$(find "$SRC" -type f \( -iname '*.mp3' -o -iname '*.m4a' \
                   -o -iname '*.m4b' -o -iname '*.flac' -o -iname '*.ogg' \
                   -o -iname '*.opus' -o -iname '*.aac' -o -iname '*.wav' \
                   -o -iname '*.wma' \) | grep -c . || true)"
-                META=""
-                if [ "${NFILES:-0}" -ge 2 ]; then
-                  echo "deriving chapters from $NFILES source files"
-                  build_file_chapters "$SRC" /work/tmp/chapters.ffmeta \
-                    && META=/work/tmp/chapters.ffmeta
-                elif [ -s /work/chapters.ffmeta ]; then
-                  echo "using Audnex chapters (region=${REGION:-?})"
-                  META=/work/chapters.ffmeta
-                fi
-                if [ -n "$META" ] && [ -s "$META" ]; then
-                  ffmpeg -nostdin -v error -i "$BOOK" -i "$META" \
-                    -map 0 -map_metadata 0 -map_chapters 1 -c copy \
-                    -f mp4 "$BOOK.chapters.m4b"
-                  mv "$BOOK.chapters.m4b" "$BOOK"
-                  echo "embedded $(chapter_count "$BOOK") chapters"
+                if [ "${NFILES:-0}" -ge 2 ] \
+                  && build_file_chapters "$SRC" /work/tmp/chapters.ffmeta; then
+                  CH=/work/tmp/chapters.ffmeta
+                  echo "chapters: derived from $NFILES source files"
                 fi
               fi
+
+              # Re-mux: apply our global tags (beets overwrites them on a good
+              # match) and the chosen chapters. -c copy, so no re-encode. A
+              # failure here must not throw away the merge - keep the untagged
+              # file and let beets do what it can.
+              rm -f "$BOOK.new"
+              if [ -s /work/tags.ffmeta ] && [ -n "$CH" ]; then
+                ffmpeg -nostdin -v error -i "$BOOK" -i /work/tags.ffmeta -i "$CH" \
+                  -map 0 -map_metadata 1 -map_chapters 2 -c copy -f mp4 "$BOOK.new" || true
+              elif [ -s /work/tags.ffmeta ]; then
+                ffmpeg -nostdin -v error -i "$BOOK" -i /work/tags.ffmeta \
+                  -map 0 -map_metadata 1 -c copy -f mp4 "$BOOK.new" || true
+              elif [ -n "$CH" ]; then
+                ffmpeg -nostdin -v error -i "$BOOK" -i "$CH" \
+                  -map 0 -map_metadata 0 -map_chapters 1 -c copy -f mp4 "$BOOK.new" || true
+              fi
+              [ -s "$BOOK.new" ] && mv "$BOOK.new" "$BOOK" || rm -f "$BOOK.new"
+              echo "final: $BOOK (chapters=$(chapter_count "$BOOK"))"
+
+              # Hand metadata.yml + cover.jpg to beets (copyartifacts moves them
+              # to the library folder alongside the .m4b).
+              [ -s /work/metadata.yml ] && cp /work/metadata.yml "$DEST/metadata.yml"
+              [ -s /work/cover.jpg ] && cp /work/cover.jpg "$DEST/cover.jpg"
+              exit 0
           env:
             - { name: SOURCE_PATH_B64, value: "__SOURCE_PATH_B64__" }
+            - { name: TITLE_B64, value: "__TITLE_B64__" }
+            - { name: AUTHOR_B64, value: "__AUTHOR_B64__" }
             - { name: HOME, value: "/work" }
             - { name: TMPDIR, value: "/work/tmp" }
           volumeMounts:
@@ -155,15 +196,18 @@ spec:
             - |
               set -e
               export HOME=/config BEETSDIR=/config
-              ASIN=""
-              [ -s /work/asin ] && ASIN="$(cut -d' ' -f1 /work/asin)"
               BOOK="$(find /work/merged -mindepth 1 -maxdepth 1 -type d | head -n1)"
               if [ -z "$BOOK" ]; then
                 echo "no merged book directory in /work/merged - nothing to import"
                 exit 0
               fi
-              echo "importing: $BOOK  (asin=${ASIN:-none})"
-              if ! /lsiopy/bin/beet -c /cfg/config.yaml import -q ${ASIN:+--search-id "$ASIN"} "$BOOK"; then
+              # metadata.yml (when asin_lookup resolved an ASIN) drives tagging
+              # deterministically; otherwise beets imports as-is with the tags
+              # the merge step embedded from the Shelfmark title / author.
+              # No --search-id: album_for_id returns one track per Audnex chapter,
+              # which never strong-matches a single merged file in quiet mode.
+              echo "importing: $BOOK"
+              if ! /lsiopy/bin/beet -c /cfg/config.yaml import -q "$BOOK"; then
                 echo "beet import failed - moving merged output to _unsorted"
                 mkdir -p /media/media/audiobooks/library/_unsorted
                 mv "$BOOK"/* /media/media/audiobooks/library/_unsorted/
