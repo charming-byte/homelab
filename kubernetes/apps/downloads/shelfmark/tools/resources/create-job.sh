@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Invoked by the adnanh webhook after HMAC verification.
+# Invoked by the webhook after HMAC verification.
 # Args (all base64): $1 source_path, $2 title, $3 author.
 # Renders /config/job.yaml and creates the Job via the Kubernetes API.
 set -euo pipefail
@@ -29,7 +29,9 @@ case "$SRC" in
   *..* | *$'\n'*) echo "source path rejected: ${SRC}" >&2; exit 1 ;;
 esac
 
-SUFFIX="$(tr -dc 'a-z0-9' < /dev/urandom | head -c 8)"
+# 8 lowercase hex chars. Avoids `tr </dev/urandom | head` - head closing the
+# pipe early makes tr exit 141 (SIGPIPE), which `set -o pipefail` turns fatal.
+SUFFIX="$(printf '%04x%04x' "$RANDOM" "$RANDOM")"
 
 MANIFEST="$(sed \
   -e "s|__SUFFIX__|${SUFFIX}|g" \
