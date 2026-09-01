@@ -14,7 +14,7 @@ spec:
       backup:
         type: cronjob
         cronjob:
-          schedule: 0 1 * * 6
+          schedule: 0 0 * * 1
           timeZone: Europe/Berlin
           backoffLimit: 0
           concurrencyPolicy: Forbid
@@ -42,7 +42,7 @@ spec:
       check:
         type: cronjob
         cronjob:
-          schedule: 0 3 1 * *
+          schedule: 0 0 1 * *
           timeZone: Europe/Berlin
           backoffLimit: 0
           concurrencyPolicy: Forbid
@@ -89,4 +89,6 @@ spec:
             subPath: photos
           - path: /nas/paperless
             subPath: paperless
+          - path: /nas/backups/postgres
+            subPath: backups/postgres
 
