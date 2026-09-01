@@ -13,7 +13,14 @@ spec:
     extraVars:
       - name: TZ
         value: Europe/Berlin
+    extraArgs:
+      - --persistence.file=/data/pushgateway.data
+      - --persistence.interval=5m
     fullnameOverride: pushgateway
+    persistentVolume:
+      enabled: true
+      storageClass: local-hostpath
+      size: 1Gi
     replicaCount: 1
     route:
       main:
@@ -35,3 +42,10 @@ spec:
       namespace: observability
       additionalLabels:
         release: pushgateway
+      relabelings:
+        - action: replace
+          targetLabel: instance
+          replacement: pushgateway
+      metricRelabelings:
+        - action: labeldrop
+          regex: pod|container|endpoint|service

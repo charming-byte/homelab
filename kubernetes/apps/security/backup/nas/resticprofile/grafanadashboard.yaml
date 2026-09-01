@@ -87,7 +87,7 @@ spec:
               "refId": "A",
               "datasource": {"type": "prometheus", "uid": "$${DS_PROMETHEUS}"},
               "editorMode": "code",
-              "expr": "resticprofile_backup_status{job=~\"$job\"}",
+              "expr": "min by (job, profile) (resticprofile_backup_status{job=~\"$job\"})",
               "legendFormat": "{{profile}}",
               "instant": true
             }
@@ -125,7 +125,7 @@ spec:
               "refId": "A",
               "datasource": {"type": "prometheus", "uid": "$${DS_PROMETHEUS}"},
               "editorMode": "code",
-              "expr": "time() - resticprofile_backup_time_seconds{job=~\"$job\"}",
+              "expr": "time() - max by (job, profile) (resticprofile_backup_time_seconds{job=~\"$job\"})",
               "legendFormat": "{{profile}}",
               "instant": true
             }
@@ -158,7 +158,7 @@ spec:
               "refId": "A",
               "datasource": {"type": "prometheus", "uid": "$${DS_PROMETHEUS}"},
               "editorMode": "code",
-              "expr": "resticprofile_backup_duration_seconds{job=~\"$job\"}",
+              "expr": "max by (job, profile) (resticprofile_backup_duration_seconds{job=~\"$job\"})",
               "legendFormat": "{{profile}}",
               "instant": true
             }
@@ -192,7 +192,7 @@ spec:
               "refId": "A",
               "datasource": {"type": "prometheus", "uid": "$${DS_PROMETHEUS}"},
               "editorMode": "code",
-              "expr": "resticprofile_backup_added_bytes{job=~\"$job\"}",
+              "expr": "max by (job, profile) (resticprofile_backup_added_bytes{job=~\"$job\"})",
               "legendFormat": "{{profile}}",
               "instant": true
             }
@@ -226,7 +226,7 @@ spec:
               "refId": "A",
               "datasource": {"type": "prometheus", "uid": "$${DS_PROMETHEUS}"},
               "editorMode": "code",
-              "expr": "resticprofile_backup_processed_bytes{job=~\"$job\"}",
+              "expr": "max by (job, profile) (resticprofile_backup_processed_bytes{job=~\"$job\"})",
               "legendFormat": "{{profile}}",
               "instant": true
             }
@@ -260,7 +260,7 @@ spec:
               "refId": "A",
               "datasource": {"type": "prometheus", "uid": "$${DS_PROMETHEUS}"},
               "editorMode": "code",
-              "expr": "resticprofile_backup_files_processed{job=~\"$job\"}",
+              "expr": "max by (job, profile) (resticprofile_backup_files_processed{job=~\"$job\"})",
               "legendFormat": "{{profile}}",
               "instant": true
             }
@@ -296,7 +296,7 @@ spec:
               "refId": "A",
               "datasource": {"type": "prometheus", "uid": "$${DS_PROMETHEUS}"},
               "editorMode": "code",
-              "expr": "1 - (resticprofile_backup_added_bytes_packed{job=~\"$job\"} / clamp_min(resticprofile_backup_added_bytes{job=~\"$job\"}, 1))",
+              "expr": "1 - (max by (job, profile) (resticprofile_backup_added_bytes_packed{job=~\"$job\"}) / clamp_min(max by (job, profile) (resticprofile_backup_added_bytes{job=~\"$job\"}), 1))",
               "legendFormat": "{{profile}}",
               "instant": true
             }
@@ -331,7 +331,7 @@ spec:
               "refId": "A",
               "datasource": {"type": "prometheus", "uid": "$${DS_PROMETHEUS}"},
               "editorMode": "code",
-              "expr": "changes(resticprofile_backup_time_seconds{job=~\"$job\"}[$__range])",
+              "expr": "max by (job, profile) (changes(resticprofile_backup_time_seconds{job=~\"$job\"}[$__range]))",
               "legendFormat": "{{profile}}",
               "instant": true
             }
@@ -370,7 +370,7 @@ spec:
               "refId": "A",
               "datasource": {"type": "prometheus", "uid": "$${DS_PROMETHEUS}"},
               "editorMode": "code",
-              "expr": "resticprofile_backup_status{job=~\"$job\"}",
+              "expr": "min by (job, profile) (resticprofile_backup_status{job=~\"$job\"})",
               "legendFormat": "{{profile}}"
             }
           ]
@@ -407,7 +407,7 @@ spec:
               "refId": "A",
               "datasource": {"type": "prometheus", "uid": "$${DS_PROMETHEUS}"},
               "editorMode": "code",
-              "expr": "resticprofile_backup_duration_seconds{job=~\"$job\"}",
+              "expr": "max by (job, profile) (resticprofile_backup_duration_seconds{job=~\"$job\"})",
               "legendFormat": "{{profile}}"
             }
           ]
@@ -443,14 +443,14 @@ spec:
               "refId": "A",
               "datasource": {"type": "prometheus", "uid": "$${DS_PROMETHEUS}"},
               "editorMode": "code",
-              "expr": "resticprofile_backup_added_bytes{job=~\"$job\"}",
+              "expr": "max by (job, profile) (resticprofile_backup_added_bytes{job=~\"$job\"})",
               "legendFormat": "roh {{profile}}"
             },
             {
               "refId": "B",
               "datasource": {"type": "prometheus", "uid": "$${DS_PROMETHEUS}"},
               "editorMode": "code",
-              "expr": "resticprofile_backup_added_bytes_packed{job=~\"$job\"}",
+              "expr": "max by (job, profile) (resticprofile_backup_added_bytes_packed{job=~\"$job\"})",
               "legendFormat": "komprimiert {{profile}}"
             }
           ]
@@ -491,21 +491,21 @@ spec:
               "refId": "A",
               "datasource": {"type": "prometheus", "uid": "$${DS_PROMETHEUS}"},
               "editorMode": "code",
-              "expr": "resticprofile_backup_files_new{job=~\"$job\"}",
+              "expr": "max by (job, profile) (resticprofile_backup_files_new{job=~\"$job\"})",
               "legendFormat": "neu"
             },
             {
               "refId": "B",
               "datasource": {"type": "prometheus", "uid": "$${DS_PROMETHEUS}"},
               "editorMode": "code",
-              "expr": "resticprofile_backup_files_changed{job=~\"$job\"}",
+              "expr": "max by (job, profile) (resticprofile_backup_files_changed{job=~\"$job\"})",
               "legendFormat": "geaendert"
             },
             {
               "refId": "C",
               "datasource": {"type": "prometheus", "uid": "$${DS_PROMETHEUS}"},
               "editorMode": "code",
-              "expr": "resticprofile_backup_files_unmodified{job=~\"$job\"}",
+              "expr": "max by (job, profile) (resticprofile_backup_files_unmodified{job=~\"$job\"})",
               "legendFormat": "unveraendert"
             }
           ]
@@ -546,21 +546,21 @@ spec:
               "refId": "A",
               "datasource": {"type": "prometheus", "uid": "$${DS_PROMETHEUS}"},
               "editorMode": "code",
-              "expr": "resticprofile_backup_dir_new{job=~\"$job\"}",
+              "expr": "max by (job, profile) (resticprofile_backup_dir_new{job=~\"$job\"})",
               "legendFormat": "neu"
             },
             {
               "refId": "B",
               "datasource": {"type": "prometheus", "uid": "$${DS_PROMETHEUS}"},
               "editorMode": "code",
-              "expr": "resticprofile_backup_dir_changed{job=~\"$job\"}",
+              "expr": "max by (job, profile) (resticprofile_backup_dir_changed{job=~\"$job\"})",
               "legendFormat": "geaendert"
             },
             {
               "refId": "C",
               "datasource": {"type": "prometheus", "uid": "$${DS_PROMETHEUS}"},
               "editorMode": "code",
-              "expr": "resticprofile_backup_dir_unmodified{job=~\"$job\"}",
+              "expr": "max by (job, profile) (resticprofile_backup_dir_unmodified{job=~\"$job\"})",
               "legendFormat": "unveraendert"
             }
           ]
@@ -597,7 +597,7 @@ spec:
               "refId": "A",
               "datasource": {"type": "prometheus", "uid": "$${DS_PROMETHEUS}"},
               "editorMode": "code",
-              "expr": "resticprofile_backup_processed_bytes{job=~\"$job\"}",
+              "expr": "max by (job, profile) (resticprofile_backup_processed_bytes{job=~\"$job\"})",
               "legendFormat": "{{profile}}"
             }
           ]
@@ -636,7 +636,7 @@ spec:
               "refId": "A",
               "datasource": {"type": "prometheus", "uid": "$${DS_PROMETHEUS}"},
               "editorMode": "code",
-              "expr": "resticprofile_backup_added_bytes{job=~\"$job\"} / clamp_min(resticprofile_backup_processed_bytes{job=~\"$job\"}, 1)",
+              "expr": "max by (job, profile) (resticprofile_backup_added_bytes{job=~\"$job\"}) / clamp_min(max by (job, profile) (resticprofile_backup_processed_bytes{job=~\"$job\"}), 1)",
               "legendFormat": "{{profile}}"
             }
           ]
@@ -677,7 +677,7 @@ spec:
               "refId": "A",
               "datasource": {"type": "prometheus", "uid": "$${DS_PROMETHEUS}"},
               "editorMode": "code",
-              "expr": "time() - resticprofile_backup_time_seconds{job=~\"$job\"}",
+              "expr": "time() - max by (job, profile) (resticprofile_backup_time_seconds{job=~\"$job\"})",
               "legendFormat": "{{profile}}"
             }
           ]
@@ -719,7 +719,7 @@ spec:
               "refId": "A",
               "datasource": {"type": "prometheus", "uid": "$${DS_PROMETHEUS}"},
               "editorMode": "code",
-              "expr": "resticprofile_backup_status{job=~\"$job\"}",
+              "expr": "min by (job, profile) (resticprofile_backup_status{job=~\"$job\"})",
               "format": "table",
               "instant": true
             },
@@ -727,7 +727,7 @@ spec:
               "refId": "B",
               "datasource": {"type": "prometheus", "uid": "$${DS_PROMETHEUS}"},
               "editorMode": "code",
-              "expr": "time() - resticprofile_backup_time_seconds{job=~\"$job\"}",
+              "expr": "time() - max by (job, profile) (resticprofile_backup_time_seconds{job=~\"$job\"})",
               "format": "table",
               "instant": true
             },
@@ -735,7 +735,7 @@ spec:
               "refId": "C",
               "datasource": {"type": "prometheus", "uid": "$${DS_PROMETHEUS}"},
               "editorMode": "code",
-              "expr": "resticprofile_backup_duration_seconds{job=~\"$job\"}",
+              "expr": "max by (job, profile) (resticprofile_backup_duration_seconds{job=~\"$job\"})",
               "format": "table",
               "instant": true
             },
@@ -743,7 +743,7 @@ spec:
               "refId": "D",
               "datasource": {"type": "prometheus", "uid": "$${DS_PROMETHEUS}"},
               "editorMode": "code",
-              "expr": "resticprofile_backup_added_bytes{job=~\"$job\"}",
+              "expr": "max by (job, profile) (resticprofile_backup_added_bytes{job=~\"$job\"})",
               "format": "table",
               "instant": true
             },
@@ -751,7 +751,7 @@ spec:
               "refId": "E",
               "datasource": {"type": "prometheus", "uid": "$${DS_PROMETHEUS}"},
               "editorMode": "code",
-              "expr": "resticprofile_backup_processed_bytes{job=~\"$job\"}",
+              "expr": "max by (job, profile) (resticprofile_backup_processed_bytes{job=~\"$job\"})",
               "format": "table",
               "instant": true
             }
