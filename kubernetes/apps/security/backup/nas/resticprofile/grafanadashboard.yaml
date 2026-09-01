@@ -1,0 +1,777 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/grafana.integreatly.org/grafanadashboard_v1beta1.json
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: nas-resticprofile
+spec:
+  allowCrossNamespaceImport: true
+  instanceSelector:
+    matchLabels:
+      grafana.internal/instance: grafana
+  datasources:
+    - datasourceName: prometheus
+      inputName: DS_PROMETHEUS
+  json: |
+    {
+      "title": "Restic Backup (resticprofile)",
+      "uid": "nas-resticprofile",
+      "schemaVersion": 39,
+      "version": 1,
+      "editable": true,
+      "timezone": "browser",
+      "refresh": "30m",
+      "time": {"from": "now-90d", "to": "now"},
+      "tags": ["backup", "restic", "resticprofile"],
+      "annotations": {
+        "list": [
+          {
+            "builtIn": 1,
+            "datasource": {"type": "grafana", "uid": "-- Grafana --"},
+            "enable": true,
+            "hide": true,
+            "iconColor": "rgba(0, 211, 255, 1)",
+            "name": "Annotations & Alerts",
+            "type": "dashboard"
+          }
+        ]
+      },
+      "templating": {
+        "list": [
+          {
+            "name": "job",
+            "label": "Job",
+            "type": "query",
+            "datasource": {"type": "prometheus", "uid": "$${DS_PROMETHEUS}"},
+            "definition": "label_values(resticprofile_backup_status, job)",
+            "query": {"query": "label_values(resticprofile_backup_status, job)", "refId": "job"},
+            "refresh": 2,
+            "includeAll": true,
+            "allValue": ".*",
+            "multi": true,
+            "current": {"text": "All", "value": "$__all"},
+            "sort": 1
+          }
+        ]
+      },
+      "panels": [
+        {
+          "id": 1,
+          "title": "Letzter Lauf - Status",
+          "type": "stat",
+          "gridPos": {"x": 0, "y": 0, "w": 6, "h": 4},
+          "datasource": {"type": "prometheus", "uid": "$${DS_PROMETHEUS}"},
+          "options": {
+            "colorMode": "background",
+            "graphMode": "none",
+            "justifyMode": "center",
+            "textMode": "value",
+            "reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false}
+          },
+          "fieldConfig": {
+            "defaults": {
+              "noValue": "keine Daten",
+              "mappings": [
+                {"type": "value", "options": {
+                  "0": {"text": "FEHLGESCHLAGEN", "color": "red", "index": 0},
+                  "1": {"text": "WARNUNG", "color": "yellow", "index": 1},
+                  "2": {"text": "OK", "color": "green", "index": 2}
+                }}
+              ],
+              "thresholds": {"mode": "absolute", "steps": [{"color": "red", "value": null}]}
+            },
+            "overrides": []
+          },
+          "targets": [
+            {
+              "refId": "A",
+              "datasource": {"type": "prometheus", "uid": "$${DS_PROMETHEUS}"},
+              "editorMode": "code",
+              "expr": "resticprofile_backup_status{job=~\"$job\"}",
+              "legendFormat": "{{profile}}",
+              "instant": true
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "Zeit seit letztem Backup",
+          "type": "stat",
+          "gridPos": {"x": 6, "y": 0, "w": 6, "h": 4},
+          "datasource": {"type": "prometheus", "uid": "$${DS_PROMETHEUS}"},
+          "description": "Backup laeuft woechentlich. Gelb ab 8 Tagen, rot ab 10 Tagen.",
+          "options": {
+            "colorMode": "value",
+            "graphMode": "none",
+            "justifyMode": "center",
+            "textMode": "value",
+            "reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false}
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "s",
+              "decimals": 0,
+              "noValue": "keine Daten",
+              "thresholds": {"mode": "absolute", "steps": [
+                {"color": "green", "value": null},
+                {"color": "yellow", "value": 691200},
+                {"color": "red", "value": 864000}
+              ]}
+            },
+            "overrides": []
+          },
+          "targets": [
+            {
+              "refId": "A",
+              "datasource": {"type": "prometheus", "uid": "$${DS_PROMETHEUS}"},
+              "editorMode": "code",
+              "expr": "time() - resticprofile_backup_time_seconds{job=~\"$job\"}",
+              "legendFormat": "{{profile}}",
+              "instant": true
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "Dauer letzter Lauf",
+          "type": "stat",
+          "gridPos": {"x": 12, "y": 0, "w": 6, "h": 4},
+          "datasource": {"type": "prometheus", "uid": "$${DS_PROMETHEUS}"},
+          "options": {
+            "colorMode": "value",
+            "graphMode": "none",
+            "justifyMode": "center",
+            "textMode": "value",
+            "reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false}
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "s",
+              "noValue": "keine Daten",
+              "color": {"mode": "fixed", "fixedColor": "blue"},
+              "thresholds": {"mode": "absolute", "steps": [{"color": "blue", "value": null}]}
+            },
+            "overrides": []
+          },
+          "targets": [
+            {
+              "refId": "A",
+              "datasource": {"type": "prometheus", "uid": "$${DS_PROMETHEUS}"},
+              "editorMode": "code",
+              "expr": "resticprofile_backup_duration_seconds{job=~\"$job\"}",
+              "legendFormat": "{{profile}}",
+              "instant": true
+            }
+          ]
+        },
+        {
+          "id": 4,
+          "title": "Neu geschrieben (letzter Lauf)",
+          "type": "stat",
+          "gridPos": {"x": 18, "y": 0, "w": 6, "h": 4},
+          "datasource": {"type": "prometheus", "uid": "$${DS_PROMETHEUS}"},
+          "description": "Neue Daten, die nach Deduplizierung und Kompression in das Repository geschrieben wurden.",
+          "options": {
+            "colorMode": "value",
+            "graphMode": "none",
+            "justifyMode": "center",
+            "textMode": "value",
+            "reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false}
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "bytes",
+              "noValue": "keine Daten",
+              "color": {"mode": "fixed", "fixedColor": "purple"},
+              "thresholds": {"mode": "absolute", "steps": [{"color": "purple", "value": null}]}
+            },
+            "overrides": []
+          },
+          "targets": [
+            {
+              "refId": "A",
+              "datasource": {"type": "prometheus", "uid": "$${DS_PROMETHEUS}"},
+              "editorMode": "code",
+              "expr": "resticprofile_backup_added_bytes{job=~\"$job\"}",
+              "legendFormat": "{{profile}}",
+              "instant": true
+            }
+          ]
+        },
+        {
+          "id": 5,
+          "title": "Backup-Set Groesse",
+          "type": "stat",
+          "gridPos": {"x": 0, "y": 4, "w": 6, "h": 4},
+          "datasource": {"type": "prometheus", "uid": "$${DS_PROMETHEUS}"},
+          "description": "Gesamtmenge der beim letzten Lauf gescannten Daten (Quellgroesse).",
+          "options": {
+            "colorMode": "value",
+            "graphMode": "none",
+            "justifyMode": "center",
+            "textMode": "value",
+            "reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false}
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "bytes",
+              "noValue": "keine Daten",
+              "color": {"mode": "fixed", "fixedColor": "yellow"},
+              "thresholds": {"mode": "absolute", "steps": [{"color": "yellow", "value": null}]}
+            },
+            "overrides": []
+          },
+          "targets": [
+            {
+              "refId": "A",
+              "datasource": {"type": "prometheus", "uid": "$${DS_PROMETHEUS}"},
+              "editorMode": "code",
+              "expr": "resticprofile_backup_processed_bytes{job=~\"$job\"}",
+              "legendFormat": "{{profile}}",
+              "instant": true
+            }
+          ]
+        },
+        {
+          "id": 6,
+          "title": "Dateien im Backup-Set",
+          "type": "stat",
+          "gridPos": {"x": 6, "y": 4, "w": 6, "h": 4},
+          "datasource": {"type": "prometheus", "uid": "$${DS_PROMETHEUS}"},
+          "options": {
+            "colorMode": "value",
+            "graphMode": "none",
+            "justifyMode": "center",
+            "textMode": "value",
+            "reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false}
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "decimals": 0,
+              "noValue": "keine Daten",
+              "color": {"mode": "fixed", "fixedColor": "blue"},
+              "thresholds": {"mode": "absolute", "steps": [{"color": "blue", "value": null}]}
+            },
+            "overrides": []
+          },
+          "targets": [
+            {
+              "refId": "A",
+              "datasource": {"type": "prometheus", "uid": "$${DS_PROMETHEUS}"},
+              "editorMode": "code",
+              "expr": "resticprofile_backup_files_processed{job=~\"$job\"}",
+              "legendFormat": "{{profile}}",
+              "instant": true
+            }
+          ]
+        },
+        {
+          "id": 7,
+          "title": "Kompressionsersparnis (neue Daten)",
+          "type": "stat",
+          "gridPos": {"x": 12, "y": 4, "w": 6, "h": 4},
+          "datasource": {"type": "prometheus", "uid": "$${DS_PROMETHEUS}"},
+          "description": "1 - (komprimiert / roh) fuer die beim letzten Lauf neu hinzugefuegten Daten.",
+          "options": {
+            "colorMode": "value",
+            "graphMode": "none",
+            "justifyMode": "center",
+            "textMode": "value",
+            "reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false}
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "percentunit",
+              "min": 0,
+              "max": 1,
+              "noValue": "keine Daten",
+              "color": {"mode": "fixed", "fixedColor": "green"},
+              "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}]}
+            },
+            "overrides": []
+          },
+          "targets": [
+            {
+              "refId": "A",
+              "datasource": {"type": "prometheus", "uid": "$${DS_PROMETHEUS}"},
+              "editorMode": "code",
+              "expr": "1 - (resticprofile_backup_added_bytes_packed{job=~\"$job\"} / clamp_min(resticprofile_backup_added_bytes{job=~\"$job\"}, 1))",
+              "legendFormat": "{{profile}}",
+              "instant": true
+            }
+          ]
+        },
+        {
+          "id": 8,
+          "title": "Backup-Laeufe (Zeitraum)",
+          "type": "stat",
+          "gridPos": {"x": 18, "y": 4, "w": 6, "h": 4},
+          "datasource": {"type": "prometheus", "uid": "$${DS_PROMETHEUS}"},
+          "description": "Anzahl abgeschlossener Backup-Laeufe im gewaehlten Zeitraum (Aenderungen am Zeitstempel des letzten Laufs).",
+          "options": {
+            "colorMode": "value",
+            "graphMode": "none",
+            "justifyMode": "center",
+            "textMode": "value",
+            "reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false}
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "decimals": 0,
+              "noValue": "0",
+              "color": {"mode": "fixed", "fixedColor": "text"},
+              "thresholds": {"mode": "absolute", "steps": [{"color": "text", "value": null}]}
+            },
+            "overrides": []
+          },
+          "targets": [
+            {
+              "refId": "A",
+              "datasource": {"type": "prometheus", "uid": "$${DS_PROMETHEUS}"},
+              "editorMode": "code",
+              "expr": "changes(resticprofile_backup_time_seconds{job=~\"$job\"}[$__range])",
+              "legendFormat": "{{profile}}",
+              "instant": true
+            }
+          ]
+        },
+        {
+          "id": 9,
+          "title": "Backup-Status Verlauf",
+          "type": "state-timeline",
+          "gridPos": {"x": 0, "y": 8, "w": 24, "h": 6},
+          "datasource": {"type": "prometheus", "uid": "$${DS_PROMETHEUS}"},
+          "description": "Zuletzt gemeldeter Status je Zeitpunkt. Der Wert bleibt bis zum naechsten Lauf erhalten.",
+          "options": {
+            "mergeValues": true,
+            "showValue": "never",
+            "alignValue": "center",
+            "rowHeight": 0.9,
+            "legend": {"displayMode": "list", "placement": "bottom", "showLegend": true}
+          },
+          "fieldConfig": {
+            "defaults": {
+              "custom": {"fillOpacity": 80, "lineWidth": 0},
+              "mappings": [
+                {"type": "value", "options": {
+                  "0": {"text": "fehlgeschlagen", "color": "red", "index": 0},
+                  "1": {"text": "Warnung", "color": "yellow", "index": 1},
+                  "2": {"text": "OK", "color": "green", "index": 2}
+                }}
+              ],
+              "thresholds": {"mode": "absolute", "steps": [{"color": "red", "value": null}]}
+            },
+            "overrides": []
+          },
+          "targets": [
+            {
+              "refId": "A",
+              "datasource": {"type": "prometheus", "uid": "$${DS_PROMETHEUS}"},
+              "editorMode": "code",
+              "expr": "resticprofile_backup_status{job=~\"$job\"}",
+              "legendFormat": "{{profile}}"
+            }
+          ]
+        },
+        {
+          "id": 10,
+          "title": "Backup-Dauer",
+          "type": "timeseries",
+          "gridPos": {"x": 0, "y": 14, "w": 12, "h": 8},
+          "datasource": {"type": "prometheus", "uid": "$${DS_PROMETHEUS}"},
+          "fieldConfig": {
+            "defaults": {
+              "unit": "s",
+              "custom": {
+                "drawStyle": "line",
+                "lineInterpolation": "stepAfter",
+                "lineWidth": 2,
+                "fillOpacity": 10,
+                "showPoints": "always",
+                "pointSize": 6,
+                "spanNulls": true
+              },
+              "color": {"mode": "fixed", "fixedColor": "orange"},
+              "thresholds": {"mode": "absolute", "steps": [{"color": "orange", "value": null}]}
+            },
+            "overrides": []
+          },
+          "options": {
+            "legend": {"displayMode": "list", "placement": "bottom", "showLegend": true},
+            "tooltip": {"mode": "multi", "sort": "none"}
+          },
+          "targets": [
+            {
+              "refId": "A",
+              "datasource": {"type": "prometheus", "uid": "$${DS_PROMETHEUS}"},
+              "editorMode": "code",
+              "expr": "resticprofile_backup_duration_seconds{job=~\"$job\"}",
+              "legendFormat": "{{profile}}"
+            }
+          ]
+        },
+        {
+          "id": 11,
+          "title": "Neu geschriebene Daten: roh vs. komprimiert",
+          "type": "timeseries",
+          "gridPos": {"x": 12, "y": 14, "w": 12, "h": 8},
+          "datasource": {"type": "prometheus", "uid": "$${DS_PROMETHEUS}"},
+          "fieldConfig": {
+            "defaults": {
+              "unit": "bytes",
+              "custom": {
+                "drawStyle": "line",
+                "lineInterpolation": "stepAfter",
+                "lineWidth": 2,
+                "fillOpacity": 10,
+                "showPoints": "always",
+                "pointSize": 6,
+                "spanNulls": true
+              },
+              "thresholds": {"mode": "absolute", "steps": [{"color": "blue", "value": null}]}
+            },
+            "overrides": []
+          },
+          "options": {
+            "legend": {"displayMode": "list", "placement": "bottom", "showLegend": true},
+            "tooltip": {"mode": "multi", "sort": "none"}
+          },
+          "targets": [
+            {
+              "refId": "A",
+              "datasource": {"type": "prometheus", "uid": "$${DS_PROMETHEUS}"},
+              "editorMode": "code",
+              "expr": "resticprofile_backup_added_bytes{job=~\"$job\"}",
+              "legendFormat": "roh {{profile}}"
+            },
+            {
+              "refId": "B",
+              "datasource": {"type": "prometheus", "uid": "$${DS_PROMETHEUS}"},
+              "editorMode": "code",
+              "expr": "resticprofile_backup_added_bytes_packed{job=~\"$job\"}",
+              "legendFormat": "komprimiert {{profile}}"
+            }
+          ]
+        },
+        {
+          "id": 12,
+          "title": "Dateien: neu / geaendert / unveraendert",
+          "type": "timeseries",
+          "gridPos": {"x": 0, "y": 22, "w": 12, "h": 8},
+          "datasource": {"type": "prometheus", "uid": "$${DS_PROMETHEUS}"},
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "decimals": 0,
+              "custom": {
+                "drawStyle": "line",
+                "lineInterpolation": "stepAfter",
+                "lineWidth": 1,
+                "fillOpacity": 40,
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {"group": "A", "mode": "normal"}
+              },
+              "thresholds": {"mode": "absolute", "steps": [{"color": "blue", "value": null}]}
+            },
+            "overrides": [
+              {"matcher": {"id": "byName", "options": "unveraendert"}, "properties": [{"id": "color", "value": {"mode": "fixed", "fixedColor": "green"}}]},
+              {"matcher": {"id": "byName", "options": "geaendert"}, "properties": [{"id": "color", "value": {"mode": "fixed", "fixedColor": "orange"}}]},
+              {"matcher": {"id": "byName", "options": "neu"}, "properties": [{"id": "color", "value": {"mode": "fixed", "fixedColor": "blue"}}]}
+            ]
+          },
+          "options": {
+            "legend": {"displayMode": "list", "placement": "bottom", "showLegend": true},
+            "tooltip": {"mode": "multi", "sort": "none"}
+          },
+          "targets": [
+            {
+              "refId": "A",
+              "datasource": {"type": "prometheus", "uid": "$${DS_PROMETHEUS}"},
+              "editorMode": "code",
+              "expr": "resticprofile_backup_files_new{job=~\"$job\"}",
+              "legendFormat": "neu"
+            },
+            {
+              "refId": "B",
+              "datasource": {"type": "prometheus", "uid": "$${DS_PROMETHEUS}"},
+              "editorMode": "code",
+              "expr": "resticprofile_backup_files_changed{job=~\"$job\"}",
+              "legendFormat": "geaendert"
+            },
+            {
+              "refId": "C",
+              "datasource": {"type": "prometheus", "uid": "$${DS_PROMETHEUS}"},
+              "editorMode": "code",
+              "expr": "resticprofile_backup_files_unmodified{job=~\"$job\"}",
+              "legendFormat": "unveraendert"
+            }
+          ]
+        },
+        {
+          "id": 13,
+          "title": "Verzeichnisse: neu / geaendert / unveraendert",
+          "type": "timeseries",
+          "gridPos": {"x": 12, "y": 22, "w": 12, "h": 8},
+          "datasource": {"type": "prometheus", "uid": "$${DS_PROMETHEUS}"},
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "decimals": 0,
+              "custom": {
+                "drawStyle": "line",
+                "lineInterpolation": "stepAfter",
+                "lineWidth": 1,
+                "fillOpacity": 40,
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {"group": "A", "mode": "normal"}
+              },
+              "thresholds": {"mode": "absolute", "steps": [{"color": "blue", "value": null}]}
+            },
+            "overrides": [
+              {"matcher": {"id": "byName", "options": "unveraendert"}, "properties": [{"id": "color", "value": {"mode": "fixed", "fixedColor": "green"}}]},
+              {"matcher": {"id": "byName", "options": "geaendert"}, "properties": [{"id": "color", "value": {"mode": "fixed", "fixedColor": "orange"}}]},
+              {"matcher": {"id": "byName", "options": "neu"}, "properties": [{"id": "color", "value": {"mode": "fixed", "fixedColor": "blue"}}]}
+            ]
+          },
+          "options": {
+            "legend": {"displayMode": "list", "placement": "bottom", "showLegend": true},
+            "tooltip": {"mode": "multi", "sort": "none"}
+          },
+          "targets": [
+            {
+              "refId": "A",
+              "datasource": {"type": "prometheus", "uid": "$${DS_PROMETHEUS}"},
+              "editorMode": "code",
+              "expr": "resticprofile_backup_dir_new{job=~\"$job\"}",
+              "legendFormat": "neu"
+            },
+            {
+              "refId": "B",
+              "datasource": {"type": "prometheus", "uid": "$${DS_PROMETHEUS}"},
+              "editorMode": "code",
+              "expr": "resticprofile_backup_dir_changed{job=~\"$job\"}",
+              "legendFormat": "geaendert"
+            },
+            {
+              "refId": "C",
+              "datasource": {"type": "prometheus", "uid": "$${DS_PROMETHEUS}"},
+              "editorMode": "code",
+              "expr": "resticprofile_backup_dir_unmodified{job=~\"$job\"}",
+              "legendFormat": "unveraendert"
+            }
+          ]
+        },
+        {
+          "id": 14,
+          "title": "Backup-Set: Gesamtgroesse",
+          "type": "timeseries",
+          "gridPos": {"x": 0, "y": 30, "w": 12, "h": 8},
+          "datasource": {"type": "prometheus", "uid": "$${DS_PROMETHEUS}"},
+          "fieldConfig": {
+            "defaults": {
+              "unit": "bytes",
+              "custom": {
+                "drawStyle": "line",
+                "lineInterpolation": "stepAfter",
+                "lineWidth": 2,
+                "fillOpacity": 15,
+                "showPoints": "always",
+                "pointSize": 6,
+                "spanNulls": true
+              },
+              "color": {"mode": "fixed", "fixedColor": "yellow"},
+              "thresholds": {"mode": "absolute", "steps": [{"color": "yellow", "value": null}]}
+            },
+            "overrides": []
+          },
+          "options": {
+            "legend": {"displayMode": "list", "placement": "bottom", "showLegend": true},
+            "tooltip": {"mode": "multi", "sort": "none"}
+          },
+          "targets": [
+            {
+              "refId": "A",
+              "datasource": {"type": "prometheus", "uid": "$${DS_PROMETHEUS}"},
+              "editorMode": "code",
+              "expr": "resticprofile_backup_processed_bytes{job=~\"$job\"}",
+              "legendFormat": "{{profile}}"
+            }
+          ]
+        },
+        {
+          "id": 15,
+          "title": "Aenderungsrate (neu geschrieben / gescannt)",
+          "type": "timeseries",
+          "gridPos": {"x": 12, "y": 30, "w": 12, "h": 8},
+          "datasource": {"type": "prometheus", "uid": "$${DS_PROMETHEUS}"},
+          "description": "Anteil der neu ins Repository geschriebenen Bytes an der gescannten Gesamtmenge.",
+          "fieldConfig": {
+            "defaults": {
+              "unit": "percentunit",
+              "min": 0,
+              "custom": {
+                "drawStyle": "line",
+                "lineInterpolation": "stepAfter",
+                "lineWidth": 2,
+                "fillOpacity": 15,
+                "showPoints": "always",
+                "pointSize": 6,
+                "spanNulls": true
+              },
+              "color": {"mode": "fixed", "fixedColor": "red"},
+              "thresholds": {"mode": "absolute", "steps": [{"color": "red", "value": null}]}
+            },
+            "overrides": []
+          },
+          "options": {
+            "legend": {"displayMode": "list", "placement": "bottom", "showLegend": true},
+            "tooltip": {"mode": "multi", "sort": "none"}
+          },
+          "targets": [
+            {
+              "refId": "A",
+              "datasource": {"type": "prometheus", "uid": "$${DS_PROMETHEUS}"},
+              "editorMode": "code",
+              "expr": "resticprofile_backup_added_bytes{job=~\"$job\"} / clamp_min(resticprofile_backup_processed_bytes{job=~\"$job\"}, 1)",
+              "legendFormat": "{{profile}}"
+            }
+          ]
+        },
+        {
+          "id": 16,
+          "title": "Zeit seit letztem Backup",
+          "type": "timeseries",
+          "gridPos": {"x": 0, "y": 38, "w": 8, "h": 8},
+          "datasource": {"type": "prometheus", "uid": "$${DS_PROMETHEUS}"},
+          "fieldConfig": {
+            "defaults": {
+              "unit": "s",
+              "custom": {
+                "drawStyle": "line",
+                "lineInterpolation": "linear",
+                "lineWidth": 2,
+                "fillOpacity": 10,
+                "showPoints": "never",
+                "spanNulls": true,
+                "thresholdsStyle": {"mode": "dashed"}
+              },
+              "thresholds": {"mode": "absolute", "steps": [
+                {"color": "green", "value": null},
+                {"color": "yellow", "value": 691200},
+                {"color": "red", "value": 864000}
+              ]},
+              "color": {"mode": "thresholds"}
+            },
+            "overrides": []
+          },
+          "options": {
+            "legend": {"displayMode": "list", "placement": "bottom", "showLegend": true},
+            "tooltip": {"mode": "multi", "sort": "none"}
+          },
+          "targets": [
+            {
+              "refId": "A",
+              "datasource": {"type": "prometheus", "uid": "$${DS_PROMETHEUS}"},
+              "editorMode": "code",
+              "expr": "time() - resticprofile_backup_time_seconds{job=~\"$job\"}",
+              "legendFormat": "{{profile}}"
+            }
+          ]
+        },
+        {
+          "id": 17,
+          "title": "Uebersicht je Profil",
+          "type": "table",
+          "gridPos": {"x": 8, "y": 38, "w": 16, "h": 8},
+          "datasource": {"type": "prometheus", "uid": "$${DS_PROMETHEUS}"},
+          "options": {
+            "showHeader": true,
+            "cellHeight": "sm",
+            "footer": {"show": false, "reducer": ["sum"], "fields": ""}
+          },
+          "fieldConfig": {
+            "defaults": {
+              "custom": {"align": "auto", "cellOptions": {"type": "auto"}, "filterable": false}
+            },
+            "overrides": [
+              {"matcher": {"id": "byName", "options": "Status"}, "properties": [
+                {"id": "custom.cellOptions", "value": {"type": "color-background"}},
+                {"id": "mappings", "value": [
+                  {"type": "value", "options": {
+                    "0": {"text": "fehlgeschlagen", "color": "red", "index": 0},
+                    "1": {"text": "Warnung", "color": "yellow", "index": 1},
+                    "2": {"text": "OK", "color": "green", "index": 2}
+                  }}
+                ]}
+              ]},
+              {"matcher": {"id": "byName", "options": "Letztes Backup vor"}, "properties": [{"id": "unit", "value": "s"}, {"id": "decimals", "value": 0}]},
+              {"matcher": {"id": "byName", "options": "Dauer"}, "properties": [{"id": "unit", "value": "s"}]},
+              {"matcher": {"id": "byName", "options": "Neu geschrieben"}, "properties": [{"id": "unit", "value": "bytes"}]},
+              {"matcher": {"id": "byName", "options": "Backup-Set"}, "properties": [{"id": "unit", "value": "bytes"}]}
+            ]
+          },
+          "targets": [
+            {
+              "refId": "A",
+              "datasource": {"type": "prometheus", "uid": "$${DS_PROMETHEUS}"},
+              "editorMode": "code",
+              "expr": "resticprofile_backup_status{job=~\"$job\"}",
+              "format": "table",
+              "instant": true
+            },
+            {
+              "refId": "B",
+              "datasource": {"type": "prometheus", "uid": "$${DS_PROMETHEUS}"},
+              "editorMode": "code",
+              "expr": "time() - resticprofile_backup_time_seconds{job=~\"$job\"}",
+              "format": "table",
+              "instant": true
+            },
+            {
+              "refId": "C",
+              "datasource": {"type": "prometheus", "uid": "$${DS_PROMETHEUS}"},
+              "editorMode": "code",
+              "expr": "resticprofile_backup_duration_seconds{job=~\"$job\"}",
+              "format": "table",
+              "instant": true
+            },
+            {
+              "refId": "D",
+              "datasource": {"type": "prometheus", "uid": "$${DS_PROMETHEUS}"},
+              "editorMode": "code",
+              "expr": "resticprofile_backup_added_bytes{job=~\"$job\"}",
+              "format": "table",
+              "instant": true
+            },
+            {
+              "refId": "E",
+              "datasource": {"type": "prometheus", "uid": "$${DS_PROMETHEUS}"},
+              "editorMode": "code",
+              "expr": "resticprofile_backup_processed_bytes{job=~\"$job\"}",
+              "format": "table",
+              "instant": true
+            }
+          ],
+          "transformations": [
+            {"id": "merge", "options": {}},
+            {"id": "organize", "options": {
+              "excludeByName": {"Time": true},
+              "indexByName": {},
+              "renameByName": {
+                "job": "Job",
+                "profile": "Profil",
+                "Value #A": "Status",
+                "Value #B": "Letztes Backup vor",
+                "Value #C": "Dauer",
+                "Value #D": "Neu geschrieben",
+                "Value #E": "Backup-Set"
+              }
+            }}
+          ]
+        }
+      ]
+    }
