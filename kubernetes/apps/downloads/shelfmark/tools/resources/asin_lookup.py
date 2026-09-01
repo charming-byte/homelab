@@ -5,11 +5,21 @@ Inputs (env):
   TITLE_B64, AUTHOR_B64   - base64 of the Shelfmark-provided title / author
   SOURCE_PATH_B64         - base64 of the downloaded file or folder path
   ASIN_OUT               - file to write the result to (default /work/asin)
-  MIN_RATIO              - minimum title similarity to accept (default 0.60)
+  MIN_SCORE             - minimum match score to accept (default 0.75)
 
 Output: writes "<ASIN> <region>" to ASIN_OUT when a confident match is found,
 otherwise writes nothing. Always exits 0 - a missing ASIN just means m4b-merge
-runs without Audible enrichment.
+runs without Audible enrichment, which is far better than embedding the chapter
+marks of the wrong book.
+
+Matching strategy:
+  * query Audible's catalog with the dedicated `title` filter, NOT a keyword
+    mash of "author title" (that returns fuzzy garbage - e.g. "Brian Sibley Der
+    Herr der Ringe" matched "Im Ankleidezimmer der Herrin");
+  * hard-gate candidates on a shared significant title token (stopwords removed);
+  * score on wanted-title coverage + sequence similarity, with the Shelfmark
+    author / narrator as a corroborating bonus - never a hard filter, because
+    Audible often credits the original writer, not the dramatiser.
 """
 
 import base64
@@ -28,6 +38,17 @@ UA = (
 )
 ASIN_RE = re.compile(r"\b(B0[A-Z0-9]{8})\b")
 TIMEOUT = 15
+RESPONSE_GROUPS = "contributors,product_desc,series"
+
+# Dropped before token comparison: articles, prepositions and audiobook-format
+# noise that carries no disambiguating signal.
+STOPWORDS = {
+    "der", "die", "das", "des", "dem", "den", "ein", "eine", "einen", "einer",
+    "eines", "und", "oder", "im", "in", "am", "an", "auf", "zu", "zum", "zur",
+    "von", "vom", "the", "a", "of", "and", "or", "to", "on",
+    "hoerbuch", "hoerspiel", "ungekuerzt", "gekuerzt", "roman", "teil", "band",
+    "vol", "volume", "edition",
+}
 
 
 def log(msg: str) -> None:
@@ -42,7 +63,21 @@ def b64(name: str) -> str:
 
 
 def norm(text: str) -> str:
-    return re.sub(r"[^a-z0-9]+", " ", text.lower()).strip()
+    text = text.lower()
+    for src, dst in (("ä", "ae"), ("ö", "oe"), ("ü", "ue"), ("ß", "ss")):
+        text = text.replace(src, dst)
+    return re.sub(r"[^a-z0-9]+", " ", text).strip()
+
+
+def toks(text: str) -> set[str]:
+    return {t for t in norm(text).split() if len(t) > 1 and t not in STOPWORDS}
+
+
+def names(product: dict, key: str) -> set[str]:
+    out: set[str] = set()
+    for entry in product.get(key) or []:
+        out |= toks(entry.get("name", ""))
+    return out
 
 
 def asin_from_source(path: str) -> str | None:
@@ -60,37 +95,52 @@ def asin_from_source(path: str) -> str | None:
     return None
 
 
-def search(base_url: str, query: str) -> list[dict]:
-    url = (
-        f"{base_url}/1.0/catalog/products?"
-        + urllib.parse.urlencode(
-            {
-                "keywords": query,
-                "num_results": "10",
-                "products_sort_by": "Relevance",
-                "response_groups": "contributors,product_attrs,product_desc,series",
-            }
-        )
+def search(base_url: str, params: dict) -> list[dict]:
+    query = dict(
+        params,
+        num_results="20",
+        products_sort_by="Relevance",
+        response_groups=RESPONSE_GROUPS,
     )
-    req = urllib.request.Request(url, headers={"User-Agent": UA, "Accept": "application/json"})
+    url = f"{base_url}/1.0/catalog/products?" + urllib.parse.urlencode(query)
+    req = urllib.request.Request(
+        url, headers={"User-Agent": UA, "Accept": "application/json"}
+    )
     with urllib.request.urlopen(req, timeout=TIMEOUT) as resp:
         data = json.load(resp)
     return data.get("products", []) or []
 
 
-def score(product: dict, want_title: str, want_author: str) -> float:
-    title = norm(product.get("title") or "")
-    ratio = SequenceMatcher(None, norm(want_title), title).ratio()
-    if want_author:
-        authors = norm(" ".join(a.get("name", "") for a in product.get("authors", []) or []))
-        if authors and want_author.split()[-1].lower() in authors:
-            ratio = min(1.0, ratio + 0.1)
-    return ratio
+def score(product: dict, want_toks: set[str], want_norm: str, want_author: str) -> float:
+    cand_toks = toks(product.get("title") or "")
+    if not want_toks or not cand_toks:
+        return 0.0
+    overlap = want_toks & cand_toks
+    if not overlap:
+        return 0.0  # hard gate: no shared significant title word
+
+    coverage = len(overlap) / len(want_toks)
+    seq = SequenceMatcher(None, want_norm, norm(product.get("title") or "")).ratio()
+    result = 0.6 * coverage + 0.4 * seq
+
+    author_match = bool(
+        want_author
+        and toks(want_author)
+        & (names(product, "authors") | names(product, "narrators"))
+    )
+    # A candidate carrying extra significant words (a series prefix, a different
+    # subtitle) is only a partial title hit - trust it only when the author or
+    # narrator corroborates.
+    if cand_toks - want_toks and not author_match:
+        result *= 0.7
+    if author_match:
+        result = min(1.0, result + 0.15)
+    return result
 
 
 def main() -> None:
     out = os.environ.get("ASIN_OUT", "/work/asin")
-    min_ratio = float(os.environ.get("MIN_RATIO", "0.60"))
+    min_score = float(os.environ.get("MIN_SCORE", "0.75"))
     title = b64("TITLE_B64")
     author = b64("AUTHOR_B64")
     source = b64("SOURCE_PATH_B64") or os.environ.get("SOURCE_PATH", "")
@@ -106,32 +156,49 @@ def main() -> None:
         log("no title provided - cannot search")
         return
 
-    query = f"{author} {title}".strip()
+    want_toks = toks(title)
+    want_norm = norm(title)
+    if not want_toks:
+        log(f"title {title!r} has no significant tokens - cannot match safely")
+        return
+
+    # Most precise filter first, keyword mash only as a last resort.
+    queries: list[dict] = []
+    if author:
+        queries.append({"title": title, "author": author})
+    queries.append({"title": title})
+    queries.append({"keywords": f"{title} {author}".strip()})
+
     best = (0.0, None, None)
     for region, base_url in REGIONS:
-        try:
-            products = search(base_url, query)
-        except Exception as exc:  # noqa: BLE001
-            log(f"search failed on {region}: {exc}")
-            continue
-        for product in products:
-            asin = product.get("asin")
-            if not asin:
+        seen: set[str] = set()
+        for params in queries:
+            try:
+                products = search(base_url, params)
+            except Exception as exc:  # noqa: BLE001
+                log(f"search failed on {region} {params}: {exc}")
                 continue
-            ratio = score(product, title, author)
-            log(f"  {region} {asin} {ratio:.2f} {product.get('title')!r}")
-            if ratio > best[0]:
-                best = (ratio, asin, region)
-        if best[0] >= min_ratio:
+            for product in products:
+                asin = product.get("asin")
+                if not asin or asin in seen:
+                    continue
+                seen.add(asin)
+                ratio = score(product, want_toks, want_norm, author)
+                log(f"  {region} {asin} {ratio:.2f} {product.get('title')!r}")
+                if ratio > best[0]:
+                    best = (ratio, asin, region)
+            if best[0] >= min_score:
+                break
+        if best[0] >= min_score:
             break
 
     ratio, asin, region = best
-    if asin and ratio >= min_ratio:
-        log(f"selected {asin} ({region}) ratio={ratio:.2f}")
+    if asin and ratio >= min_score:
+        log(f"selected {asin} ({region}) score={ratio:.2f}")
         with open(out, "w") as fh:
             fh.write(f"{asin} {region}")
     else:
-        log(f"no confident match (best ratio={ratio:.2f}) - continuing without ASIN")
+        log(f"no confident match (best score={ratio:.2f}) - continuing without ASIN")
 
 
 if __name__ == "__main__":
