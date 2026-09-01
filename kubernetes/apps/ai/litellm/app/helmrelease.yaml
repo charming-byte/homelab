@@ -25,6 +25,7 @@ spec:
               - "--port"
               - "4000"
             env:
+              HOME: /data
               LITELLM_DONT_SHOW_FEEDBACK_BOX: "true"
               LITELLM_MODE: PRODUCTION
               REDIS_HOST: dragonfly.dbms.svc.cluster.local
@@ -85,6 +86,15 @@ spec:
         runAsGroup: 1000
         runAsUser: 1000
     persistence:
+      data:
+        type: persistentVolumeClaim
+        accessMode: ReadWriteOnce
+        size: 128Mi
+        storageClass: local-hostpath
+        advancedMounts:
+          litellm:
+            app:
+              - path: /data
       tmpfs:
         globalMounts:
           - path: /cache

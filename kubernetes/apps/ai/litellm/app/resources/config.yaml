@@ -54,6 +54,8 @@ model_list:
       model: github_copilot/gpt-5.4
 
   - model_name: github_copilot/gpt-5.3-codex
+    model_info:
+      mode: responses
     litellm_params:
       model: github_copilot/gpt-5.3-codex
 
