@@ -1,15 +1,18 @@
 # beets config for the one-shot audiobook-m4b conversion Job.
-# Takes the single merged .m4b produced by m4b-merge, matches it against Audible
-# via beets-audible, writes book-level tags + desc.txt / reader.txt sidecars and
-# moves it into the audiobook library. Chapter markers are embedded by m4b-merge,
-# NOT by beets (match_chapters only touches the beets track list).
-plugins: audible edit fromfilename scrub copyartifacts
+# Takes the single merged .m4b, matches it against the /work/merged/<book>/
+# metadata.yml that asin_lookup wrote (beets-audible reads it and skips the
+# Audible lookup), writes book-level tags + desc.txt / reader.txt sidecars and
+# moves it into the audiobook library. Chapter markers and cover art are embedded
+# by the merge step, not by beets. No copyartifacts plugin - its sorted_walk call
+# is str/bytes-incompatible with this beets version and crashes manipulate_files;
+# the merge + beets steps copy cover.jpg / metadata.yml themselves.
+plugins: audible edit fromfilename scrub
 
 directory: /media/media/audiobooks/library
 library: /config/library.db
 
-# Non-interactive import: never prompt; if no confident Audible match, keep the
-# tags m4b-merge already wrote (quiet_fallback: asis) instead of failing.
+# Non-interactive import: never prompt; with no metadata.yml / no confident
+# match, keep the tags the merge step embedded (quiet_fallback: asis).
 import:
   write: yes
   copy: no
@@ -39,9 +42,6 @@ audible:
   include_narrator_in_artists: false
   write_description_file: true
   write_reader_file: true
-
-copyartifacts:
-  extensions: .jpg .png .txt .yml .yaml
 
 scrub:
   auto: yes
