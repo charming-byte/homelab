@@ -14,7 +14,7 @@ spec:
       - name: TZ
         value: Europe/Berlin
     fullnameOverride: pushgateway
-    replicaCount: 2
+    replicaCount: 1
     route:
       main:
         enabled: true
