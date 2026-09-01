@@ -27,17 +27,16 @@ musicbrainz:
   enabled: no
 
 paths:
-  "albumtype:audiobook series_name::.+ series_position::.+": $albumartist/%ifdef{series_name}/%ifdef{series_position} - $album%aunique{}/$title
-  "albumtype:audiobook series_name::.+": $albumartist/%ifdef{series_name}/$album%aunique{}/$title
-  "albumtype:audiobook": $albumartist/$album%aunique{}/$title
-  default: $albumartist/$album%aunique{}/$title
+  "albumtype:audiobook series_name::.+": $albumartist/%ifdef{series_name}/$album%aunique{}/$album
+  "albumtype:audiobook": $albumartist/$album%aunique{}/$album
+  default: $albumartist/$album%aunique{}/$album
 
 audible:
   region: de
   match_chapters: false
   data_source_mismatch_penalty: 0.0
   fetch_art: true
-  include_narrator_in_artists: true
+  include_narrator_in_artists: false
   write_description_file: true
   write_reader_file: true
 
