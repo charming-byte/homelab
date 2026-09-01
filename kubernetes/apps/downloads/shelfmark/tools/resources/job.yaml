@@ -104,6 +104,16 @@ spec:
               BOOK="$(find /work/merged -name '*.m4b' -type f | head -n1)"
               [ -n "$BOOK" ] || { echo "m4b-merge produced no .m4b" >&2; exit 1; }
 
+              # beets imports a directory as an album; m4b-merge writes the .m4b
+              # straight into -o when no metadata is applied (no us ASIN), so nest
+              # it under its own folder: /work/merged/<title>/<title>.m4b
+              if [ "$(dirname "$BOOK")" = "/work/merged" ]; then
+                BASE="$(basename "$BOOK" .m4b)"
+                mkdir -p "/work/merged/$BASE"
+                mv "$BOOK" "/work/merged/$BASE/$BASE.m4b"
+                BOOK="/work/merged/$BASE/$BASE.m4b"
+              fi
+
               if [ "$(chapter_count "$BOOK")" -lt 2 ]; then
                 NFILES="$(find "$SRC" -type f \( -iname '*.mp3' -o -iname '*.m4a' \
                   -o -iname '*.m4b' -o -iname '*.flac' -o -iname '*.ogg' \
