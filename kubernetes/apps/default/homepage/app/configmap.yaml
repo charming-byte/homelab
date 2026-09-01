@@ -142,7 +142,10 @@ data:
             href: https://192.168.1.1
             icon: opnsense
             description: Firewall and routing platform
-
+        - TP-Link Managed Switch:
+            href: http://192.168.100.2
+            icon: si-tp-link
+            description: Web interface for TP-Link managed switch
     - Storage:
         - NAS:
             href: http://nas.internal
