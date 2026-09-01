@@ -48,13 +48,84 @@ spec:
           args:
             - |
               set -e
+
+              # One [CHAPTER] per source file, offsets from real durations.
+              # m4b-merge only chapterizes when its Audnex lookup succeeds, and
+              # its client sends no region so any non-us ASIN 404s - without this
+              # a multi-file source would merge into one chapterless blob.
+              build_file_chapters() {
+                _list=/work/tmp/flist
+                find "$1" -type f \( -iname '*.mp3' -o -iname '*.m4a' \
+                  -o -iname '*.m4b' -o -iname '*.flac' -o -iname '*.ogg' \
+                  -o -iname '*.opus' -o -iname '*.aac' -o -iname '*.wav' \
+                  -o -iname '*.wma' \) | sort -V > "$_list"
+                [ -s "$_list" ] || return 1
+                : > /work/tmp/durs
+                while IFS= read -r _f; do
+                  printf '%s\t%s\n' \
+                    "$(ffprobe -v error -show_entries format=duration \
+                        -of default=nw=1:nk=1 "$_f" 2>/dev/null)" \
+                    "$(basename "$_f")" >> /work/tmp/durs
+                done < "$_list"
+                awk -F'\t' '
+                  BEGIN { print ";FFMETADATA1" }
+                  {
+                    start = off; off += $1 * 1000
+                    t = $2; sub(/\.[^.]+$/, "", t); gsub(/[=;#\\]/, " ", t)
+                    printf "\n[CHAPTER]\nTIMEBASE=1/1000\nSTART=%d\nEND=%d\ntitle=%s\n", \
+                      start, off, t
+                  }
+                ' /work/tmp/durs > "$2"
+              }
+
+              chapter_count() {
+                ffprobe -v error -show_entries chapter=start_time -of csv=p=0 \
+                  "$1" 2>/dev/null | grep -c . || true
+              }
+
               SRC="$(printf '%s' "$SOURCE_PATH_B64" | base64 -d)"
-              ASIN=""
-              [ -s /work/asin ] && ASIN="$(cut -d' ' -f1 /work/asin)"
+              ASIN=""; REGION=""
+              if [ -s /work/asin ]; then
+                ASIN="$(cut -d' ' -f1 /work/asin)"
+                REGION="$(cut -d' ' -f2 /work/asin)"
+              fi
               mkdir -p /work/merged /work/tmp
-              echo "merging: $SRC  (asin=${ASIN:-none})"
-              exec m4b-merge -i "$SRC" ${ASIN:+-a "$ASIN"} \
+
+              # m4b-merge can only resolve us-region ASINs; asin_lookup has
+              # already written the correct-region chapters to
+              # /work/chapters.ffmeta for every other case.
+              MERGE_ASIN=""
+              [ "$REGION" = "us" ] && MERGE_ASIN="$ASIN"
+
+              echo "merging: $SRC (asin=${ASIN:-none} region=${REGION:-none} m4b-merge-a=${MERGE_ASIN:-none})"
+              m4b-merge -i "$SRC" ${MERGE_ASIN:+-a "$MERGE_ASIN"} \
                 -o /work/merged -p "{title}" --num-cpus 4
+
+              BOOK="$(find /work/merged -name '*.m4b' -type f | head -n1)"
+              [ -n "$BOOK" ] || { echo "m4b-merge produced no .m4b" >&2; exit 1; }
+
+              if [ "$(chapter_count "$BOOK")" -lt 2 ]; then
+                NFILES="$(find "$SRC" -type f \( -iname '*.mp3' -o -iname '*.m4a' \
+                  -o -iname '*.m4b' -o -iname '*.flac' -o -iname '*.ogg' \
+                  -o -iname '*.opus' -o -iname '*.aac' -o -iname '*.wav' \
+                  -o -iname '*.wma' \) | grep -c . || true)"
+                META=""
+                if [ "${NFILES:-0}" -ge 2 ]; then
+                  echo "deriving chapters from $NFILES source files"
+                  build_file_chapters "$SRC" /work/tmp/chapters.ffmeta \
+                    && META=/work/tmp/chapters.ffmeta
+                elif [ -s /work/chapters.ffmeta ]; then
+                  echo "using Audnex chapters (region=${REGION:-?})"
+                  META=/work/chapters.ffmeta
+                fi
+                if [ -n "$META" ] && [ -s "$META" ]; then
+                  ffmpeg -nostdin -v error -i "$BOOK" -i "$META" \
+                    -map 0 -map_metadata 0 -map_chapters 1 -c copy \
+                    -f mp4 "$BOOK.chapters.m4b"
+                  mv "$BOOK.chapters.m4b" "$BOOK"
+                  echo "embedded $(chapter_count "$BOOK") chapters"
+                fi
+              fi
           env:
             - { name: SOURCE_PATH_B64, value: "__SOURCE_PATH_B64__" }
             - { name: HOME, value: "/work" }
