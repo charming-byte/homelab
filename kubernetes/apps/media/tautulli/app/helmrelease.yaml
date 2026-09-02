@@ -71,7 +71,7 @@ spec:
           http:
             port: *port
     route:
-      app:
+      tautulli:
         annotations:
           gethomepage.dev/enabled: "true"
           gethomepage.dev/group: Downloads
@@ -84,7 +84,7 @@ spec:
             namespace: network
         rules:
           - backendRefs:
-            - name: app
+            - name: tautulli
               port: *port
       image-host:
        enabled: true
@@ -98,7 +98,7 @@ spec:
               type: PathPrefix
               value: /images
           backendRefs:
-            - name: app
+            - name: tautulli
               port: *port
       authentik-callback:
         enabled: true
