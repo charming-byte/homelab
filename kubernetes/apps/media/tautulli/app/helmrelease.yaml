@@ -87,19 +87,19 @@ spec:
             - name: tautulli
               port: *port
       image-host:
-       enabled: true
-       hostnames: ["{{ .Release.Name }}.${SECRET_DOMAIN}"]
-       parentRefs:
-         - name: envoy-external
-           namespace: network
-       rules:
-        - matches:
-          - path:
-              type: PathPrefix
-              value: /images
-          backendRefs:
-            - name: tautulli
-              port: *port
+        enabled: true
+        hostnames: ["{{ .Release.Name }}-newsletter.${SECRET_DOMAIN}"]
+        parentRefs:
+          - name: envoy-external
+            namespace: network
+        rules:
+          - matches:
+              - path:
+                  type: PathPrefix
+                  value: /image
+            backendRefs:
+              - name: tautulli
+                port: *port
       authentik-callback:
         enabled: true
         hostnames: ["{{ .Release.Name }}.${SECRET_DOMAIN}"]
