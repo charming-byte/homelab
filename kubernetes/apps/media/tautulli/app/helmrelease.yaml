@@ -78,11 +78,28 @@ spec:
           gethomepage.dev/icon: sh-tautulli-light.png
           gethomepage.dev/name: Tautulli
           gethomepage.dev/description: Tautulli is a Python based monitoring and tracking tool for Plex Media Server.
-        hostnames:
-          - "{{ .Release.Name }}.${SECRET_DOMAIN}"
+        hostnames: ["{{ .Release.Name }}.${SECRET_DOMAIN}"]
         parentRefs:
           - name: envoy-internal
             namespace: network
+        rules:
+          - backendRefs:
+            - name: app
+              port: *port
+      image-host:
+       enabled: true
+       hostnames: ["{{ .Release.Name }}.${SECRET_DOMAIN}"]
+       parentRefs:
+         - name: envoy-external
+           namespace: network
+       rules:
+        - matches:
+          - path:
+              type: PathPrefix
+              value: /images
+          backendRefs:
+            - name: app
+              port: *port
       authentik-callback:
         enabled: true
         hostnames: ["{{ .Release.Name }}.${SECRET_DOMAIN}"]
