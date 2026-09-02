@@ -83,6 +83,21 @@ spec:
         parentRefs:
           - name: envoy-internal
             namespace: network
+      authentik-callback:
+        enabled: true
+        hostnames: ["{{ .Release.Name }}.${SECRET_DOMAIN}"]
+        parentRefs:
+          - name: envoy-internal
+            namespace: network
+        rules:
+          - matches:
+              - path:
+                  type: PathPrefix
+                  value: /outpost.goauthentik.io
+            backendRefs:
+              - name: ak-outpost-authentik-embedded-outpost
+                namespace: security
+                port: 9000
     persistence:
       config:
         existingClaim: "{{ .Release.Name }}"

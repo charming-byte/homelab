@@ -6,7 +6,11 @@ metadata:
   name: tautulli
   namespace: media
 spec:
+  components:
+    - ../../../../components/ext-auth
   dependsOn:
+    - name: authentik
+      namespace: security
     - name: openebs
       namespace: openebs-system
     - name: onepassword-connect
@@ -16,6 +20,8 @@ spec:
   postBuild:
     substitute:
       APP: tautulli
+      EXT_AUTH_APP: tautulli
+      EXT_AUTH_TARGET_NAME: tautulli
     substituteFrom:
       - kind: Secret
         name: cluster-secrets
