@@ -116,6 +116,13 @@ spec:
                 namespace: security
                 port: 9000
     persistence:
+      backups:
+        globalMounts:
+          - path: /config/backups
+            subPath: backups/tautulli
+        path: /nas
+        server: nas.internal
+        type: nfs
       config:
         existingClaim: "{{ .Release.Name }}"
       tmp:

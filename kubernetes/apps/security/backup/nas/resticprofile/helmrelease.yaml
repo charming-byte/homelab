@@ -91,4 +91,6 @@ spec:
             subPath: paperless
           - path: /nas/backups/postgres
             subPath: backups/postgres
+          - path: /nas/backups/tautulli
+            subPath: backups/tautulli
 
