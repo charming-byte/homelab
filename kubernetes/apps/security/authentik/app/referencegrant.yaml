@@ -13,12 +13,19 @@ spec:
     - group: gateway.envoyproxy.io
       kind: SecurityPolicy
       namespace: self-hosted
+    - group: gateway.envoyproxy.io
+      kind: SecurityPolicy
+      namespace: media
+
     - group: gateway.networking.k8s.io
       kind: HTTPRoute
       namespace: downloads
     - group: gateway.networking.k8s.io
       kind: HTTPRoute
       namespace: self-hosted
+    - group: gateway.networking.k8s.io
+      kind: HTTPRoute
+      namespace: media
   to:
     - group: ""
       kind: Service
