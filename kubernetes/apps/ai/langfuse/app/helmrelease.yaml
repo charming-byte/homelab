@@ -154,7 +154,7 @@ spec:
             envFrom: *envFrom
             image:
               repository: ghcr.io/langfuse/langfuse-worker
-              tag: 4.24@sha256:d4cbfe486b0eaaead437f8c5f626420b0275557bf7f89229e4edc8fc6683f01e
+              tag: 4.27@sha256:091a85c3c54bf5fff7cc0073a7f35a52861cc0e30d33dd05569fe3ed66b15d8d
             probes:
               liveness:
                 custom: true
