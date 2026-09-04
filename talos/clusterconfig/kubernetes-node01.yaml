@@ -11,7 +11,7 @@ machine:
     - 127.0.0.1
     - 192.168.178.200
   kubelet:
-    image: ghcr.io/siderolabs/kubelet:v1.36.3
+    image: ghcr.io/siderolabs/kubelet:v1.37.0
     extraMounts:
       - destination: /var/openebs/local
         type: bind
