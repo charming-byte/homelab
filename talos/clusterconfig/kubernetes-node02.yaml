@@ -48,7 +48,7 @@ machine:
       - security=none
       - sysctl.kernel.kexec_load_disabled=1
       - talos.auditd.disabled=1
-    image: factory.talos.dev/metal-installer/7a81fabba91c3dbdb0568d99436efa51afdb13104074a2fec50e56f28ebebbad:v1.13.8
+    image: factory.talos.dev/metal-installer/7a81fabba91c3dbdb0568d99436efa51afdb13104074a2fec50e56f28ebebbad:v1.14.0
     wipe: false
     grubUseUKICmdline: false
   files:
