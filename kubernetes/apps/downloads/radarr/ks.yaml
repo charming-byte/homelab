@@ -27,7 +27,6 @@ spec:
       APP: radarr
       EXT_AUTH_APP: radarr
       EXT_AUTH_TARGET_NAME: radarr
-      EXT_AUTH_HOSTNAME: radarr.${SECRET_DOMAIN}
     substituteFrom:
       - kind: Secret
         name: cluster-secrets
