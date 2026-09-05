@@ -85,7 +85,7 @@ spec:
               - path: /media
         enabled: true
         path: /media-root
-        server: scarif.nas.${SECRET_DOMAIN}
+        server: nas.internal
         type: nfs
       tmp:
         type: emptyDir
