@@ -19,3 +19,9 @@ radarr:
     include:
       - template: 2b90e905c99490edc7c7a5787443748b
         source: TRASH
+
+    # Vorhandenes Serverprofil übernehmen statt ein zweites anzulegen:
+    # 'from' ist der Name im TRaSH-Template, 'to' der Name auf dem Server.
+    renameQualityProfiles:
+      - from: "[German] HD Bluray + WEB"
+        to: "HD Bluray + WEB (GER)"

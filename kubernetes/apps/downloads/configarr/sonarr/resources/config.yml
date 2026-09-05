@@ -19,3 +19,9 @@ sonarr:
     include:
       - template: dca7e5e9e99c703bcbdaaa471dd40e98
         source: TRASH
+
+    # Vorhandenes Serverprofil übernehmen statt ein zweites anzulegen:
+    # 'from' ist der Name im TRaSH-Template, 'to' der Name auf dem Server.
+    renameQualityProfiles:
+      - from: "[German] HD Bluray + WEB"
+        to: "German"
