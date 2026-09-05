@@ -79,14 +79,14 @@ spec:
         size: 3Gi
         storageClass: local-hostpath
         type: persistentVolumeClaim
-      media:
+      data:
         advancedMounts:
           radarr:
             app:
-              - path: /media
+              - path: /data
         enabled: true
-        path: /media-root
-        server: nas.internal
+        path: /data
+        server: scarif.local
         type: nfs
       tmp:
         type: emptyDir

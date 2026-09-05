@@ -66,11 +66,12 @@ spec:
         size: 5Gi
         storageClass: local-hostpath
         type: persistentVolumeClaim
-      media:
+      data:
         globalMounts:
-          - path: /media
-        path: /media-root
-        server: nas.internal
+          - path: /data
+            subPath: usenet
+        path: /data
+        server: scarif.local
         type: nfs
       tmpfs:
         advancedMounts:

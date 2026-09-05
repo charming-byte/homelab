@@ -83,14 +83,14 @@ spec:
         size: 2Gi
         storageClass: local-hostpath
         suffix: config
-      media:
+      data:
         advancedMounts:
           sonarr:
             app:
-              - path: /media
+              - path: /data
         enabled: true
-        path: /media-root
-        server: nas.internal
+        path: /data
+        server: scarif.local
         type: nfs
       tmp:
         type: emptyDir
