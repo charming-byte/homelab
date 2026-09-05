@@ -5,37 +5,25 @@ kind: HelmRelease
 metadata:
   name: shelfmark
 spec:
-  interval: 1h
   chartRef:
     kind: OCIRepository
     name: shelfmark
   install:
     remediation:
       retries: 3
+  interval: 1h
   upgrade:
     cleanupOnFail: true
     remediation:
-      strategy: rollback
       retries: 3
+      strategy: rollback
   values:
     controllers:
       shelfmark:
         annotations:
           reloader.stakater.com/auto: "true"
-        pod:
-          securityContext:
-            runAsNonRoot: true
-            runAsUser: 1000
-            runAsGroup: 1000
-            fsGroup: 1000
-            fsGroupChangePolicy: OnRootMismatch
         containers:
           app:
-            image:
-              repository: ghcr.io/calibrain/shelfmark
-              tag: v1.3.15@sha256:9602290324993c801b319d3166b202b96bd9039af2416f0916dae03a5bdca815
-            command:
-              - gunicorn
             args:
               - --access-logfile=-
               - --error-logfile=-
@@ -46,64 +34,99 @@ spec:
               - -b
               - 0.0.0.0:8084
               - shelfmark.main:app
+            command:
+              - gunicorn
             env:
-              TZ: Europe/Berlin
+              AUDIOBOOK_WEBHOOK_URL: http://webhook.downloads.svc.cluster.local:8080/hooks/request-audiobook-m4b-conversion
               AUTH_METHOD: oidc
-              INGEST_DIR: /media/media/books/ingest
-              OIDC_DISCOVERY_URL: https://sso.${SECRET_DOMAIN}/application/o/shelfmark/.well-known/openid-configuration
-              OIDC_CLIENT_ID: shelfmark
-              OIDC_ADMIN_GROUP: shelfmark Admins
-              OIDC_AUTO_PROVISION: "true"
-              OIDC_AUTO_REDIRECT: "true"
-              HIDE_LOCAL_AUTH: "true"
               # Post-download hook: notify the audiobook-m4b webhook, which
               # creates a Job that converts non-m4b audiobooks to a tagged m4b.
               CUSTOM_SCRIPT: /scripts/notify-webhook.py
-              CUSTOM_SCRIPT_PATH_MODE: absolute
               CUSTOM_SCRIPT_JSON_PAYLOAD: "true"
-              AUDIOBOOK_WEBHOOK_URL: http://webhook.downloads.svc.cluster.local:8080/hooks/request-audiobook-m4b-conversion
+              CUSTOM_SCRIPT_PATH_MODE: absolute
+              HIDE_LOCAL_AUTH: "true"
+              INGEST_DIR: /media/media/books/ingest
+              OIDC_ADMIN_GROUP: shelfmark Admins
+              OIDC_AUTO_PROVISION: "true"
+              OIDC_AUTO_REDIRECT: "true"
+              OIDC_CLIENT_ID: shelfmark
+              OIDC_DISCOVERY_URL: https://sso.${SECRET_DOMAIN}/application/o/shelfmark/.well-known/openid-configuration
               PYTHONDONTWRITEBYTECODE: "1"
+              TZ: Europe/Berlin
             envFrom:
               - secretRef:
                   name: shelfmark-secret
+            image:
+              repository: ghcr.io/calibrain/shelfmark
+              tag: v1.3.15@sha256:9602290324993c801b319d3166b202b96bd9039af2416f0916dae03a5bdca815
             probes:
               liveness:
                 enabled: true
                 spec:
+                  failureThreshold: 5
                   periodSeconds: 30
                   timeoutSeconds: 5
-                  failureThreshold: 5
               readiness:
-                enabled: true
                 custom: true
+                enabled: true
                 spec:
+                  failureThreshold: 5
                   httpGet:
                     path: /api/health
-                    port: &port 8084
+                    port: 8084
                   periodSeconds: 10
                   timeoutSeconds: 5
-                  failureThreshold: 5
               startup:
                 enabled: true
                 spec:
                   failureThreshold: 30
                   periodSeconds: 10
-            securityContext:
-              allowPrivilegeEscalation: false
-              readOnlyRootFilesystem: true
-              capabilities: {drop: ["ALL"]}
             resources:
+              limits:
+                memory: 512Mi
               requests:
                 cpu: 10m
                 memory: 128Mi
-              limits:
-                memory: 512Mi
-    service:
-      app:
-        controller: shelfmark
-        ports:
-          http:
-            port: *port
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop: ["ALL"]
+              readOnlyRootFilesystem: true
+        pod:
+          securityContext:
+            fsGroup: 1000
+            fsGroupChangePolicy: OnRootMismatch
+            runAsGroup: 1000
+            runAsNonRoot: true
+            runAsUser: 1000
+    persistence:
+      config:
+        accessMode: ReadWriteOnce
+        globalMounts:
+          - path: /config
+        size: 2Gi
+        storageClass: local-hostpath
+      media:
+        globalMounts:
+          - path: /data
+        path: /data
+        server: scarif.nas.${SECRET_DOMAIN}
+        type: nfs
+      scripts:
+        defaultMode: 0755
+        globalMounts:
+          - path: /scripts
+            readOnly: true
+        name: shelfmark-scripts
+        type: configMap
+      tmpfs:
+        globalMounts:
+          - path: /tmp
+            subPath: tmp
+          - path: /var/log
+            subPath: var-log
+        sizeLimit: 1Gi
+        type: emptyDir
     route:
       app:
         annotations:
@@ -119,32 +142,10 @@ spec:
         rules:
           - backendRefs:
               - name: shelfmark
-                port: *port
-    persistence:
-      config:
-        accessMode: ReadWriteOnce
-        globalMounts:
-          - path: /config
-        size: 2Gi
-        storageClass: local-hostpath
-      scripts:
-        type: configMap
-        name: shelfmark-scripts
-        defaultMode: 0755
-        globalMounts:
-          - path: /scripts
-            readOnly: true
-      media:
-        globalMounts:
-          - path: /media
-        path: /media-root
-        server: nas.internal
-        type: nfs
-      tmpfs:
-        globalMounts:
-          - path: /tmp
-            subPath: tmp
-          - path: /var/log
-            subPath: var-log
-        sizeLimit: 1Gi
-        type: emptyDir
+                port: 8084
+    service:
+      app:
+        controller: shelfmark
+        ports:
+          http:
+            port: 8084
