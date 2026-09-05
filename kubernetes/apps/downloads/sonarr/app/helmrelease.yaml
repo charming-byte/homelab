@@ -89,7 +89,7 @@ spec:
             app:
               - path: /data
         enabled: true
-        path: /data
+        path: /mnt/user/data
         server: scarif.local
         type: nfs
       tmp:
