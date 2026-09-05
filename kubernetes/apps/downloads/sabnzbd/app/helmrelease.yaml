@@ -71,7 +71,7 @@ spec:
           - path: /data
             subPath: usenet
         path: /mnt/user/data
-        server: scarif.local
+        server: scarif.nas.${SECRET_DOMAIN}
         type: nfs
       tmpfs:
         advancedMounts:

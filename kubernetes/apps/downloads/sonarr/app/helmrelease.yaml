@@ -90,7 +90,7 @@ spec:
               - path: /data
         enabled: true
         path: /mnt/user/data
-        server: scarif.local
+        server: scarif.nas.${SECRET_DOMAIN}
         type: nfs
       tmp:
         type: emptyDir
