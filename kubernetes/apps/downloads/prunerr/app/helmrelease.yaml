@@ -47,14 +47,18 @@ spec:
               allowPrivilegeEscalation: false
               capabilities:
                 drop: ["ALL"]
+                add:
+                  - CHOWN
+                  - SETUID
+                  - SETGID
               readOnlyRootFilesystem: true
     defaultPodOptions:
       securityContext:
-        fsGroup: 1001
+        fsGroup: 100
         fsGroupChangePolicy: OnRootMismatch
-        runAsGroup: 1001
+        runAsGroup: 100
         runAsNonRoot: true
-        runAsUser: 1001
+        runAsUser: 99
     persistence:
       data:
         accessMode: ReadWriteOnce
@@ -63,7 +67,8 @@ spec:
         advancedMounts:
           prunerr:
             app:
-              - path: /app/data
+              - path: /app
+                subPath: data
       tmp:
         type: emptyDir
     route:
