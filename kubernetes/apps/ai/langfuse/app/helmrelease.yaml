@@ -242,7 +242,7 @@ spec:
             envFrom: *envFrom
             image:
               repository: amazon/aws-cli
-              tag: 2.36.38@sha256:269b824fd142de9de0bd6fa2e78cdcf3012c1b05f1792a8e44b30ad80680c83d
+              tag: 2.36.40@sha256:b6aeb95d19d7f5a8cae4eb814cb16739b6b2a4f2f46f427ada6a8c9a20d9881d
             resources:
               limits:
                 memory: 128Mi
