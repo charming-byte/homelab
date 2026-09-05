@@ -69,7 +69,6 @@ spec:
       data:
         globalMounts:
           - path: /data
-            subPath: usenet
         path: /mnt/user/data
         server: scarif.nas.${SECRET_DOMAIN}
         type: nfs
