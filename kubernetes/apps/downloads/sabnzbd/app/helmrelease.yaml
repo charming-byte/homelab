@@ -53,11 +53,11 @@ spec:
               readOnlyRootFilesystem: true
     defaultPodOptions:
       securityContext:
-        fsGroup: 1000
+        fsGroup: 100
         fsGroupChangePolicy: OnRootMismatch
-        runAsGroup: 1000
+        runAsGroup: 100
         runAsNonRoot: true
-        runAsUser: 1000
+        runAsUser: 99
     persistence:
       config:
         accessMode: ReadWriteOnce
