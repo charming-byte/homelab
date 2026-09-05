@@ -1,0 +1,21 @@
+---
+radarrEnabled: true
+sonarrEnabled: false
+lidarrEnabled: false
+readarrEnabled: false
+whisparrEnabled: false
+
+telemetry: false
+
+radarr:
+  instance1:
+    base_url: http://radarr.downloads.svc.cluster.local
+    api_key: !env RADARR_API_KEY
+
+    quality_definition:
+      type: movie
+
+    # [German] HD Bluray + WEB
+    include:
+      - template: 2b90e905c99490edc7c7a5787443748b
+        source: TRASH

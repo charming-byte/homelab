@@ -9,6 +9,7 @@ resources:
   - ./namespace.yaml
   - ./prowlarr/ks.yaml
   - ./prunerr/ks.yaml
+  - ./configarr/ks.yaml
   - ./qbittorrent/ks.yaml
   - ./radarr/ks.yaml
   - ./sabnzbd/ks.yaml

@@ -1,0 +1,21 @@
+---
+radarrEnabled: false
+sonarrEnabled: true
+lidarrEnabled: false
+readarrEnabled: false
+whisparrEnabled: false
+
+telemetry: false
+
+sonarr:
+  instance1:
+    base_url: http://sonarr.downloads.svc.cluster.local
+    api_key: !env SONARR_API_KEY
+
+    quality_definition:
+      type: series
+
+    # [German] HD Bluray + WEB
+    include:
+      - template: dca7e5e9e99c703bcbdaaa471dd40e98
+        source: TRASH
