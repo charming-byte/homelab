@@ -15,13 +15,16 @@ radarr:
     quality_definition:
       type: movie
 
-    # [German] HD Bluray + WEB
     include:
+      # [German] HD Bluray + WEB
       - template: 2b90e905c99490edc7c7a5787443748b
         source: TRASH
 
-    # Vorhandenes Serverprofil übernehmen statt ein zweites anzulegen:
-    # 'from' ist der Name im TRaSH-Template, 'to' der Name auf dem Server.
+      # [German] Anime HD Bluray + WEB
+      - template: bf3cc2e99ad9a804a9b0d0e538e1fbba
+        source: TRASH
+
     renameQualityProfiles:
       - from: "[German] HD Bluray + WEB"
-        to: "HD Bluray + WEB (GER)"
+        to: "German"
+

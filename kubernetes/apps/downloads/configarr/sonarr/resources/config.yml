@@ -15,13 +15,15 @@ sonarr:
     quality_definition:
       type: series
 
-    # [German] HD Bluray + WEB
     include:
+      # [German] HD Bluray + WEB
       - template: dca7e5e9e99c703bcbdaaa471dd40e98
         source: TRASH
 
-    # Vorhandenes Serverprofil übernehmen statt ein zweites anzulegen:
-    # 'from' ist der Name im TRaSH-Template, 'to' der Name auf dem Server.
+      # [German] Anime HD Bluray + WEB
+      - template: 6fe5937e1dcc2269e23b49eb46dfe6d6
+        source: TRASH
+
     renameQualityProfiles:
       - from: "[German] HD Bluray + WEB"
         to: "German"
