@@ -5,11 +5,12 @@ namespace: downloads
 components:
   - ../../components/common
 resources:
+  - ./configarr/ks.yaml
   - ./lidarr/ks.yaml
   - ./namespace.yaml
   - ./prowlarr/ks.yaml
   - ./prunerr/ks.yaml
-  - ./configarr/ks.yaml
+  - ./pulsarr/ks.yaml
   - ./qbittorrent/ks.yaml
   - ./radarr/ks.yaml
   - ./sabnzbd/ks.yaml

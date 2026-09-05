@@ -1,0 +1,123 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: pulsarr
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: pulsarr
+  interval: 1h
+  values:
+    controllers:
+      pulsarr:
+        annotations:
+          reloader.stakater.com/auto: "true"
+        containers:
+          app:
+            env:
+              TZ: Europe/Berlin
+              baseUrl: https://pulsarr.${SECRET_DOMAIN}
+              cookieSecured: "true"
+              dbType: postgres
+              listenPort: &port 3000
+              logLevel: info
+              authenticationMethod: "requiredExceptLocal"
+            envFrom: &envFrom
+              - secretRef:
+                  name: "{{ .Release.Name }}-secret"
+            image:
+              repository: docker.io/lakker/pulsarr
+              tag: 0.19.0@sha256:679786282711def4ec2996c7df997984b4f66d015f0f9e8fd5889b11faeaf0d7
+            probes:
+              liveness: &liveness
+                custom: true
+                enabled: true
+                spec:
+                  failureThreshold: 3
+                  httpGet:
+                    path: /health
+                    port: *port
+                  initialDelaySeconds: 0
+                  periodSeconds: 10
+                  timeoutSeconds: 1
+              readiness: *liveness
+            resources:
+              limits:
+                memory: 1Gi
+              requests:
+                cpu: 50m
+                memory: 128Mi
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop: ["ALL"]
+              readOnlyRootFilesystem: true
+        initContainers:
+          init-db:
+            envFrom: *envFrom
+            image:
+              repository: ghcr.io/home-operations/postgres-init
+              tag: 18.6.0@sha256:b6d3af974df781c673d37e49bdddfa14a6f5be28b18d2cb7713f0449bea4057b
+    defaultPodOptions:
+      securityContext:
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+        runAsGroup: 1000
+        runAsNonRoot: true
+        runAsUser: 1000
+    persistence:
+      data:
+        advancedMounts:
+          pulsarr:
+            app:
+              - path: /app/data
+        enabled: true
+        existingClaim: "{{ .Release.Name }}"
+      tmp:
+        advancedMounts:
+          pulsarr:
+            app:
+              - path: /app/data/logs
+                subPath: logs
+              - path: /tmp
+                subPath: tmp
+        type: emptyDir
+    route:
+      authentik-callback:
+        enabled: true
+        hostnames: ["{{ .Release.Name }}.${SECRET_DOMAIN}"]
+        parentRefs:
+          - name: envoy-internal
+            namespace: network
+        rules:
+          - backendRefs:
+              - name: ak-outpost-authentik-embedded-outpost
+                namespace: security
+                port: 9000
+            matches:
+              - path:
+                  type: PathPrefix
+                  value: /outpost.goauthentik.io
+      pulsarr:
+        annotations:
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/group: Downloads
+          gethomepage.dev/icon: sh-pulsarr-light.png
+          gethomepage.dev/name: Pulsarr
+          gethomepage.dev/description: "Real-time Plex watchlist monitoring and content acquisition tool."
+        hostnames: ["{{ .Release.Name }}.${SECRET_DOMAIN}"]
+        parentRefs:
+          - name: envoy-internal
+            namespace: network
+        rules:
+          - backendRefs:
+              - name: pulsarr
+                port: 80
+    service:
+      app:
+        ports:
+          http:
+            port: 80
+            targetPort: *port
