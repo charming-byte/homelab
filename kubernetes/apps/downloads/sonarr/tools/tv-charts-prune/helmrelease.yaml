@@ -1,0 +1,75 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: tv-charts-prune
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: tv-charts-prune
+  interval: 1h
+  values:
+    controllers:
+      tv-charts-prune:
+        type: cronjob
+        annotations:
+          reloader.stakater.com/auto: "true"
+        cronjob:
+          # Monday night: outside viewing hours, and far enough past the
+          # weekend that its plays are already in Tautulli's history.
+          schedule: 0 4 * * 1
+          timeZone: Europe/Berlin
+          backoffLimit: 0
+          concurrencyPolicy: Forbid
+          successfulJobsHistory: 1
+          failedJobsHistory: 1
+          ttlSecondsAfterFinished: 18000
+        containers:
+          app:
+            image:
+              repository: docker.io/library/python
+              tag: 3.14-alpine@sha256:c6ead215bfd31f1e433d968853b7a769989117115b728874824e6c0a27cb96fc
+            command: ["python3", "/scripts/tv_charts_prune.py"]
+            env:
+              TZ: Europe/Berlin
+              SONARR_URL: http://sonarr.downloads.svc.cluster.local
+              TAUTULLI_URL: http://tautulli.media.svc.cluster.local
+              PUSHGATEWAY_URL: http://pushgateway.observability.svc.cluster.local:9091
+              SONARR_TAG: tv-charts
+              DRY_RUN: "true"
+              # More candidates than this means the upstream list is suspect,
+              # not that the charts rotated - the run aborts without deleting.
+              MAX_DELETE: "10"
+              WATCH_MIN_PERCENT: "20"
+              WATCH_WINDOW_DAYS: "30"
+              GRACE_DAYS: "30"
+            envFrom:
+              - secretRef:
+                  name: tv-charts-prune-secret
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: { drop: ["ALL"] }
+            resources:
+              requests:
+                cpu: 10m
+                memory: 64Mi
+              limits:
+                memory: 256Mi
+        pod:
+          restartPolicy: Never
+    defaultPodOptions:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+    persistence:
+      scripts:
+        type: configMap
+        name: tv-charts-prune-scripts
+        globalMounts:
+          - path: /scripts
+            readOnly: true

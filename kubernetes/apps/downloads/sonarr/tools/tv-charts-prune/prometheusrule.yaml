@@ -1,0 +1,38 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/monitoring.coreos.com/prometheusrule_v1.json
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    prometheus: k8s
+    role: alert-rules
+  name: tv-charts-prune-rules
+spec:
+  groups:
+    - name: tv-charts-prune.rules
+      rules:
+        - alert: TvChartsPruneStale
+          annotations:
+            description: >-
+              The tv-charts prune job has not completed successfully for over 8
+              days. It runs weekly, so either the CronJob stopped firing or every
+              run since then failed.
+            summary: tv-charts prune job has not succeeded in over 8 days
+          expr: |-
+            time() - tv_charts_prune_last_success_timestamp_seconds > 8 * 86400
+            or absent(tv_charts_prune_last_success_timestamp_seconds)
+          for: 1h
+          labels:
+            severity: critical
+        - alert: TvChartsPruneFailed
+          annotations:
+            description: >-
+              The last tv-charts prune run failed. Either a safety net tripped
+              (empty upstream list, or more candidates than MAX_DELETE) or a
+              deletion errored. Check `kubectl -n downloads logs job/...`.
+            summary: tv-charts prune run failed
+          expr: |-
+            tv_charts_prune_status != 1
+          for: 1h
+          labels:
+            severity: critical
