@@ -147,8 +147,9 @@ data:
             icon: si-tp-link
             description: Web interface for TP-Link managed switch
     - Storage:
-        - NAS:
+        - OpenMediaVault:
             href: http://nas.internal
+            description: RPI4 NAS
             icon: openmediavault.png
             widget:
               type: openmediavault
@@ -157,6 +158,14 @@ data:
               password: {{HOMEPAGE_VAR_NAS_PASSWORD}}
               method: smart.getListBg
               fields: ["passed", "failed"]
+        - Unraid:
+            href: http://192.168.178.140
+            icon: unraid.png
+            widget:
+              type: unraid
+              url: http://192.168.178.140
+              api-key: {{HOMEPAGE_VAR_UNRAID_API_KEY}}
+              fields: ["status", "arrayUsedSpace", "arrayFree"]
     - Calendar:
         - Calendar:
             widget:
