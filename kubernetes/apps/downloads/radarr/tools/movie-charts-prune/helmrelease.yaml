@@ -35,7 +35,7 @@ spec:
               TAUTULLI_URL: http://tautulli.media.svc.cluster.local
               PUSHGATEWAY_URL: http://pushgateway.observability.svc.cluster.local:9091
               RADARR_TAG: movie-charts
-              DRY_RUN: "true"
+              DRY_RUN: "false"
               MAX_DELETE: "15"
               WATCH_MIN_PERCENT: "20"
               WATCH_WINDOW_DAYS: "30"
