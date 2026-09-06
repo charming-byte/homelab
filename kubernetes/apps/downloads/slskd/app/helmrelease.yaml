@@ -79,7 +79,7 @@ spec:
           gluetun:
             env:
               FIREWALL_INPUT_PORTS: "80,9999"
-              FIREWALL_OUTBOUND_SUBNETS: 10.42.0.0/16
+              FIREWALL_OUTBOUND_SUBNETS: "10.42.0.0/16,10.43.0.0/16"
               SERVER_COUNTRIES: Switzerland
               VPN_PORT_FORWARDING: on
               VPN_SERVICE_PROVIDER: protonvpn
@@ -96,9 +96,7 @@ spec:
                   name: "{{ .Release.Name }}-secret"
             image:
               repository: ghcr.io/qdm12/gluetun
-              tag: v3.41@sha256:1a5bf4b4820a879cdf8d93d7ef0d2d963af56670c9ebff8981860b6804ebc8ab            # Kubernetes shares IP rules across the whole pod netns, so a restarted
-            # gluetun container hits "file exists" re-adding its IPv6 rule. Clear
-            # stale rules on postStart: https://github.com/qdm12/gluetun-wiki/blob/main/setup/advanced/kubernetes.md#adding-ipv6-rule--file-exists
+              tag: v3.41@sha256:1a5bf4b4820a879cdf8d93d7ef0d2d963af56670c9ebff8981860b6804ebc8ab
             lifecycle:
               postStart:
                 exec:

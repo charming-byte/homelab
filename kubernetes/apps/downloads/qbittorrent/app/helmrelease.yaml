@@ -19,7 +19,7 @@ spec:
           gluetun:
             env:
               FIREWALL_INPUT_PORTS: "80,8000,9999,41857"
-              FIREWALL_OUTBOUND_SUBNETS: 10.42.0.0/16
+              FIREWALL_OUTBOUND_SUBNETS: "10.42.0.0/16,10.43.0.0/16"
               SERVER_COUNTRIES: Switzerland
               VPN_PORT_FORWARDING: on
               VPN_SERVICE_PROVIDER: protonvpn
