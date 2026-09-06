@@ -164,7 +164,7 @@ data:
             widget:
               type: unraid
               url: http://192.168.178.140
-              api-key: {{HOMEPAGE_VAR_UNRAID_API_KEY}}
+              key: {{HOMEPAGE_VAR_UNRAID_API_KEY}}
               fields: ["status", "arrayUsedSpace", "arrayFree"]
     - Calendar:
         - Calendar:
