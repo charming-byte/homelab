@@ -1,0 +1,15 @@
+---
+# yaml-language-server: $schema=https://json.schemastore.org/kustomization
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ./movie-charts-prune
+configMapGenerator:
+  # Mounted read-only into the movie-charts-prune CronJob pods.
+  - name: movie-charts-prune-scripts
+    files:
+      - resources/movie_charts_prune.py
+generatorOptions:
+  annotations:
+    kustomize.toolkit.fluxcd.io/substitute: disabled
+  disableNameSuffixHash: true
