@@ -16,8 +16,6 @@ spec:
         annotations:
           reloader.stakater.com/auto: "true"
         cronjob:
-          # Monday night: outside viewing hours, and far enough past the
-          # weekend that its plays are already in Tautulli's history.
           schedule: 0 4 * * 1
           timeZone: Europe/Berlin
           backoffLimit: 0
@@ -37,10 +35,8 @@ spec:
               TAUTULLI_URL: http://tautulli.media.svc.cluster.local
               PUSHGATEWAY_URL: http://pushgateway.observability.svc.cluster.local:9091
               SONARR_TAG: tv-charts
-              DRY_RUN: "true"
-              # More candidates than this means the upstream list is suspect,
-              # not that the charts rotated - the run aborts without deleting.
-              MAX_DELETE: "10"
+              DRY_RUN: "false"
+              MAX_DELETE: "15"
               WATCH_MIN_PERCENT: "20"
               WATCH_WINDOW_DAYS: "30"
               GRACE_DAYS: "30"
