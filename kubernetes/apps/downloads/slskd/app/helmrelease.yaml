@@ -53,7 +53,7 @@ spec:
                   initialDelaySeconds: 10
                   timeoutSeconds: 10
                   periodSeconds: 10
-                  failureThreshold: 90
+                  failureThreshold: 180
               liveness: &probes
                 custom: true
                 enabled: true

@@ -1,0 +1,15 @@
+---
+# yaml-language-server: $schema=https://json.schemastore.org/kustomization
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ./tv-charts-prune
+configMapGenerator:
+  # Mounted read-only into the tv-charts-prune CronJob pods.
+  - name: tv-charts-prune-scripts
+    files:
+      - resources/tv_charts_prune.py
+generatorOptions:
+  annotations:
+    kustomize.toolkit.fluxcd.io/substitute: disabled
+  disableNameSuffixHash: true
