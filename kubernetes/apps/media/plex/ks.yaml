@@ -33,6 +33,11 @@ kind: Kustomization
 metadata:
   name: plex-tools
 spec:
+  dependsOn:
+    - name: openebs
+      namespace: openebs-system
+    - name: onepassword-connect
+      namespace: kube-system
   interval: 1h
   path: ./kubernetes/apps/media/plex/tools
   postBuild:

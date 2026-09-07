@@ -1,0 +1,70 @@
+---
+libraries:
+  Filme:
+    run_order:
+      - collections
+    collection_files:
+      - file: /config/filme.yml
+      - default: genre
+        template_variables:
+          language: de
+          name_format: <<key_name>> Filme
+          sort_by: release.desc
+          use_separator: true
+          sep_style: blue
+          name_separator: Genres
+
+  Serien:
+    run_order:
+      - collections
+    collection_files:
+      - file: /config/serien.yml
+      - default: genre
+        template_variables:
+          language: de
+          name_format: <<key_name>> Serien
+          sort_by: release.desc
+          use_separator: true
+          sep_style: blue
+          name_separator: Genres
+
+settings:
+  cache: true
+  cache_expiration: 60
+  asset_directory: config/assets
+  asset_folders: false
+  create_asset_folders: false
+  download_url_assets: true
+  sync_mode: sync
+  minimum_items: 5
+  delete_below_minimum: true
+  delete_not_scheduled: false
+  default_collection_order:
+  item_refresh_delay: 0
+  run_again_delay: 2
+  show_unmanaged: false
+  show_unconfigured: false
+  show_filtered: false
+  show_missing: false
+  show_options: false
+  save_report: false
+  verify_ssl: true
+  check_nightly: false
+
+plex:
+  url: http://plex.media.svc.cluster.local:32400
+  token: <<PLEX_API_KEY>>
+  timeout: 60
+  clean_bundles: false
+  empty_trash: false
+  optimize: false
+
+mdblist:
+  apikey: <<MDBLIST_API_KEY>>
+  cache_expiration: 60
+
+tmdb:
+  apikey: <<TMDB_API_KEY>>
+  language: de
+  cache_expiration: 60
+  region:

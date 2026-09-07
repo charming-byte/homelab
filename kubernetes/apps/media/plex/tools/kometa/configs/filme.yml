@@ -1,0 +1,10 @@
+---
+collections:
+  Derzeit beliebt:
+    mdblist_list: https://mdblist.com/lists/beetbytes/german-most-popular-top-50-released-within-132d
+    collection_order: custom
+    sync_mode: sync
+    sort_title: "!001_Derzeit beliebt"
+    summary: Die derzeit meistgesehenen Filme.
+    visible_home: true
+    visible_shared: true
