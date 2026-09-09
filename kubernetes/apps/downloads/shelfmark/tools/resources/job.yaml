@@ -201,7 +201,7 @@ spec:
             limits: { cpu: "4", memory: 1Gi }
       containers:
         - name: beets
-          image: ghcr.io/neopterygii/beets-audible:latest@sha256:23a8476fd08e539f7e5330364bc3d18ace80341b4ce9a6ca6fd0fa5bb8b2dc79
+          image: ghcr.io/neopterygii/beets-audible:latest@sha256:b120aba6ba5d4638d3139c212e91287a424721e910ccc3007c122df63ea5f5f9
           command: ["/bin/sh", "-c"]
           args:
             - |
