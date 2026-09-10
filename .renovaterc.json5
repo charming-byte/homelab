@@ -68,6 +68,19 @@
       automergeType: "branch",
       ignoreTests: true,
     },
+    // Package rules for changelog retrieval
+     {
+      "description": "Atuin Docker releases",
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["ghcr.io/atuinsh/atuin"],
+      "sourceUrl": "https://github.com/atuinsh/atuin",
+      "allowedVersions": "/^\\d+\\.\\d+\\.\\d+$/"
+    },
+     {
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["ghcr.io/goauthentik/helm-charts/authentik"],
+      "sourceUrl": "https://github.com/goauthentik/authentik"
+    },
     // Grouping rules
     {
       description: "Actions Runner Controller Group",
@@ -134,6 +147,7 @@
       matchDepNames: ["1password-cli"],
       enabled: false,
     },
+
     // Labeling rules
     {
       matchUpdateTypes: ["major"],
