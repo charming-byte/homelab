@@ -110,7 +110,7 @@ spec:
         globalMounts:
           - path: /data
         path: /data
-        server: scarif.nas.${SECRET_DOMAIN}
+        server: 192.168.178.140
         type: nfs
       scripts:
         defaultMode: 0755
