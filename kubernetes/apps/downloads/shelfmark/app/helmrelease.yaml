@@ -109,7 +109,7 @@ spec:
       media:
         globalMounts:
           - path: /data
-        path: /data
+        path: /mnt/user/data
         server: 192.168.178.140
         type: nfs
       scripts:
