@@ -10,7 +10,6 @@ spec:
   instances: 2
   affinity:
     podAntiAffinityType: required
-  # renovate: datasource=docker depName=ghcr.io/cloudnative-pg/postgresql
   imageName: ghcr.io/cloudnative-pg/postgresql:18.3-standard-trixie@sha256:d879dfab951cb0eef9beac367f259d08ea1c04ae84699526854ff9ae478656be
   primaryUpdateStrategy: unsupervised
   storage:
