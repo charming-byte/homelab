@@ -10,10 +10,7 @@ spec:
     name: rfc2136-dns
   interval: 1h
   values:
-    domainFilters:
-      - ${SECRET_DOMAIN}
-    extraArgs:
-      - "--annotation-prefix=external-dns.alpha.kubernetes.io/"
+    domainFilters: ["${SECRET_DOMAIN}"]
     env:
       - name: EXTERNAL_DNS_RFC2136_TSIG_SECRET
         valueFrom:
