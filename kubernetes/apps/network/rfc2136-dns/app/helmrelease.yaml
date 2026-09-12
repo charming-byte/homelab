@@ -12,6 +12,8 @@ spec:
   values:
     domainFilters:
       - ${SECRET_DOMAIN}
+    extraArgs:
+      - "--annotation-prefix=external-dns.alpha.kubernetes.io/"
     env:
       - name: EXTERNAL_DNS_RFC2136_TSIG_SECRET
         valueFrom:
