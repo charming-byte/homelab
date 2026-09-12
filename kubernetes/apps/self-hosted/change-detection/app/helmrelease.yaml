@@ -57,13 +57,19 @@ spec:
               ENABLE_DEBUGGER: "false"
               TZ: Europe/Berlin
               TIMEOUT: "300000"
-              CONCURRENT: "10"
+              CONCURRENT: "3"
               HOME: /tmp
               INVISIBLE_PLAYWRIGHT_CACHE_DIR: /tmp/invisible-playwright
             securityContext:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true
               capabilities: { drop: ["ALL"] }
+            resources:
+              requests:
+                cpu: 10m
+                memory: 1Gi
+              limits:
+                memory: 4Gi
     defaultPodOptions:
       securityContext:
         runAsNonRoot: true
