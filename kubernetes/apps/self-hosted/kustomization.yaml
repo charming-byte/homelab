@@ -9,6 +9,7 @@ resources:
   - ./bentopdf/ks.yaml
   - ./calibre-web-automated/ks.yaml
   - ./immich/ks.yaml
+  - ./change-detection/ks.yaml
   #- ./mealie/ks.yaml
   - ./miniflux/ks.yaml
   - ./namespace.yaml

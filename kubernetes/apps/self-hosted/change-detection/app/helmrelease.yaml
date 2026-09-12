@@ -1,0 +1,104 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: changedetection
+spec:
+  interval: 1h
+  chartRef:
+    kind: OCIRepository
+    name: change-detection
+  values:
+    controllers:
+      change-detection:
+        annotations:
+          reloader.stakater.com/auto: "true"
+        containers:
+          app:
+            image:
+              repository: ghcr.io/dgtlmoon/changedetection.io
+              tag: 0.60.4
+            env:
+              TZ: Europe/Berlin
+              PORT: &port 5000
+              USE_X_SETTINGS: 1
+              PLAYWRIGHT_DRIVER_URL: ws://localhost:3000/firefox/playwright
+            probes:
+              liveness: &probes
+                custom: true
+                enabled: true
+                spec:
+                  httpGet:
+                    path: /
+                    port: *port
+                  initialDelaySeconds: 10
+                  periodSeconds: 10
+                  timeoutSeconds: 1
+                  failureThreshold: 3
+              readiness: *probes
+            resources:
+              requests:
+                cpu: 10m
+                memory: 128Mi
+              limits:
+                memory: 512Mi
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities:
+                drop: ["ALL"]
+          browser:
+            image:
+              repository: ghcr.io/charming-byte/browserless-invisible-playwright
+              tag: latest@sha256:85ad3f323a3a81421c422f9b299229fb6e4b603c2723f72b750d095d16fe50ca
+              pullPolicy: IfNotPresent
+            env:
+              ENABLE_DEBUGGER: "false"
+              TZ: Europe/Berlin
+              TIMEOUT: "300000"
+              CONCURRENT: "10"
+              HOME: /tmp
+              INVISIBLE_PLAYWRIGHT_CACHE_DIR: /tmp/invisible-playwright
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: { drop: ["ALL"] }
+    defaultPodOptions:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+    service:
+      app:
+        ports:
+          http:
+            port: *port
+    route:
+      app:
+        annotations:
+          gethomepage.dev/description: Website change detection
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/group: Self-hosted
+          gethomepage.dev/icon: changedetection.png
+          gethomepage.dev/name: Change Detection
+        hostnames: ["{{ .Release.Name }}.${SECRET_DOMAIN}"]
+        parentRefs:
+          - name: envoy-internal
+            namespace: network
+            sectionName: https
+    persistence:
+      tmp:
+        globalMounts:
+          - path: /tmp
+        enabled: true
+        type: emptyDir
+      config:
+        enabled: true
+        existingClaim: change-detection-0
+        advancedMounts:
+          change-detection:
+            app:
+              - path: /datastore
