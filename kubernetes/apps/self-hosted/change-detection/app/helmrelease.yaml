@@ -23,7 +23,7 @@ spec:
               TZ: Europe/Berlin
               PORT: &port 5000
               USE_X_SETTINGS: 1
-              PLAYWRIGHT_DRIVER_URL: ws://localhost:3000/?stealth=true&humanlike=true&blockAds=true&--disable-web-security=true&--user-data-dir=/tmp/browserless-cache-123&--window-size=1920,1080&--lang=de_DE
+              PLAYWRIGHT_DRIVER_URL: ws://localhost:3000/chrome/playwright?stealth=true&humanlike=true&blockAds=true&--disable-web-security=true&--user-data-dir=/tmp/browserless-cache-123&--window-size=1920,1080&--lang=de_DE
             probes:
               liveness: &probes
                 custom: true
