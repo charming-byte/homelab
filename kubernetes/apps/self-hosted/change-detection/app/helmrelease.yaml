@@ -23,7 +23,7 @@ spec:
               TZ: Europe/Berlin
               PORT: &port 5000
               USE_X_SETTINGS: 1
-              PLAYWRIGHT_DRIVER_URL: ws://localhost:3000/chrome/playwright?stealth=true&humanlike=true&blockAds=true&--disable-web-security=true&--user-data-dir=/tmp/browserless-cache-123&--window-size=1920,1080&--lang=de_DE
+              PLAYWRIGHT_DRIVER_URL: ws://localhost:3000/chromium/playwright
             probes:
               liveness: &probes
                 custom: true
@@ -50,8 +50,8 @@ spec:
                 drop: ["ALL"]
           browser:
             image:
-              repository: ghcr.io/browserless/chrome
-              tag: v2.56.7@sha256:d600eac6283f03d2b540ea8af705b3c382cf1bf886b52a699ec9fe054142c241
+              repository: ghcr.io/charming-byte/browserless-patchright
+              tag: latest@sha256:07e70592e452fefbe3f990c5cbf7d68735d3cd9b88b44083dcc2f862f5509434
               pullPolicy: IfNotPresent
             env:
               ENABLE_DEBUGGER: "false"
@@ -63,6 +63,7 @@ spec:
               SCREEN_WIDTH: "1920"
               SCREEN_HEIGHT: "1024"
               SCREEN_DEPTH: "16"
+              HUMANLIKE: "true"
             securityContext:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true
