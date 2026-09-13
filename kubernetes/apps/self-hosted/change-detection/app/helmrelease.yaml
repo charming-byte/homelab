@@ -3,7 +3,7 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: changedetection
+  name: change-detection
 spec:
   interval: 1h
   chartRef:
@@ -51,7 +51,7 @@ spec:
           browser:
             image:
               repository: ghcr.io/charming-byte/browserless-patchright
-              tag: latest@sha256:07e70592e452fefbe3f990c5cbf7d68735d3cd9b88b44083dcc2f862f5509434
+              tag: latest@sha256:8ccdd90193dcc72b78eb41edc64bfede9b147a18fa5e8bed2fc9f539be797e24
               pullPolicy: IfNotPresent
             env:
               ENABLE_DEBUGGER: "false"
