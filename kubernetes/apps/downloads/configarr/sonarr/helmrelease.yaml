@@ -25,7 +25,7 @@ spec:
           app:
             image:
               repository: ghcr.io/raydak-labs/configarr
-              tag: 1.30@sha256:ec585b6d2530f6090ee26fdcc9701f279666c24dc96c9087208e88ec867c2416
+              tag: 1.32@sha256:8a94c8355f86619ac4c52298144f15859f9c66311515f96c4688435fa020039e
             envFrom:
               - secretRef:
                   name: "{{ .Release.Name }}-secret"
