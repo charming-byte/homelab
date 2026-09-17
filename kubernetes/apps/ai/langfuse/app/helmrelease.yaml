@@ -42,7 +42,7 @@ spec:
                   name: "{{ .Release.Name }}-secret"
             image:
               repository: ghcr.io/langfuse/langfuse
-              tag: 4.35@sha256:a5d8d2457702ab7e051bc0788d73871970caebd10aae6635e87cfb736e4067cd
+              tag: 4.38@sha256:47ef2f121e2959c8458c209d118949ade25778017e3f5b75b1e45f72276811c3
             probes:
               liveness:
                 custom: true
