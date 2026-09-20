@@ -241,7 +241,16 @@ def build_id_maps():
             rating_key = movie.get("rating_key")
             if not rating_key:
                 continue
-            meta = tautulli("get_metadata", rating_key=rating_key) or {}
+            try:
+                meta = tautulli("get_metadata", rating_key=rating_key) or {}
+            except urllib.error.HTTPError as exc:
+                # Tautulli answers a stale rating_key (Plex re-scanned/moved the
+                # item) with a bare HTTP error instead of its usual JSON error
+                # envelope - one dangling entry must not abort the whole run.
+                unidentified += 1
+                log.warning("plex movie %r (rating_key %s): metadata lookup failed (%s)",
+                            movie.get("title"), rating_key, exc)
+                continue
             matched = False
             for guid in meta.get("guids", []):
                 if guid.startswith("tmdb://"):
