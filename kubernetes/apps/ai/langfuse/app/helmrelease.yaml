@@ -92,7 +92,7 @@ spec:
             envFrom: *envFrom
             image:
               repository: clickhouse/clickhouse-server
-              tag: 26.9.1@sha256:42acb460c63b4e76b64bea7798b9e414178d59ef42eb92e86fe2abf7ceb6c51c
+              tag: 26.9.3@sha256:12b16e744f91d8228705e136bd2b0ab14c939c87ff82443090279b65255c50c1
             ports:
               - containerPort: 8123
               - containerPort: 9000
