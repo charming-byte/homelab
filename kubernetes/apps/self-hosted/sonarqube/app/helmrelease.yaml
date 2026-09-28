@@ -1,0 +1,133 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: sonarqube
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: sonarqube
+  install:
+    remediation:
+      retries: 5
+  interval: 5m
+  upgrade:
+    remediation:
+      retries: 5
+  values:
+    controllers:
+      sonarqube:
+        annotations:
+          reloader.stakater.com/auto: "true"
+        containers:
+          app:
+            env:
+              SONAR_CORE_SERVERBASEURL: https://sonarqube.${SECRET_DOMAIN}
+              SONAR_TELEMETRY_ENABLE: "false"
+              TZ: Europe/Berlin
+            envFrom: &envFrom
+              - secretRef:
+                  name: "{{ .Release.Name }}-secret"
+            image:
+              repository: docker.io/library/sonarqube
+              tag: 26.9.0.129388-community@sha256:58b068af30bdfdccf91222de36e310529033e853dfae221b429cba80d10d5751
+            probes:
+              liveness: &probes
+                custom: true
+                enabled: true
+                spec:
+                  httpGet:
+                    path: /api/system/status
+                    port: 9000
+                  failureThreshold: 5
+                  initialDelaySeconds: 0
+                  periodSeconds: 30
+                  timeoutSeconds: 10
+              readiness: *probes
+              startup:
+                custom: true
+                enabled: true
+                spec:
+                  httpGet:
+                    path: /api/system/status
+                    port: 9000
+                  failureThreshold: 120
+                  initialDelaySeconds: 60
+                  periodSeconds: 15
+                  timeoutSeconds: 5
+            resources:
+              limits:
+                memory: 4Gi
+              requests:
+                cpu: 250m
+                memory: 2Gi
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop: ["ALL"]
+              readOnlyRootFilesystem: true
+        initContainers:
+          init-db:
+            envFrom: *envFrom
+            image:
+              repository: ghcr.io/home-operations/postgres-init
+              tag: 18.6.0@sha256:b6d3af974df781c673d37e49bdddfa14a6f5be28b18d2cb7713f0449bea4057b
+    defaultPodOptions:
+      securityContext:
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+        runAsGroup: 1000
+        runAsNonRoot: true
+        runAsUser: 1000
+    persistence:
+      data:
+        advancedMounts:
+          sonarqube:
+            app:
+              - path: /opt/sonarqube/data
+        enabled: true
+        existingClaim: "{{ .Release.Name }}-data-pvc"
+      logs:
+        advancedMounts:
+          sonarqube:
+            app:
+              - path: /opt/sonarqube/logs
+        enabled: true
+        type: emptyDir
+      temp:
+        advancedMounts:
+          sonarqube:
+            app:
+             - path: /opt/sonarqube/temp
+        enabled: true
+        type: emptyDir
+      extensions:
+        advancedMounts:
+          sonarqube:
+            app:
+            - path: /opt/sonarqube/extensions
+        enabled: true
+        existingClaim: "{{ .Release.Name }}-extensions-pvc"
+    route:
+      app:
+        annotations:
+          gethomepage.dev/app: sonarqube
+          gethomepage.dev/description: "Code quality and security analysis"
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/group: Self-Hosted
+          gethomepage.dev/icon: sonarqube.png
+          gethomepage.dev/name: SonarQube
+        hostnames: ["{{ .Release.Name }}.${SECRET_DOMAIN}"]
+        parentRefs:
+          - name: envoy-internal
+            namespace: network
+        rules:
+          - backendRefs:
+              - name: app
+                port: &port 9000
+    service:
+      app:
+        ports:
+          http:
+            port: *port
