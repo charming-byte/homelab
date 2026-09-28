@@ -13,6 +13,8 @@ spec:
   values:
     controllers:
       paperless-ngx:
+        annotations:
+              reloader.stakater.com/auto: "true"
         containers:
           app:
             env:
