@@ -29,6 +29,13 @@ diff:
 nodes:
     topf nodes
 
+[doc('Reboot a single node by name')]
+[group('talos')]
+reboot-node node:
+    export NODE_NAME={{ quote(node) }}
+    node_ip=$(yq -er '.nodes[] | select(.host == strenv(NODE_NAME)) | .ip' topf.yaml) || { echo "Unknown node: $NODE_NAME" >&2; exit 1; }
+    talosctl --nodes "$node_ip" reboot
+
 [doc('Render Talos machine configs to ./rendered')]
 [group('talos')]
 render:
