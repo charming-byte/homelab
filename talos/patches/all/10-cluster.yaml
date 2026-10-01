@@ -1,0 +1,17 @@
+---
+machine:
+  certSANs:
+    - 127.0.0.1
+    - 192.168.178.200
+---
+apiVersion: v1alpha1
+kind: KubeNetworkConfig
+podSubnets:
+  - 10.42.0.0/16
+serviceSubnets:
+  - 10.43.0.0/16
+---
+# Cilium manages the CNI on both workers and control-plane nodes.
+apiVersion: v1alpha1
+kind: KubeFlannelCNIConfig
+$patch: delete

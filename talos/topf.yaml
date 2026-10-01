@@ -1,0 +1,38 @@
+---
+clusterName: kubernetes
+clusterEndpoint: https://192.168.178.200:6443
+
+# renovate: datasource=github-releases depName=siderolabs/talos
+talosVersion: v1.14.1
+# renovate: datasource=docker depName=ghcr.io/siderolabs/kubelet
+kubernetesVersion: v1.37.0
+
+# Reuse the existing cluster identity; never regenerate secrets during migration.
+secretsPath: talsecret.sops.yaml
+patchesDir: patches
+
+data:
+  nodeSubnet: 192.168.178.0/24
+  prefixLength: 24
+  gateway: 192.168.178.1
+  vip: 192.168.178.200
+
+nodes:
+  - host: node01
+    ip: 192.168.178.55
+    role: worker
+    schematicId: "@schematics/node01.yaml"
+    secureboot: false
+    data:
+      installDisk: /dev/sda
+      macAddr: e8:6a:64:f4:8b:6d
+      mtu: 1500
+  - host: node02
+    ip: 192.168.178.56
+    role: control-plane
+    schematicId: "@schematics/node02.yaml"
+    secureboot: false
+    data:
+      installDisk: /dev/sda
+      macAddr: c8:d3:ff:9b:ff:36
+      mtu: 1500

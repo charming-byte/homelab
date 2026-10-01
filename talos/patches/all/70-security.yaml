@@ -1,0 +1,5 @@
+---
+# Preserve the existing host access for storage and GPU workloads on Talos 1.14.
+apiVersion: v1alpha1
+kind: SecurityProfileConfig
+workloadIsolation: false

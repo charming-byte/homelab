@@ -13,8 +13,11 @@
 # Kubernetes
 kubeconfig
 talosconfig
+# Rendered machine configs contain cluster secrets.
+/talos/rendered/
+/talos/output/
+/talos/rendered-check.*/
 # Misc.
-.task/
 .venv/
 .DS_Store
 Thumbs.db
