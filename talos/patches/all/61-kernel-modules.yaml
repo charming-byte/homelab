@@ -1,0 +1,20 @@
+---
+apiVersion: v1alpha1
+kind: KernelModuleConfig
+name: nbd
+---
+apiVersion: v1alpha1
+kind: KernelModuleConfig
+name: iscsi_tcp
+---
+apiVersion: v1alpha1
+kind: KernelModuleConfig
+name: configfs
+---
+apiVersion: v1alpha1
+kind: KernelModuleConfig
+name: vhost_net
+---
+apiVersion: v1alpha1
+kind: KernelModuleConfig
+name: vhost_vsock

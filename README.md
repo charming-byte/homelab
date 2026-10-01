@@ -28,10 +28,14 @@ Kubernetes cluster stats:
 
 ---
 
+### Talos configuration
+
+Talos configuration is managed by topf. See the [Talos workflow](talos/README.md)
+for local generation, validation, applying changes and upgrades.
+
 ### 🤝 Thanks
 
 Thanks to everyone who contributes their time and expertise to the [Home Operations](https://discord.gg/home-operations) Discord community. Much of the inspiration for my cluster comes from community members who have shared their setups under the [k8s-at-home](https://github.com/topics/k8s-at-home) GitHub topic. For additional inspiration and practical deployment examples, the [Kubesearch](http://kubesearch.dev) tool is well worth exploring.
-
 
 ---
 

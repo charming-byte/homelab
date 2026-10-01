@@ -1,0 +1,22 @@
+---
+# Existing factory ID: 7a81fabba91c3dbdb0568d99436efa51afdb13104074a2fec50e56f28ebebbad
+customization:
+  extraKernelArgs:
+    - init_on_alloc=0
+    - init_on_free=0
+    - apparmor=0
+    - i915.enable_guc=3
+    - intel_iommu=on
+    - iommu=pt
+    - mitigations=off
+    - security=none
+    - sysctl.kernel.kexec_load_disabled=1
+    - talos.auditd.disabled=1
+  systemExtensions:
+    officialExtensions:
+      - siderolabs/gvisor
+      - siderolabs/intel-ucode
+      - siderolabs/iscsi-tools
+      - siderolabs/kata-containers
+      - siderolabs/mei
+      - siderolabs/nfs-utils
