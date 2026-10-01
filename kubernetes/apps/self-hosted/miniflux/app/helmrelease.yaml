@@ -76,7 +76,7 @@ spec:
           gethomepage.dev/app: miniflux
           gethomepage.dev/description: Feed Reader
           gethomepage.dev/enabled: "true"
-          gethomepage.dev/group: Self-hosted
+          gethomepage.dev/group: Self-Hosted
           gethomepage.dev/icon: miniflux.svg
           gethomepage.dev/name: Miniflux
         hostnames: ["{{ .Release.Name }}.${SECRET_DOMAIN}"]

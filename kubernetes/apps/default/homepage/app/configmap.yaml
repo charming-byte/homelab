@@ -52,7 +52,7 @@ data:
         columns: 3
         icon: mdi-home-automation
         useEqualHeights: true
-      Self-hosted:
+      Self-Hosted:
         tab: Home
         useEqualHeights: true
         style: row
