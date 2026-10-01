@@ -99,15 +99,15 @@ spec:
         advancedMounts:
           sonarqube:
             app:
-             - path: /opt/sonarqube/temp
-             - path: /tmp
+              - path: /opt/sonarqube/temp
+              - path: /tmp
         enabled: true
         type: emptyDir
       extensions:
         advancedMounts:
           sonarqube:
             app:
-            - path: /opt/sonarqube/extensions
+              - path: /opt/sonarqube/extensions
         enabled: true
         existingClaim: "{{ .Release.Name }}-extensions-pvc"
     route:
@@ -123,9 +123,10 @@ spec:
         parentRefs:
           - name: envoy-internal
             namespace: network
+            sectionName: https
         rules:
           - backendRefs:
-              - name: app
+              - identifier: app
                 port: &port 9000
     service:
       app:
