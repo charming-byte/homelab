@@ -166,12 +166,12 @@ metadata:
   namespace: network
 spec:
   compressor:
-  - type: Zstd
-    zstd: {}
-  - type: Brotli
-    brotli: {}
-  - type: Gzip
-    gzip: {}
+    - type: Zstd
+      zstd: {}
+    - type: Brotli
+      brotli: {}
+    - type: Gzip
+      gzip: {}
   retry:
     numRetries: 2
     retryOn:
@@ -185,72 +185,72 @@ spec:
     http:
       requestTimeout: 0s
   responseOverride:
-  - match:
-      statusCodes:
-        - type: Value
-          value: 403
-    redirect:
-      scheme: https
-      hostname: error.${SECRET_DOMAIN}
-      path:
-        type: ReplaceFullPath
-        replaceFullPath: /403.html
-      statusCode: 302
-  - match:
-      statusCodes:
-        - type: Value
-          value: 404
-    redirect:
-      scheme: https
-      hostname: error.${SECRET_DOMAIN}
-      path:
-        type: ReplaceFullPath
-        replaceFullPath: /404.html
-      statusCode: 302
-  - match:
-      statusCodes:
-        - type: Value
-          value: 500
-    redirect:
-      scheme: https
-      hostname: error.${SECRET_DOMAIN}
-      path:
-        type: ReplaceFullPath
-        replaceFullPath: /500.html
-      statusCode: 302
-  - match:
-      statusCodes:
-        - type: Value
-          value: 502
-    redirect:
-      scheme: https
-      hostname: error.${SECRET_DOMAIN}
-      path:
-        type: ReplaceFullPath
-        replaceFullPath: /502.html
-      statusCode: 302
-  - match:
-      statusCodes:
-        - type: Value
-          value: 503
-    redirect:
-      scheme: https
-      hostname: error.${SECRET_DOMAIN}
-      path:
-        type: ReplaceFullPath
-        replaceFullPath: /503.html
-      statusCode: 302
-  - match:
-      statusCodes:
-        - type: Value
-          value: 504
-    redirect:
-      scheme: https
-      hostname: error.${SECRET_DOMAIN}
-      path:
-        type: ReplaceFullPath
-        replaceFullPath: /504.html
-      statusCode: 302
+    - match:
+        statusCodes:
+          - type: Value
+            value: 403
+      redirect:
+        scheme: https
+        hostname: error.${SECRET_DOMAIN}
+        path:
+          type: ReplaceFullPath
+          replaceFullPath: /403.html
+        statusCode: 403
+    - match:
+        statusCodes:
+          - type: Value
+            value: 404
+      redirect:
+        scheme: https
+        hostname: error.${SECRET_DOMAIN}
+        path:
+          type: ReplaceFullPath
+          replaceFullPath: /404.html
+        statusCode: 404
+    - match:
+        statusCodes:
+          - type: Value
+            value: 500
+      redirect:
+        scheme: https
+        hostname: error.${SECRET_DOMAIN}
+        path:
+          type: ReplaceFullPath
+          replaceFullPath: /500.html
+        statusCode: 500
+    - match:
+        statusCodes:
+          - type: Value
+            value: 502
+      redirect:
+        scheme: https
+        hostname: error.${SECRET_DOMAIN}
+        path:
+          type: ReplaceFullPath
+          replaceFullPath: /502.html
+        statusCode: 502
+    - match:
+        statusCodes:
+          - type: Value
+            value: 503
+      redirect:
+        scheme: https
+        hostname: error.${SECRET_DOMAIN}
+        path:
+          type: ReplaceFullPath
+          replaceFullPath: /503.html
+        statusCode: 503
+    - match:
+        statusCodes:
+          - type: Value
+            value: 504
+      redirect:
+        scheme: https
+        hostname: error.${SECRET_DOMAIN}
+        path:
+          type: ReplaceFullPath
+          replaceFullPath: /504.html
+        statusCode: 504
 
 ---
 apiVersion: gateway.envoyproxy.io/v1alpha1
