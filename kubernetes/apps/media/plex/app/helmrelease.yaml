@@ -41,7 +41,7 @@ spec:
                   failureThreshold: 3
                   httpGet:
                     path: /identity
-                    port: 32400
+                    port: &port 32400
                   initialDelaySeconds: 0
                   periodSeconds: 10
                   timeoutSeconds: 1
@@ -119,15 +119,49 @@ spec:
           gethomepage.dev/widget.type: plex
           gethomepage.dev/widget.url: http://plex.media.svc.cluster.local:32400
           gatus.home-operations.com/endpoint: |-
-            conditions: ["[STATUS] == 401"]
+            path: /identity
         hostnames: ["{{ .Release.Name }}.${SECRET_DOMAIN}"]
         parentRefs:
           - name: envoy-external
             namespace: network
         rules:
+          - name: app
+            backendRefs: &backendRefs
+              - identifier: app
+                port: *port
+            filters:
+              - type: RequestHeaderModifier
+                requestHeaderModifier: &pipeline
+                  set:
+                    # Plex closes idle keep-alive connections after 20s unless this is set, so Envoy owns the pool
+                    - name: X-Plex-Http-Pipeline
+                      value: infinite
+          - name: events
+            backendRefs: *backendRefs
+            filters:
+              - type: RequestHeaderModifier
+                requestHeaderModifier: *pipeline
+            matches:
+              - path:
+                  type: PathPrefix
+                  value: /:/eventsource
+              - path:
+                  type: PathPrefix
+                  value: /:/websockets
+          - matches:
+              - path:
+                  type: Exact
+                  value: /
+            filters:
+              - type: RequestRedirect
+                requestRedirect:
+                  path:
+                    type: ReplaceFullPath
+                    replaceFullPath: /web/
+                  statusCode: 302
           - backendRefs:
               - identifier: app
-                port: 32400
+                port: *port
     service:
       app:
         annotations:
@@ -135,5 +169,5 @@ spec:
         externalTrafficPolicy: Local
         ports:
           http:
-            port: 32400
+            port: *port
         type: LoadBalancer
