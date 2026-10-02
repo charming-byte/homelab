@@ -1,4 +1,16 @@
 model_list:
+  - model_name: anthropic-opus-5.5
+    litellm_params:
+      model: anthropic/claude-opus-5.5
+
+  - model_name: anthropic-sonnet-5.5
+    litellm_params:
+      model: anthropic/claude-sonnet-5.5
+
+  - model_name: anthropic-haiku-4.5
+    litellm_params:
+      model: anthropic/claude-haiku-4.5
+
   - model_name: chatgpt/gpt-6.1-sol
     model_info:
       mode: responses
@@ -81,3 +93,8 @@ litellm_settings:
   cache: True
   cache_params:
     type: redis
+  model_group_settings:
+    forward_client_headers_to_llm_api:
+      - anthropic-opus-5.5
+      - anthropic-sonnet-5.5
+      - anthropic-haiku-4.5
