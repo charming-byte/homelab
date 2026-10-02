@@ -4,10 +4,6 @@ set script-interpreter := ['bash', '-euo', 'pipefail']
 set default-list
 set default-script
 
-# Day-2 apply/upgrade recipes rely on topf's built-in diff-and-confirm
-# prompt; only the destructive reset recipes disable it in favour of just's
-# own confirmation.
-
 [doc('Apply Talos config to all nodes (shows a diff and asks first)')]
 [group('talos')]
 apply:
