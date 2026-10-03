@@ -104,6 +104,8 @@ spec:
               limits:
                 memory: 64Mi
     defaultPodOptions:
+      nodeSelector:
+        kubernetes.io/hostname: node02
       securityContext:
         fsGroup: 1000
         fsGroupChangePolicy: OnRootMismatch
