@@ -7,7 +7,6 @@ talosVersion: v1.14.2
 # renovate: datasource=docker depName=ghcr.io/siderolabs/kubelet
 kubernetesVersion: v1.37.1
 
-# Reuse the existing cluster identity; never regenerate secrets during migration.
 secretsPath: talsecret.sops.yaml
 patchesDir: patches
 
