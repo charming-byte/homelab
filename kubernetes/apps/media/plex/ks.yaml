@@ -32,6 +32,7 @@ apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
   name: plex-tools
+  namespace: media
 spec:
   dependsOn:
     - name: openebs

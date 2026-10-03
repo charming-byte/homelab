@@ -77,3 +77,8 @@ spec:
           - path: /config/logs
       tmp:
         type: emptyDir
+      assets:
+        existingClaim: posterizarr-assets-pvc
+        globalMounts:
+          - path: /assets
+            subPath: assets

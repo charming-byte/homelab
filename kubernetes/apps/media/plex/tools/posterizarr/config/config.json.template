@@ -1,0 +1,72 @@
+{
+  "ApiPart": {
+    "tmdbtoken": "{{ .TMDB_API_KEY }}",
+    "tvdbapi": "{{ .TVDB_API_KEY }}",
+    "FanartTvAPIKey": "{{ .FANARTTV_API_KEY }}",
+    "PlexToken": "{{ .PLEX_TOKEN }}",
+    "PreferredLanguageOrder": [
+      "xx",
+      "de",
+      "en"
+    ],
+    "PreferredSeasonLanguageOrder": [
+      "xx",
+      "de",
+      "en"
+    ],
+    "PreferredBackgroundLanguageOrder": [
+      "xx",
+      "de",
+      "en"
+    ],
+    "PreferredTCLanguageOrder": [
+      "xx",
+      "de",
+      "en"
+    ],
+    "LogoLanguageOrder": [
+      "de",
+      "en"
+    ]
+  },
+  "PlexPart": {
+    "LibstoExclude": [
+      "Hörbücher",
+      "Musik",
+      "R&D"
+    ],
+    "PlexUrl": "http://plex.media.svc.cluster.local:32400"
+  },
+  "PrerequisitePart": {
+    "SkipAddText": "true",
+    "SkipAddTextAndOverlay": "true",
+    "SkipAddTextAndBorder": "true",
+    "telemetry": "false",
+    "font": "BebasNeue-Regular.ttf",
+    "collectionfont": "BebasNeue-Regular.ttf",
+    "backgroundfont": "BebasNeue-Regular.ttf",
+    "titlecardfont": "BebasNeue-Regular.ttf",
+    "AssetPath": "/assets",
+    "BackupPath": "/assetsbackup",
+    "ManualAssetPath": "/manualassets",
+    "magickinstalllocation": "/usr/local/bin",
+    "TitleCards": "true",
+    "NewLineOnSpecificSymbols": "true",
+    "NewLineSymbols": [
+      " - ",
+      ": ",
+      " – "
+    ],
+    "SkipJapTitle": "true",
+    "AssetCleanup": "true"
+  },
+  "SeasonPosterOverlayPart": {
+    "ShowFallback": "true",
+    "OverrideSeasonName": "true",
+    "SeasonOverrideText": "Staffel",
+    "SpecialSeasonOverrideText": "Spezial"
+  },
+  "TitleCardEPTextPart": {
+    "SeasonTCText": "Staffel"
+  }
+}

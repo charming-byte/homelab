@@ -159,9 +159,7 @@ spec:
                     type: ReplaceFullPath
                     replaceFullPath: /web/
                   statusCode: 302
-          - backendRefs:
-              - identifier: app
-                port: *port
+          - backendRefs: *backendRefs
     service:
       app:
         annotations:

@@ -1,8 +1,6 @@
 ---
 libraries:
   Filme:
-    run_order:
-      - collections
     collection_files:
       - file: /config/filme.yml
       - default: genre
@@ -10,13 +8,16 @@ libraries:
           language: de
           name_format: <<key_name>> Filme
           sort_by: release.desc
-          use_separator: true
+          use_separator: false
           sep_style: blue
           name_separator: Genres
+    settings:
+      asset_directory: /assets/Filme
+      prioritize_assets: true
+    operations:
+      assets_for_all: true
 
   Serien:
-    run_order:
-      - collections
     collection_files:
       - file: /config/serien.yml
       - default: genre
@@ -24,15 +25,20 @@ libraries:
           language: de
           name_format: <<key_name>> Serien
           sort_by: release.desc
-          use_separator: true
+          use_separator: false
           sep_style: blue
           name_separator: Genres
+    settings:
+      asset_directory: /assets/Serien
+      prioritize_assets: true
+    operations:
+      assets_for_all: true
 
 settings:
   cache: true
   cache_expiration: 60
   asset_directory: config/assets
-  asset_folders: false
+  asset_folders: true
   create_asset_folders: false
   download_url_assets: true
   sync_mode: sync
