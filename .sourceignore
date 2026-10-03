@@ -1,0 +1,2 @@
+# Include Kometa posters required by the ConfigMap generators.
+!/kubernetes/apps/media/plex/tools/kometa/configs/posters/genre/*.jpg
