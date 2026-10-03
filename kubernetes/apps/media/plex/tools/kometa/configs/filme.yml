@@ -1,4 +1,12 @@
 ---
+templates:
+  universe:
+    collection_mode: show_items
+    collection_order: release
+    sync_mode: sync
+    minimum_items: 1
+    sort_title: "!040_<<collection_name>>"
+
 collections:
   Derzeit beliebt:
     file_poster: /config/posters/genre/Trending.jpg
@@ -9,3 +17,13 @@ collections:
     summary: Die derzeit meistgesehenen Filme.
     visible_home: true
     visible_shared: true
+
+  Matrix:
+    template:
+      name: universe
+    tmdb_collection_details: 2344
+
+  Der Pate:
+    template:
+      name: universe
+    tmdb_collection_details: 230
