@@ -81,7 +81,7 @@ spec:
         annotations:
           gethomepage.dev/description: Indexer management
           gethomepage.dev/enabled: "true"
-          gethomepage.dev/group: Downloads
+          gethomepage.dev/group: Media Automation
           gethomepage.dev/icon: prowlarr.png
           gethomepage.dev/name: Prowlarr
           gethomepage.dev/widget.key: '{{ "{{HOMEPAGE_VAR_PROWLARR_API_KEY}}" }}'

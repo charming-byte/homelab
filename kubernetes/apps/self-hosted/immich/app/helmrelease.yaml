@@ -115,7 +115,7 @@ spec:
         annotations:
           gethomepage.dev/description: Photo and video library
           gethomepage.dev/enabled: "true"
-          gethomepage.dev/group: Media
+          gethomepage.dev/group: Media Library
           gethomepage.dev/icon: immich.svg
           gethomepage.dev/name: Immich
           gethomepage.dev/widget.type: immich

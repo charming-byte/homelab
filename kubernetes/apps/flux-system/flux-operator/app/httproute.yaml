@@ -9,7 +9,7 @@ metadata:
     gethomepage.dev/icon: flux-cd.svg
     gethomepage.dev/name: Flux Status
     gethomepage.dev/description: Flux-CD Status Dashboard
-    gethomepage.dev/group: Infrastructure
+    gethomepage.dev/group: Platform & Network
 spec:
   hostnames: ["flux-operator.${SECRET_DOMAIN}"]
   parentRefs:

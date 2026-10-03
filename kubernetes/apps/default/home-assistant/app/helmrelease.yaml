@@ -27,7 +27,7 @@ spec:
             securityContext:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true
-              capabilities: {drop: ["ALL"]}
+              capabilities: { drop: ["ALL"] }
             probes:
               liveness: &probes
                 custom: true
@@ -63,7 +63,7 @@ spec:
                 "/config/.vscode",
                 "--port",
                 "8080",
-                "/config"
+                "/config",
               ]
             env:
               TZ: "Europe/Berlin"
@@ -123,7 +123,7 @@ spec:
       app:
         annotations:
           gethomepage.dev/enabled: "true"
-          gethomepage.dev/group: "Home Automation"
+          gethomepage.dev/group: Smart Home
           gethomepage.dev/name: "Home Assistant"
           gethomepage.dev/icon: home-assistant.png
           gethomepage.dev/app: home-assistant
@@ -146,7 +146,7 @@ spec:
       code-server:
         annotations:
           gethomepage.dev/enabled: "true"
-          gethomepage.dev/group: "Home Automation"
+          gethomepage.dev/group: Smart Home
           gethomepage.dev/name: "Code Server"
           gethomepage.dev/app: home-assistant
           gethomepage.dev/namespace: default

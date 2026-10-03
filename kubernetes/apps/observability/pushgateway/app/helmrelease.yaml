@@ -29,7 +29,7 @@ spec:
           gethomepage.dev/app: prometheus-pushgateway
           gethomepage.dev/description: Metrics from batch jobs
           gethomepage.dev/enabled: "true"
-          gethomepage.dev/group: Infrastructure
+          gethomepage.dev/group: Monitoring
           gethomepage.dev/icon: prometheus.svg
           gethomepage.dev/name: Prometheus Pushgateway
         hostnames: ["{{ .Release.Name }}.${SECRET_DOMAIN}"]

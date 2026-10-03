@@ -24,41 +24,49 @@ data:
       searchDescriptions: true
       hideInternetSearch: true
     layout:
-      Home:
+      Media Library:
         tab: Home
+        useEqualHeights: true
         style: row
         columns: 2
-        icon: mdi-home-analytics
-      AI:
-        tab: Home
-        style: row
-        columns: 2
-        icon: si-openapiinitiative
-      Media:
+        icon: mdi-play-circle
+      Media Automation:
         tab: Home
         useEqualHeights: true
         style: row
         columns: 3
-        icon: mdi-play-circle
+        icon: mdi-movie-cog
       Downloads:
         tab: Home
+        useEqualHeights: true
         style: row
         columns: 3
         icon: mdi-download-circle
-        useEqualHeights: true
-      Home Automation:
-        tab: Home
-        style: column
-        columns: 3
-        icon: mdi-home-automation
-        useEqualHeights: true
-      Self-Hosted:
+      Productivity:
         tab: Home
         useEqualHeights: true
         style: row
         columns: 3
         icon: mdi-apps
-      Infrastructure:
+      Development & AI:
+        tab: Home
+        useEqualHeights: true
+        style: row
+        columns: 2
+        icon: mdi-code-braces
+      Smart Home:
+        tab: Home
+        useEqualHeights: true
+        style: row
+        columns: 3
+        icon: mdi-home-automation
+      Monitoring:
+        tab: Home
+        useEqualHeights: true
+        style: row
+        columns: 3
+        icon: mdi-chart-line
+      Platform & Network:
         tab: Home
         useEqualHeights: true
         style: row
@@ -119,7 +127,7 @@ data:
             - icon: si-simpleicons
               href: https://simpleicons.org/
   services.yaml: |
-    - Infrastructure:
+    - Platform & Network:
         - AdGuard Home:
             href: http://192.168.1.1:3000
             icon: adguard-home.svg
@@ -179,10 +187,10 @@ data:
               timezone: Europe/Berlin
               integrations:
                 - type: sonarr
-                  service_group: Downloads
+                  service_group: Media Automation
                   service_name: Sonarr
                 - type: radarr
-                  service_group: Downloads
+                  service_group: Media Automation
                   service_name: Radarr
   widgets.yaml: |
     - search:

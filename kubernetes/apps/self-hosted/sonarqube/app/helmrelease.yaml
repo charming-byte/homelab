@@ -116,7 +116,7 @@ spec:
           gethomepage.dev/app: sonarqube
           gethomepage.dev/description: "Code quality and security analysis"
           gethomepage.dev/enabled: "true"
-          gethomepage.dev/group: Self-Hosted
+          gethomepage.dev/group: Development & AI
           gethomepage.dev/icon: sonarqube.png
           gethomepage.dev/name: SonarQube
         hostnames: ["{{ .Release.Name }}.${SECRET_DOMAIN}"]

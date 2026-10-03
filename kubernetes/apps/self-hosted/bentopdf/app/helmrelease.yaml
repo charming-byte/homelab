@@ -59,7 +59,7 @@ spec:
         annotations:
           gethomepage.dev/description: PDF Toolkit
           gethomepage.dev/enabled: "true"
-          gethomepage.dev/group: Self-Hosted
+          gethomepage.dev/group: Productivity
           gethomepage.dev/icon: bentopdf.svg
           gethomepage.dev/name: BentoPDF
         hostnames: ["pdf.${SECRET_DOMAIN}"]

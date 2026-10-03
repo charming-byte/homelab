@@ -53,7 +53,7 @@ spec:
           annotations:
             gethomepage.dev/description: Authentication and identity management
             gethomepage.dev/enabled: "true"
-            gethomepage.dev/group: Infrastructure
+            gethomepage.dev/group: Platform & Network
             gethomepage.dev/icon: authentik.svg
             gethomepage.dev/href: https://sso.${SECRET_DOMAIN}
             gethomepage.dev/name: Authentik

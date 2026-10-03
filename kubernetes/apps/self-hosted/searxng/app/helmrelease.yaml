@@ -79,7 +79,7 @@ spec:
       app:
         annotations:
           gethomepage.dev/enabled: "true"
-          gethomepage.dev/group: Self-Hosted
+          gethomepage.dev/group: Productivity
           gethomepage.dev/name: SearXNG
           gethomepage.dev/icon: searxng.png
           gethomepage.dev/description: "Privacy-respecting metasearch engine"

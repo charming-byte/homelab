@@ -74,7 +74,7 @@ spec:
       tautulli:
         annotations:
           gethomepage.dev/enabled: "true"
-          gethomepage.dev/group: Downloads
+          gethomepage.dev/group: Media Automation
           gethomepage.dev/icon: sh-tautulli-light.png
           gethomepage.dev/name: Tautulli
           gethomepage.dev/description: Plex activity monitoring

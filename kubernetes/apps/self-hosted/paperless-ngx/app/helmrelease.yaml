@@ -135,7 +135,7 @@ spec:
         annotations:
           gethomepage.dev/description: Document Management System
           gethomepage.dev/enabled: "true"
-          gethomepage.dev/group: Self-Hosted
+          gethomepage.dev/group: Productivity
           gethomepage.dev/icon: paperless-ngx.svg
           gethomepage.dev/name: Paperless-ngx
           gethomepage.dev/widget.type: paperlessngx

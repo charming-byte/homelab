@@ -99,7 +99,7 @@ spec:
         annotations:
           gethomepage.dev/description: Movie collection management
           gethomepage.dev/enabled: "true"
-          gethomepage.dev/group: Downloads
+          gethomepage.dev/group: Media Automation
           gethomepage.dev/icon: radarr.png
           gethomepage.dev/name: Radarr
           gethomepage.dev/widget.key: "{{`{{HOMEPAGE_VAR_RADARR_API_KEY}}`}}"

@@ -55,7 +55,7 @@ spec:
             gethomepage.dev/app: alertmanager
             gethomepage.dev/description: Manages and routes Prometheus alerts.
             gethomepage.dev/enabled: "true"
-            gethomepage.dev/group: Infrastructure
+            gethomepage.dev/group: Monitoring
             gethomepage.dev/href: https://alertmanager.${SECRET_DOMAIN}
             gethomepage.dev/icon: prometheus.svg
             gethomepage.dev/name: Alertmanager
@@ -132,7 +132,7 @@ spec:
             gethomepage.dev/app: prometheus
             gethomepage.dev/description: Monitoring system
             gethomepage.dev/enabled: "true"
-            gethomepage.dev/group: Infrastructure
+            gethomepage.dev/group: Monitoring
             gethomepage.dev/href: https://prometheus.${SECRET_DOMAIN}
             gethomepage.dev/icon: prometheus.svg
             gethomepage.dev/name: Prometheus

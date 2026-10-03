@@ -111,7 +111,7 @@ spec:
         annotations:
           gethomepage.dev/description: Media Server
           gethomepage.dev/enabled: "true"
-          gethomepage.dev/group: Media
+          gethomepage.dev/group: Media Library
           gethomepage.dev/href: https://plex.${SECRET_DOMAIN}
           gethomepage.dev/icon: plex.png
           gethomepage.dev/name: Plex

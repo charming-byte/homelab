@@ -152,7 +152,7 @@ spec:
         annotations:
           gethomepage.dev/description: Movie and TV poster generation
           gethomepage.dev/enabled: "true"
-          gethomepage.dev/group: Media
+          gethomepage.dev/group: Media Automation
           gethomepage.dev/href: https://posterizarr.${SECRET_DOMAIN}
           gethomepage.dev/icon: posterizarr
           gethomepage.dev/name: Posterizarr

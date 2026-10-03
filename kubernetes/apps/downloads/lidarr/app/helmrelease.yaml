@@ -94,7 +94,7 @@ spec:
         annotations:
           gethomepage.dev/description: Music collection management
           gethomepage.dev/enabled: "true"
-          gethomepage.dev/group: Downloads
+          gethomepage.dev/group: Media Automation
           gethomepage.dev/icon: lidarr.png
           gethomepage.dev/name: Lidarr
           gethomepage.dev/widget.key: "{{`{{HOMEPAGE_VAR_LIDARR_API_KEY}}`}}"

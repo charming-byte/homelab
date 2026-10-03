@@ -103,7 +103,7 @@ spec:
       app:
         annotations:
           gethomepage.dev/enabled: "true"
-          gethomepage.dev/group: Infrastructure
+          gethomepage.dev/group: Monitoring
           gethomepage.dev/description: Status Dashboard
           gethomepage.dev/name: Gatus
           gethomepage.dev/icon: gatus.png

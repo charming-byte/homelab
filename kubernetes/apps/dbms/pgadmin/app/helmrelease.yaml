@@ -118,7 +118,7 @@ spec:
         annotations:
           gethomepage.dev/description: PostgreSQL Tools
           gethomepage.dev/enabled: "true"
-          gethomepage.dev/group: Infrastructure
+          gethomepage.dev/group: Platform & Network
           gethomepage.dev/icon: pgadmin.png
           gethomepage.dev/name: PGAdmin
         hostnames: ["{{ .Release.Name }}.${SECRET_DOMAIN}"]

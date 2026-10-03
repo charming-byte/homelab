@@ -103,7 +103,7 @@ spec:
       pulsarr:
         annotations:
           gethomepage.dev/enabled: "true"
-          gethomepage.dev/group: Downloads
+          gethomepage.dev/group: Media Automation
           gethomepage.dev/icon: sh-pulsarr-light.png
           gethomepage.dev/name: Pulsarr
           gethomepage.dev/description: Plex watchlist automation
