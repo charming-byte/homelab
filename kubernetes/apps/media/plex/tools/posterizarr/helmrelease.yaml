@@ -150,7 +150,7 @@ spec:
     route:
       app:
         annotations:
-          gethomepage.dev/description: "Generating and managing movie and TV show posters."
+          gethomepage.dev/description: Movie and TV poster generation
           gethomepage.dev/enabled: "true"
           gethomepage.dev/group: Media
           gethomepage.dev/href: https://posterizarr.${SECRET_DOMAIN}

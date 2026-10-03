@@ -51,7 +51,7 @@ spec:
       route:
         main:
           annotations:
-            gethomepage.dev/description: Centralized authentication and identity management.
+            gethomepage.dev/description: Authentication and identity management
             gethomepage.dev/enabled: "true"
             gethomepage.dev/group: Infrastructure
             gethomepage.dev/icon: authentik.svg

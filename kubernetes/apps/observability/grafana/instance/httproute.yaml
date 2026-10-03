@@ -5,7 +5,7 @@ kind: HTTPRoute
 metadata:
   annotations:
     gethomepage.dev/app: grafana
-    gethomepage.dev/description: Visualization and exploration of metrics, logs, and traces.
+    gethomepage.dev/description: Metrics and logs dashboards
     gethomepage.dev/enabled: "true"
     gethomepage.dev/group: Infrastructure
     gethomepage.dev/icon: grafana.svg

@@ -176,6 +176,7 @@ spec:
     route:
       slskd:
         annotations:
+          gethomepage.dev/description: Soulseek music downloads
           gethomepage.dev/enabled: "true"
           gethomepage.dev/group: Downloads
           gethomepage.dev/icon: slskd.png

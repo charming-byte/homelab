@@ -97,6 +97,7 @@ spec:
     route:
       sonarr:
         annotations:
+          gethomepage.dev/description: TV series management
           gethomepage.dev/enabled: "true"
           gethomepage.dev/group: Downloads
           gethomepage.dev/icon: sonarr.png

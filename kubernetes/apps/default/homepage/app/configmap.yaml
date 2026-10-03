@@ -123,7 +123,7 @@ data:
         - AdGuard Home:
             href: http://192.168.1.1:3000
             icon: adguard-home.svg
-            description: Network-wide ads & trackers blocking DNS server.
+            description: Network-wide ad and tracker blocking
             widget:
               type: adguard
               url: http://192.168.1.1:3000
@@ -132,7 +132,7 @@ data:
         - Cloudflared:
             href: https://dash.cloudflare.com/
             icon: cloudflare-zero-trust.png
-            description: Cloudflared Tunnel
+            description: Cloudflare tunnel monitoring
             widget:
               type: cloudflared
               accountid: {{HOMEPAGE_VAR_CLOUDFLARE_ACCOUNTID}}
@@ -145,11 +145,11 @@ data:
         - TP-Link Managed Switch:
             href: http://192.168.100.2
             icon: si-tp-link
-            description: Web interface for TP-Link managed switch
+            description: Managed network switch
     - Storage:
         - OpenMediaVault:
             href: http://nas.internal
-            description: RPI4 NAS
+            description: Raspberry Pi network storage
             icon: openmediavault.png
             widget:
               type: openmediavault
@@ -159,6 +159,7 @@ data:
               method: smart.getListBg
               fields: ["passed", "failed"]
         - Unraid:
+            description: NAS and storage management
             href: http://192.168.178.140
             icon: unraid.png
             widget:
@@ -168,6 +169,7 @@ data:
               fields: ["status", "arrayUsedSpace", "arrayUsedPercent", "arrayFree"]
     - Calendar:
         - Calendar:
+            description: Upcoming movies and TV episodes
             widget:
               type: calendar
               firstDayInWeek: sunday

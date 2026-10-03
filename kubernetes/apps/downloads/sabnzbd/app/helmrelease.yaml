@@ -84,6 +84,7 @@ spec:
     route:
       sabnzbd:
         annotations:
+          gethomepage.dev/description: Usenet downloads
           gethomepage.dev/enabled: "true"
           gethomepage.dev/group: Downloads
           gethomepage.dev/icon: sabnzbd.png

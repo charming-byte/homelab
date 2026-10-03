@@ -106,7 +106,7 @@ spec:
           gethomepage.dev/group: Downloads
           gethomepage.dev/icon: sh-pulsarr-light.png
           gethomepage.dev/name: Pulsarr
-          gethomepage.dev/description: "Real-time Plex watchlist monitoring and content acquisition tool."
+          gethomepage.dev/description: Plex watchlist automation
         hostnames: ["{{ .Release.Name }}.${SECRET_DOMAIN}"]
         parentRefs:
           - name: envoy-internal

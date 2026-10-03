@@ -120,7 +120,7 @@ spec:
             securityContext:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true
-              capabilities: {drop: ["ALL"]}
+              capabilities: { drop: ["ALL"] }
             resources:
               requests:
                 cpu: 100m
@@ -152,6 +152,7 @@ spec:
     route:
       qbittorrent:
         annotations:
+          gethomepage.dev/description: BitTorrent downloads
           gethomepage.dev/enabled: "true"
           gethomepage.dev/group: Downloads
           gethomepage.dev/icon: qbittorrent.png

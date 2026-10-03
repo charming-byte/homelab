@@ -97,6 +97,7 @@ spec:
     route:
       app:
         annotations:
+          gethomepage.dev/description: Movie collection management
           gethomepage.dev/enabled: "true"
           gethomepage.dev/group: Downloads
           gethomepage.dev/icon: radarr.png

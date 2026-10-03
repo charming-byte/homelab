@@ -92,6 +92,7 @@ spec:
     route:
       lidarr:
         annotations:
+          gethomepage.dev/description: Music collection management
           gethomepage.dev/enabled: "true"
           gethomepage.dev/group: Downloads
           gethomepage.dev/icon: lidarr.png

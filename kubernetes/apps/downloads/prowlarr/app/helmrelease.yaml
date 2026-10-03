@@ -79,6 +79,7 @@ spec:
     route:
       prowlarr:
         annotations:
+          gethomepage.dev/description: Indexer management
           gethomepage.dev/enabled: "true"
           gethomepage.dev/group: Downloads
           gethomepage.dev/icon: prowlarr.png

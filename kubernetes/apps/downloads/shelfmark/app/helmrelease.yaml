@@ -130,6 +130,7 @@ spec:
     route:
       app:
         annotations:
+          gethomepage.dev/description: Book and audiobook downloads
           gethomepage.dev/enabled: "true"
           gethomepage.dev/group: Downloads
           gethomepage.dev/icon: shelfmark.png

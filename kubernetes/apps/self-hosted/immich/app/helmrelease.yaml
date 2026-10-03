@@ -113,7 +113,7 @@ spec:
     route:
       app:
         annotations:
-          gethomepage.dev/description: Photo and video management solution
+          gethomepage.dev/description: Photo and video library
           gethomepage.dev/enabled: "true"
           gethomepage.dev/group: Media
           gethomepage.dev/icon: immich.svg
