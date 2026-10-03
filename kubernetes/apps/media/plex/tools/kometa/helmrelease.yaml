@@ -49,6 +49,8 @@ spec:
         pod:
           restartPolicy: Never
     defaultPodOptions:
+      nodeSelector:
+        kubernetes.io/hostname: node02
       securityContext:
         fsGroup: 1000
         fsGroupChangePolicy: OnRootMismatch
@@ -70,6 +72,44 @@ spec:
             readOnly: true
           - path: /config/serien.yml
             subPath: serien.yml
+            readOnly: true
+      genre-posters:
+        type: custom
+        volumeSpec:
+          projected:
+            sources:
+              - configMap:
+                  name: kometa-genre-posters-01
+              - configMap:
+                  name: kometa-genre-posters-02
+              - configMap:
+                  name: kometa-genre-posters-03
+              - configMap:
+                  name: kometa-genre-posters-04
+              - configMap:
+                  name: kometa-genre-posters-05
+              - configMap:
+                  name: kometa-genre-posters-06
+              - configMap:
+                  name: kometa-genre-posters-07
+              - configMap:
+                  name: kometa-genre-posters-08
+              - configMap:
+                  name: kometa-genre-posters-09
+              - configMap:
+                  name: kometa-genre-posters-10
+              - configMap:
+                  name: kometa-genre-posters-11
+              - configMap:
+                  name: kometa-genre-posters-12
+              - configMap:
+                  name: kometa-genre-posters-13
+              - configMap:
+                  name: kometa-genre-posters-14
+              - configMap:
+                  name: kometa-genre-posters-15
+        globalMounts:
+          - path: /config/posters/genre
             readOnly: true
       logs:
         type: emptyDir

@@ -1,6 +1,7 @@
 ---
 collections:
   Derzeit beliebt:
+    file_poster: /config/posters/genre/Trending.jpg
     mdblist_list: https://mdblist.com/lists/beetbytes/german-monthly-streaming-charts-last-aired-within-365d
     collection_order: custom
     sync_mode: sync

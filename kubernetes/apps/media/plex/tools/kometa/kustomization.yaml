@@ -15,3 +15,60 @@ configMapGenerator:
       - ./configs/config.yml
       - ./configs/filme.yml
       - ./configs/serien.yml
+  - name: kometa-genre-posters-01
+    files:
+      - ./configs/posters/genre/Action.jpg
+      - ./configs/posters/genre/Adventure.jpg
+  - name: kometa-genre-posters-02
+    files:
+      - ./configs/posters/genre/Animation.jpg
+      - ./configs/posters/genre/Anime.jpg
+  - name: kometa-genre-posters-03
+    files:
+      - ./configs/posters/genre/Biopic.jpg
+  - name: kometa-genre-posters-04
+    files:
+      - ./configs/posters/genre/Comedy.jpg
+      - ./configs/posters/genre/Crime.jpg
+  - name: kometa-genre-posters-05
+    files:
+      - ./configs/posters/genre/Documentaries.jpg
+      - ./configs/posters/genre/Drama.jpg
+      - ./configs/posters/genre/Family.jpg
+  - name: kometa-genre-posters-06
+    files:
+      - ./configs/posters/genre/Fantasy.jpg
+      - ./configs/posters/genre/Gangster.jpg
+  - name: kometa-genre-posters-07
+    files:
+      - ./configs/posters/genre/History.jpg
+      - ./configs/posters/genre/Horror.jpg
+  - name: kometa-genre-posters-08
+    files:
+      - ./configs/posters/genre/Martial-Arts.jpg
+  - name: kometa-genre-posters-09
+    files:
+      - ./configs/posters/genre/Mystery.jpg
+  - name: kometa-genre-posters-10
+    files:
+      - ./configs/posters/genre/Pandemic.jpg
+  - name: kometa-genre-posters-11
+    files:
+      - ./configs/posters/genre/Romance.jpg
+      - ./configs/posters/genre/Romantic-Comedy.jpg
+  - name: kometa-genre-posters-12
+    files:
+      - ./configs/posters/genre/Romantic-Drama.jpg
+      - ./configs/posters/genre/Science-Fiction.jpg
+  - name: kometa-genre-posters-13
+    files:
+      - ./configs/posters/genre/Sports.jpg
+      - ./configs/posters/genre/Thriller.jpg
+  - name: kometa-genre-posters-14
+    files:
+      - ./configs/posters/genre/Travel.jpg
+      - ./configs/posters/genre/War.jpg
+  - name: kometa-genre-posters-15
+    files:
+      - ./configs/posters/genre/Trending.jpg
+      - ./configs/posters/genre/Westerns.jpg

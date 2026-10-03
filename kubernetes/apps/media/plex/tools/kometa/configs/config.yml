@@ -4,7 +4,59 @@ libraries:
     collection_files:
       - file: /config/filme.yml
       - default: genre
-        template_variables:
+        template_variables: &genre-posters
+          file_poster_Action: /config/posters/genre/Action.jpg
+          file_poster_Adventure: /config/posters/genre/Adventure.jpg
+          file_poster_Abenteuer: /config/posters/genre/Adventure.jpg
+          file_poster_Animation: /config/posters/genre/Animation.jpg
+          file_poster_Anime: /config/posters/genre/Anime.jpg
+          file_poster_Biopic: /config/posters/genre/Biopic.jpg
+          file_poster_Biography: /config/posters/genre/Biopic.jpg
+          file_poster_Biografie: /config/posters/genre/Biopic.jpg
+          file_poster_Comedy: /config/posters/genre/Comedy.jpg
+          file_poster_Komödie: /config/posters/genre/Comedy.jpg
+          file_poster_Crime: /config/posters/genre/Crime.jpg
+          file_poster_Krimi: /config/posters/genre/Crime.jpg
+          file_poster_Verbrechen: /config/posters/genre/Crime.jpg
+          file_poster_Documentaries: /config/posters/genre/Documentaries.jpg
+          file_poster_Documentary: /config/posters/genre/Documentaries.jpg
+          file_poster_Dokumentation: /config/posters/genre/Documentaries.jpg
+          file_poster_Dokumentarfilm: /config/posters/genre/Documentaries.jpg
+          file_poster_Drama: /config/posters/genre/Drama.jpg
+          file_poster_Family: /config/posters/genre/Family.jpg
+          file_poster_Familie: /config/posters/genre/Family.jpg
+          file_poster_Fantasy: /config/posters/genre/Fantasy.jpg
+          file_poster_Fantasie: /config/posters/genre/Fantasy.jpg
+          file_poster_Gangster: /config/posters/genre/Gangster.jpg
+          file_poster_History: /config/posters/genre/History.jpg
+          file_poster_Geschichte: /config/posters/genre/History.jpg
+          file_poster_Historie: /config/posters/genre/History.jpg
+          file_poster_Horror: /config/posters/genre/Horror.jpg
+          file_poster_Martial Arts: /config/posters/genre/Martial-Arts.jpg
+          file_poster_Kampfsport: /config/posters/genre/Martial-Arts.jpg
+          file_poster_Mystery: /config/posters/genre/Mystery.jpg
+          file_poster_Mysterium: /config/posters/genre/Mystery.jpg
+          file_poster_Pandemic: /config/posters/genre/Pandemic.jpg
+          file_poster_Romance: /config/posters/genre/Romance.jpg
+          file_poster_Romanze: /config/posters/genre/Romance.jpg
+          file_poster_Romantik: /config/posters/genre/Romance.jpg
+          file_poster_Romantic Comedy: /config/posters/genre/Romantic-Comedy.jpg
+          file_poster_Romantische Komödie: /config/posters/genre/Romantic-Comedy.jpg
+          file_poster_Romantic Drama: /config/posters/genre/Romantic-Drama.jpg
+          file_poster_Romantisches Drama: /config/posters/genre/Romantic-Drama.jpg
+          file_poster_Science Fiction: /config/posters/genre/Science-Fiction.jpg
+          file_poster_Science-Fiction: /config/posters/genre/Science-Fiction.jpg
+          file_poster_Sci-Fi: /config/posters/genre/Science-Fiction.jpg
+          file_poster_SciFi: /config/posters/genre/Science-Fiction.jpg
+          file_poster_Sports: /config/posters/genre/Sports.jpg
+          file_poster_Sport: /config/posters/genre/Sports.jpg
+          file_poster_Thriller: /config/posters/genre/Thriller.jpg
+          file_poster_Travel: /config/posters/genre/Travel.jpg
+          file_poster_Reisen: /config/posters/genre/Travel.jpg
+          file_poster_War: /config/posters/genre/War.jpg
+          file_poster_Krieg: /config/posters/genre/War.jpg
+          file_poster_Westerns: /config/posters/genre/Westerns.jpg
+          file_poster_Western: /config/posters/genre/Westerns.jpg
           language: de
           name_format: <<key_name>> Filme
           sort_by: release.desc
@@ -13,7 +65,9 @@ libraries:
           name_separator: Genres
     settings:
       asset_directory: /assets/Filme
-      prioritize_assets: true
+      prioritize_assets: false
+    template_variables:
+      collection_mode: hide
     operations:
       assets_for_all: true
 
@@ -22,6 +76,7 @@ libraries:
       - file: /config/serien.yml
       - default: genre
         template_variables:
+          <<: *genre-posters
           language: de
           name_format: <<key_name>> Serien
           sort_by: release.desc
@@ -30,7 +85,9 @@ libraries:
           name_separator: Genres
     settings:
       asset_directory: /assets/Serien
-      prioritize_assets: true
+      prioritize_assets: false
+    template_variables:
+      collection_mode: hide
     operations:
       assets_for_all: true
 
