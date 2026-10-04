@@ -13,6 +13,8 @@ libraries:
           use_separator: true
           sep_style: blue
           name_separator: Sagas
+          # Plex needs a non-empty separator to honor collection_mode: hide.
+          placeholder_imdb_id: tt0068646
           minimum_items: 1
           collection_mode: hide
           collection_order: release
@@ -46,6 +48,8 @@ libraries:
           use_separator: true
           sep_style: blue
           name_separator: Genres
+          collection_mode: hide
+          placeholder_imdb_id: tt0068646
     settings:
       asset_directory: /assets/Filme
       prioritize_assets: false
@@ -58,10 +62,13 @@ libraries:
     collection_files:
       - file: /config/serien.yml
       - default: universe
-        template_variables: *universe-settings
+        template_variables:
+          <<: *universe-settings
+          placeholder_imdb_id: tt8466564
       - default: genre
         template_variables:
           <<: *genre-posters
+          placeholder_imdb_id: tt8466564
           file_poster_Mini-Series: /config/posters/genre/Mini-Series.jpg
           language: de
           name_format: <<key_name>> Serien
