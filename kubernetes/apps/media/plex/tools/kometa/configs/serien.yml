@@ -1,12 +1,12 @@
 ---
 collections:
-  Derzeit beliebt:
+  Angesagte Serien:
     collection_mode: hide
     file_poster: /config/posters/genre/Trending.jpg
     mdblist_list: https://mdblist.com/lists/beetbytes/german-monthly-streaming-charts-last-aired-within-365d
     collection_order: custom
     sync_mode: sync
-    sort_title: "!001_Derzeit beliebt"
+    sort_title: "!001_Angesagte Serien"
     summary: Die derzeit meistgesehenen Serien.
     visible_home: true
     visible_shared: true
