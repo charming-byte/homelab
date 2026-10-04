@@ -104,6 +104,7 @@ spec:
           gethomepage.dev/name: Radarr
           gethomepage.dev/widget.key: "{{`{{HOMEPAGE_VAR_RADARR_API_KEY}}`}}"
           gethomepage.dev/widget.type: radarr
+          gethomepage.dev/widget.fields: '["wanted", "queued"]'
           gethomepage.dev/widget.url: http://radarr.downloads.svc.cluster.local
         hostnames: ["{{ .Release.Name }}.${SECRET_DOMAIN}"]
         parentRefs:

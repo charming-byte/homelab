@@ -119,6 +119,7 @@ spec:
           gethomepage.dev/icon: immich.svg
           gethomepage.dev/name: Immich
           gethomepage.dev/widget.type: immich
+          gethomepage.dev/widget.fields: '["photos", "videos", "storage"]'
           gethomepage.dev/widget.url: http://immich-server.self-hosted.svc.cluster.local:2283
           gethomepage.dev/widget.key: "{{`{{HOMEPAGE_VAR_IMMICH_API_KEY}}`}}"
           gethomepage.dev/widget.version: "2"

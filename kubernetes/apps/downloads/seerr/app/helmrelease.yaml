@@ -104,6 +104,7 @@ spec:
           gethomepage.dev/description: Media requests
           gethomepage.dev/widget.key: '{{ "{{HOMEPAGE_VAR_SEERR_API_KEY}}" }}'
           gethomepage.dev/widget.type: overseerr
+          gethomepage.dev/widget.fields: '["pending", "approved"]'
           gethomepage.dev/widget.url: http://seerr.downloads.svc.cluster.local:5055
         hostnames:
           - requests.${SECRET_DOMAIN}

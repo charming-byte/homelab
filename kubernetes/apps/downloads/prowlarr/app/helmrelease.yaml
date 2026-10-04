@@ -86,6 +86,7 @@ spec:
           gethomepage.dev/name: Prowlarr
           gethomepage.dev/widget.key: '{{ "{{HOMEPAGE_VAR_PROWLARR_API_KEY}}" }}'
           gethomepage.dev/widget.type: prowlarr
+          gethomepage.dev/widget.fields: '["numberOfGrabs", "numberOfFailGrabs"]'
           gethomepage.dev/widget.url: http://prowlarr.downloads.svc.cluster.local
         hostnames: ["{{ .Release.Name }}.${SECRET_DOMAIN}"]
         parentRefs:

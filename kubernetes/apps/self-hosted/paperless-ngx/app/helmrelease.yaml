@@ -139,6 +139,7 @@ spec:
           gethomepage.dev/icon: paperless-ngx.svg
           gethomepage.dev/name: Paperless-ngx
           gethomepage.dev/widget.type: paperlessngx
+          gethomepage.dev/widget.fields: '["total", "inbox"]'
           gethomepage.dev/widget.url: http://paperless-ngx.self-hosted:8000
           gethomepage.dev/widget.key: "{{`{{HOMEPAGE_VAR_PAPERLESS_TOKEN}}`}}"
         hostnames: ["paperless.${SECRET_DOMAIN}"]

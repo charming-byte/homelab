@@ -99,6 +99,7 @@ spec:
           gethomepage.dev/name: Lidarr
           gethomepage.dev/widget.key: "{{`{{HOMEPAGE_VAR_LIDARR_API_KEY}}`}}"
           gethomepage.dev/widget.type: lidarr
+          gethomepage.dev/widget.fields: '["wanted", "queued"]'
           gethomepage.dev/widget.url: http://lidarr.downloads.svc.cluster.local
         hostnames: ["{{ .Release.Name }}.${SECRET_DOMAIN}"]
         parentRefs:

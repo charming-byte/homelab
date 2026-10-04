@@ -159,6 +159,7 @@ spec:
           gethomepage.dev/name: qBittorrent
           gethomepage.dev/widget.username: admin
           gethomepage.dev/widget.type: qbittorrent
+          gethomepage.dev/widget.fields: '["leech", "download", "upload"]'
           gethomepage.dev/widget.url: http://qbittorrent.downloads.svc.cluster.local
         hostnames: ["{{ .Release.Name }}.${SECRET_DOMAIN}"]
         parentRefs:

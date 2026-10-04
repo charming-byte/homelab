@@ -137,6 +137,7 @@ spec:
             gethomepage.dev/icon: prometheus.svg
             gethomepage.dev/name: Prometheus
             gethomepage.dev/widget.type: prometheus
+            gethomepage.dev/widget.fields: '["targets_up", "targets_down"]'
             gethomepage.dev/widget.url: https://prometheus.${SECRET_DOMAIN}
           enabled: true
           hostnames: ["prometheus.${SECRET_DOMAIN}"]

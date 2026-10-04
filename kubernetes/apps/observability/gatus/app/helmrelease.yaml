@@ -108,6 +108,7 @@ spec:
           gethomepage.dev/name: Gatus
           gethomepage.dev/icon: gatus.png
           gethomepage.dev/widget.type: gatus
+          gethomepage.dev/widget.fields: '["up", "down"]'
           gethomepage.dev/widget.url: http://gatus.observability
         hostnames:
           - "{{ .Release.Name }}.${SECRET_DOMAIN}"
