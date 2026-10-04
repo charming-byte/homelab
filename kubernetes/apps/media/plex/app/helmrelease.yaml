@@ -109,11 +109,11 @@ spec:
     route:
       app:
         annotations:
-          gethomepage.dev/description: Media Server
+          gethomepage.dev/description: Media streaming
           gethomepage.dev/enabled: "true"
           gethomepage.dev/group: Media Library
           gethomepage.dev/href: https://plex.${SECRET_DOMAIN}
-          gethomepage.dev/icon: plex.png
+          gethomepage.dev/icon: plex.svg
           gethomepage.dev/name: Plex
           gethomepage.dev/widget.key: "{{`{{HOMEPAGE_VAR_PLEX_API_KEY}}`}}"
           gethomepage.dev/widget.type: plex

@@ -116,8 +116,8 @@ spec:
           gethomepage.dev/enabled: "true"
           gethomepage.dev/group: Development & AI
           gethomepage.dev/name: LiteLLM
-          gethomepage.dev/icon: sh-litellm
-          gethomepage.dev/description: "AI Gateway"
+          gethomepage.dev/icon: sh-litellm.png
+          gethomepage.dev/description: "AI gateway"
         hostnames: ["{{ .Release.Name }}.${SECRET_DOMAIN}"]
         parentRefs:
           - name: envoy-internal

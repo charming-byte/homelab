@@ -133,7 +133,7 @@ spec:
     route:
       app:
         annotations:
-          gethomepage.dev/description: Document Management System
+          gethomepage.dev/description: Document management
           gethomepage.dev/enabled: "true"
           gethomepage.dev/group: Productivity
           gethomepage.dev/icon: paperless-ngx.svg

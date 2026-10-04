@@ -57,7 +57,7 @@ spec:
     route:
       app:
         annotations:
-          gethomepage.dev/description: PDF Toolkit
+          gethomepage.dev/description: PDF tools
           gethomepage.dev/enabled: "true"
           gethomepage.dev/group: Productivity
           gethomepage.dev/icon: bentopdf.svg

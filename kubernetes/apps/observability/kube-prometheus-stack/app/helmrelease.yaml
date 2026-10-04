@@ -53,7 +53,7 @@ spec:
         main:
           annotations:
             gethomepage.dev/app: alertmanager
-            gethomepage.dev/description: Manages and routes Prometheus alerts.
+            gethomepage.dev/description: Alert routing and management
             gethomepage.dev/enabled: "true"
             gethomepage.dev/group: Monitoring
             gethomepage.dev/href: https://alertmanager.${SECRET_DOMAIN}
@@ -130,7 +130,7 @@ spec:
         main:
           annotations:
             gethomepage.dev/app: prometheus
-            gethomepage.dev/description: Monitoring system
+            gethomepage.dev/description: Metrics collection and queries
             gethomepage.dev/enabled: "true"
             gethomepage.dev/group: Monitoring
             gethomepage.dev/href: https://prometheus.${SECRET_DOMAIN}

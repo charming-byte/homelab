@@ -82,7 +82,7 @@ spec:
           gethomepage.dev/group: Productivity
           gethomepage.dev/name: SearXNG
           gethomepage.dev/icon: searxng.png
-          gethomepage.dev/description: "Privacy-respecting metasearch engine"
+          gethomepage.dev/description: "Private web search"
         hostnames: ["search.${SECRET_DOMAIN}"]
         parentRefs:
           - name: envoy-internal

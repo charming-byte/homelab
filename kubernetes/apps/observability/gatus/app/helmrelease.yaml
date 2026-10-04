@@ -104,7 +104,7 @@ spec:
         annotations:
           gethomepage.dev/enabled: "true"
           gethomepage.dev/group: Monitoring
-          gethomepage.dev/description: Status Dashboard
+          gethomepage.dev/description: Service health monitoring
           gethomepage.dev/name: Gatus
           gethomepage.dev/icon: gatus.png
           gethomepage.dev/widget.type: gatus

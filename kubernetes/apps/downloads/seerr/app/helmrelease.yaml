@@ -99,9 +99,9 @@ spec:
         annotations:
           gethomepage.dev/enabled: "true"
           gethomepage.dev/group: Media Automation
-          gethomepage.dev/icon: overseerr.png
+          gethomepage.dev/icon: seerr.png
           gethomepage.dev/name: Requests
-          gethomepage.dev/description: Media Request Manager
+          gethomepage.dev/description: Media requests
           gethomepage.dev/widget.key: '{{ "{{HOMEPAGE_VAR_SEERR_API_KEY}}" }}'
           gethomepage.dev/widget.type: overseerr
           gethomepage.dev/widget.url: http://seerr.downloads.svc.cluster.local:5055

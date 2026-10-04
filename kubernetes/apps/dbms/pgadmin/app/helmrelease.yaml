@@ -116,7 +116,7 @@ spec:
     route:
       app:
         annotations:
-          gethomepage.dev/description: PostgreSQL Tools
+          gethomepage.dev/description: PostgreSQL administration
           gethomepage.dev/enabled: "true"
           gethomepage.dev/group: Platform & Network
           gethomepage.dev/icon: pgadmin.png

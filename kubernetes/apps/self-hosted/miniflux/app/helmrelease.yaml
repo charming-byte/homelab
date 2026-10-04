@@ -74,7 +74,7 @@ spec:
       miniflux:
         annotations:
           gethomepage.dev/app: miniflux
-          gethomepage.dev/description: Feed Reader
+          gethomepage.dev/description: RSS feed reader
           gethomepage.dev/enabled: "true"
           gethomepage.dev/group: Productivity
           gethomepage.dev/icon: miniflux.svg

@@ -51,7 +51,7 @@ spec:
       route:
         main:
           annotations:
-            gethomepage.dev/description: Authentication and identity management
+            gethomepage.dev/description: Authentication and identity
             gethomepage.dev/enabled: "true"
             gethomepage.dev/group: Platform & Network
             gethomepage.dev/icon: authentik.svg
