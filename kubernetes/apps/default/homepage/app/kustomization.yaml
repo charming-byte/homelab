@@ -7,3 +7,14 @@ resources:
   - ./externalsecret.yaml
   - ./helmrelease.yaml
   - ./rbac.yaml
+configMapGenerator:
+  - name: homepage-theme
+    files:
+      - custom.css
+      - custom.js
+    options:
+      disableNameSuffixHash: true
+      annotations:
+        kustomize.toolkit.fluxcd.io/substitute: disabled
+      labels:
+        app.kubernetes.io/name: homepage

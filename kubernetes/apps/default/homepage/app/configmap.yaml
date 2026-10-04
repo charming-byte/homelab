@@ -17,6 +17,7 @@ data:
     # https://simpleicons.org/
     title: Dashboard
     theme: dark
+    iconStyle: theme
     headerStyle: clean
     hideVersion: true
     target: _blank
@@ -31,13 +32,13 @@ data:
         columns: 2
         icon: mdi-play-circle
       Media Automation:
-        tab: Home
+        tab: Media
         useEqualHeights: true
         style: row
         columns: 3
         icon: mdi-movie-cog
       Downloads:
-        tab: Home
+        tab: Media
         useEqualHeights: true
         style: row
         columns: 3
@@ -61,27 +62,27 @@ data:
         columns: 3
         icon: mdi-home-automation
       Monitoring:
-        tab: Home
+        tab: Infrastructure
         useEqualHeights: true
         style: row
         columns: 3
         icon: mdi-chart-line
       Platform & Network:
-        tab: Home
+        tab: Infrastructure
         useEqualHeights: true
         style: row
         columns: 3
         icon: mdi-server-network
       Storage:
-        tab: Home
-        style: column
+        tab: Infrastructure
+        useEqualHeights: true
+        style: row
+        columns: 2
         icon: mdi-database
       Calendar:
         tab: Calendar
         style: row
         header: false
-  custom.css: ""
-  custom.js: ""
   bookmarks.yaml: |
     - Social:
         - Discord:
@@ -131,9 +132,10 @@ data:
         - AdGuard Home:
             href: http://192.168.1.1:3000
             icon: adguard-home.svg
-            description: Network-wide ad and tracker blocking
+            description: DNS ad and tracker blocking
             widget:
               type: adguard
+              fields: ["queries", "blocked"]
               url: http://192.168.1.1:3000
               username: {{HOMEPAGE_VAR_ADGUARD_USERNAME}}
               password: {{HOMEPAGE_VAR_ADGUARD_PASSWORD}}
@@ -143,13 +145,14 @@ data:
             description: Cloudflare tunnel monitoring
             widget:
               type: cloudflared
+              fields: ["status"]
               accountid: {{HOMEPAGE_VAR_CLOUDFLARE_ACCOUNTID}}
               tunnelid: {{HOMEPAGE_VAR_CLOUDFLARE_TUNNELID}}
               key: {{HOMEPAGE_VAR_CLOUDFLARE_API_TOKEN}}
         - OPNSense:
             href: https://192.168.1.1
-            icon: opnsense
-            description: Firewall and routing platform
+            icon: opnsense.svg
+            description: Firewall and routing
         - TP-Link Managed Switch:
             href: http://192.168.100.2
             icon: si-tp-link
@@ -174,7 +177,7 @@ data:
               type: unraid
               url: http://192.168.178.140
               key: {{HOMEPAGE_VAR_UNRAID_API_KEY}}
-              fields: ["status", "arrayUsedSpace", "arrayUsedPercent", "arrayFree"]
+              fields: ["status", "arrayUsedPercent", "arrayFree"]
     - Calendar:
         - Calendar:
             description: Upcoming movies and TV episodes

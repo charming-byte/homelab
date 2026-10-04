@@ -50,6 +50,17 @@ spec:
         pod:
           automountServiceAccountToken: true
     persistence:
+      theme:
+        enabled: true
+        type: configMap
+        name: homepage-theme
+        globalMounts:
+          - path: /app/config/custom.css
+            subPath: custom.css
+            readOnly: true
+          - path: /app/config/custom.js
+            subPath: custom.js
+            readOnly: true
       config:
         enabled: true
         globalMounts:
