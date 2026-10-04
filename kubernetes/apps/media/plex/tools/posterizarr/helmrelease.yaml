@@ -122,6 +122,9 @@ spec:
               - path: /app/Overlayfiles/BebasNeue-Regular.ttf
                 subPath: BebasNeue-Regular.ttf
                 readOnly: true
+              - path: /app/Overlayfiles/GoodHeadlinePro-CondMedium.ttf
+                subPath: GoodHeadlinePro-CondMedium.ttf
+                readOnly: true
       config:
         accessMode: ReadWriteOnce
         enabled: true

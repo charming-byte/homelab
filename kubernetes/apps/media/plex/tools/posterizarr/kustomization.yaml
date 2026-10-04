@@ -11,6 +11,7 @@ configMapGenerator:
   - name: posterizarr-overlay-files
     files:
       - ./resources/fonts/BebasNeue-Regular.ttf
+      - ./resources/fonts/GoodHeadlinePro-CondMedium.ttf
   - name: posterizarr-configmap
     files:
       - config.json.template=./config/config.json.template

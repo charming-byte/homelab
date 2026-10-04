@@ -19,7 +19,10 @@ if [ -f /config/config.json ]; then
     yq -i '.ApiPart.tmdbtoken = strenv(TMDB_READ_API_TOKEN)' /config/config.json
     yq -i '.ApiPart.PlexToken = strenv(PLEX_TOKEN)' /config/config.json
 
-    echo "API keys updated successfully"
+    # Apply the managed poster fonts while preserving other UI settings.
+    yq -i '.PrerequisitePart.font = "GoodHeadlinePro-CondMedium.ttf" | .PrerequisitePart.collectionfont = "GoodHeadlinePro-CondMedium.ttf"' /config/config.json
+
+    echo "API keys and managed poster fonts updated successfully"
 else
     echo "Config file does not exist, creating from template..."
 
