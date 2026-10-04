@@ -108,8 +108,24 @@ spec:
                   name: kometa-genre-posters-14
               - configMap:
                   name: kometa-genre-posters-15
+              - configMap:
+                  name: kometa-genre-posters-16
         globalMounts:
           - path: /config/posters/genre
+            readOnly: true
+      universe-posters:
+        type: custom
+        volumeSpec:
+          projected:
+            sources:
+              - configMap:
+                  name: kometa-universe-posters-01
+              - configMap:
+                  name: kometa-universe-posters-02
+              - configMap:
+                  name: kometa-universe-posters-03
+        globalMounts:
+          - path: /config/posters/universe
             readOnly: true
       logs:
         type: emptyDir

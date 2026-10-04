@@ -72,3 +72,15 @@ configMapGenerator:
     files:
       - ./configs/posters/genre/Trending.jpg
       - ./configs/posters/genre/Westerns.jpg
+  - name: kometa-universe-posters-01
+    files:
+      - ./configs/posters/universe/Star-Wars.jpg
+  - name: kometa-universe-posters-02
+    files:
+      - ./configs/posters/universe/Matrix.jpg
+  - name: kometa-universe-posters-03
+    files:
+      - ./configs/posters/universe/The-Godfather.jpg
+  - name: kometa-genre-posters-16
+    files:
+      - ./configs/posters/genre/Mini-Series.jpg

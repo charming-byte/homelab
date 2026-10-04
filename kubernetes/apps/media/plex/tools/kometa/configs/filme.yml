@@ -1,7 +1,7 @@
 ---
 templates:
   universe:
-    collection_mode: show_items
+    collection_mode: hide
     collection_order: release
     sync_mode: sync
     minimum_items: 1
@@ -9,6 +9,7 @@ templates:
 
 collections:
   Derzeit beliebt:
+    collection_mode: hide
     file_poster: /config/posters/genre/Trending.jpg
     mdblist_list: https://mdblist.com/lists/beetbytes/german-most-popular-top-50-released-within-132d
     collection_order: custom
@@ -18,12 +19,14 @@ collections:
     visible_home: true
     visible_shared: true
 
-  Matrix:
+  Matrix Collection:
     template:
       name: universe
     tmdb_collection_details: 2344
+    file_poster: /config/posters/universe/Matrix.jpg
 
-  Der Pate:
+  Der Pate Collection:
     template:
       name: universe
     tmdb_collection_details: 230
+    file_poster: /config/posters/universe/The-Godfather.jpg
