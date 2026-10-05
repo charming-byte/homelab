@@ -13,6 +13,17 @@
     commitMessageExtra: "({{manager}})",
     additionalBranchPrefix: "{{manager}}-",
   },
+  customManagers: [
+    {
+      customType: "regex",
+      description: "Process raw GitHub release URLs (e.g. CRD manifests)",
+      managerFilePatterns: ["/(^|/)kustomization\\.ya?ml$/"],
+      matchStrings: [
+        "https://raw\\.githubusercontent\\.com/(?<depName>[\\w.-]+/[\\w.-]+)/(?<currentValue>v?\\d[\\w.-]*)/",
+      ],
+      datasourceTemplate: "github-releases",
+    },
+  ],
   packageRules: [
     // Auto-merge rules
     {
@@ -70,17 +81,17 @@
       ignoreTests: true,
     },
     // Package rules for changelog retrieval
-     {
-      "description": "Atuin Docker releases",
-      "matchDatasources": ["docker"],
-      "matchPackageNames": ["ghcr.io/atuinsh/atuin"],
-      "sourceUrl": "https://github.com/atuinsh/atuin",
-      "allowedVersions": "/^\\d+\\.\\d+\\.\\d+$/"
+    {
+      description: "Atuin Docker releases",
+      matchDatasources: ["docker"],
+      matchPackageNames: ["ghcr.io/atuinsh/atuin"],
+      sourceUrl: "https://github.com/atuinsh/atuin",
+      allowedVersions: "/^\\d+\\.\\d+\\.\\d+$/",
     },
-     {
-      "matchDatasources": ["docker"],
-      "matchPackageNames": ["ghcr.io/goauthentik/helm-charts/authentik"],
-      "sourceUrl": "https://github.com/goauthentik/authentik"
+    {
+      matchDatasources: ["docker"],
+      matchPackageNames: ["ghcr.io/goauthentik/helm-charts/authentik"],
+      sourceUrl: "https://github.com/goauthentik/authentik",
     },
     // Grouping rules
     {
@@ -98,6 +109,15 @@
       groupName: "flux-operator",
       matchDatasources: ["docker"],
       matchPackageNames: ["/flux-operator/", "/flux-instance/"],
+      group: {
+        commitMessageTopic: "{{{groupName}}} group",
+      },
+      minimumGroupSize: 2,
+    },
+    {
+      description: "Dragonfly Operator Group",
+      groupName: "dragonfly-operator",
+      matchPackageNames: ["/dragonflydb\\/(dragonfly-)?operator/"],
       group: {
         commitMessageTopic: "{{{groupName}}} group",
       },
