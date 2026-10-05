@@ -10,7 +10,6 @@ spec:
     - "--default_lua_flags=allow-undeclared-keys"
     - "--maxmemory=$(MAX_MEMORY)Mi"
     - "--proactor_threads=2"
-  networkPolicyEnabled: false
   env:
     - name: MAX_MEMORY
       valueFrom:
