@@ -1,6 +1,3 @@
-// TRIAL: animated background in the style of soulextract.com, not part of the theme yet.
-// Grid adapted from GridLines in @arwes/bgs (MIT, github.com/arwes/arwes); traces and pulses follow
-// soulextract's circuit lines. Colors come from the theme tokens.
 (() => {
   const root = getComputedStyle(document.documentElement);
   const token = (name) => root.getPropertyValue(name).trim();
@@ -22,6 +19,7 @@
     inset: "0",
     zIndex: "-1",
     pointerEvents: "none",
+    opacity: "0.9",
     backgroundImage: `radial-gradient(color-mix(in srgb, ${COLORS.pulse} 5%, transparent) 25%, transparent)`,
   });
   const board = document.createElement("canvas");
