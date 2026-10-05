@@ -1,3 +1,6 @@
+// TRIAL: animated background in the style of soulextract.com, not part of the theme yet.
+// Grid adapted from GridLines in @arwes/bgs (MIT, github.com/arwes/arwes); traces and pulses follow
+// soulextract's circuit lines. Colors come from the theme tokens.
 (() => {
   const root = getComputedStyle(document.documentElement);
   const token = (name) => root.getPropertyValue(name).trim();
@@ -19,7 +22,8 @@
     inset: "0",
     zIndex: "-1",
     pointerEvents: "none",
-    opacity: "0.9",
+    opacity: "0.8",
+    filter: "brightness(0.7)",
     backgroundImage: `radial-gradient(color-mix(in srgb, ${COLORS.pulse} 5%, transparent) 25%, transparent)`,
   });
   const board = document.createElement("canvas");
@@ -36,8 +40,7 @@
   style.textContent = ":root .service-card { backdrop-filter: blur(20px) brightness(0.75); }";
   document.head.append(style);
   document.body.prepend(layer);
-  // The background image would compete with the board. The body color goes too: with html
-  // painting its own background, body's paints above negative z-index layers and would hide this one.
+  // Clear the body background so it cannot cover the circuit layer's negative z-index.
   document.body.style.background = "transparent";
 
   let width = 0;
