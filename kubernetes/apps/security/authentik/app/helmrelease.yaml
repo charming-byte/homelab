@@ -65,7 +65,6 @@ spec:
             gethomepage.dev/widget.version: "2"
             gatus.home-operations.com/endpoint: |-
               path: ""
-              conditions: ["[STATUS] == 302"]
           enabled: true
           hostnames: ["sso.${SECRET_DOMAIN}"]
           parentRefs:
