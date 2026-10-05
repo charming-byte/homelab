@@ -10,8 +10,8 @@ resources:
 configMapGenerator:
   - name: homepage-theme
     files:
-      - custom.css
-      - custom.js
+      - resources/custom.css
+      - resources/custom.js
     options:
       disableNameSuffixHash: true
       annotations:
