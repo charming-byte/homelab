@@ -15,7 +15,7 @@ model_list:
     model_info:
       mode: responses
     litellm_params:
-      model: chatgpt/gpt-6-1-sol
+      model: chatgpt/gpt-6.1-sol
 
   - model_name: chatgpt/gpt-6-astra
     model_info:
