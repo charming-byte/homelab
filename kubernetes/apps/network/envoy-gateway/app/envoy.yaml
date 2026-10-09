@@ -267,4 +267,6 @@ spec:
         showDetails: false
         locale: auto
         logLevel: warn
+        excludeDomains:
+          - '(?i)^litellm\.'
       failOpen: false
