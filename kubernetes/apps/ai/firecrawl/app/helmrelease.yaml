@@ -24,7 +24,7 @@ spec:
                 IS_KUBERNETES: "true"
                 LOGGING_LEVEL: INFO
                 MODEL_EMBEDDING_NAME: github_copilot/text-embedding-3-small
-                MODEL_NAME: anthropic-haiku-4.5
+                MODEL_NAME: github_copilot/gpt-4.1
                 OPENAI_BASE_URL: http://litellm.ai.svc.cluster.local/v1
                 PLAYWRIGHT_MICROSERVICE_URL: http://firecrawl-playwright.ai.svc.cluster.local:3000/scrape
                 REDIS_RATE_LIMIT_URL: &redis redis://dragonfly.dbms.svc.cluster.local:6379/2
