@@ -1,15 +1,15 @@
 model_list:
   - model_name: anthropic-opus-5.5
     litellm_params:
-      model: anthropic/claude-opus-5.5
+      model: anthropic/claude-opus-5-5
 
   - model_name: anthropic-sonnet-5.5
     litellm_params:
-      model: anthropic/claude-sonnet-5.5
+      model: anthropic/claude-sonnet-5-5
 
   - model_name: anthropic-haiku-4.5
     litellm_params:
-      model: anthropic/claude-haiku-4.5
+      model: anthropic/claude-haiku-4-5
 
   - model_name: chatgpt/gpt-6.1-sol
     model_info:
