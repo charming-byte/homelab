@@ -30,6 +30,8 @@ spec:
                 REDIS_RATE_LIMIT_URL: &redis redis://dragonfly.dbms.svc.cluster.local:6379/2
                 REDIS_URL: *redis
                 SEARXNG_ENDPOINT: http://searxng.self-hosted.svc.cluster.local:8080
+                # most default searxng engines answer with captcha / rate limits from this network
+                SEARXNG_ENGINES: bing,yandex
                 TZ: Europe/Berlin
                 USE_DB_AUTHENTICATION: "false"
               FLY_PROCESS_GROUP: app
