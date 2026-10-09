@@ -93,6 +93,13 @@
       matchPackageNames: ["ghcr.io/goauthentik/helm-charts/authentik"],
       sourceUrl: "https://github.com/goauthentik/authentik",
     },
+    // Versioning rules
+    {
+      description: "SearXNG tags are <date>-<commit>, version by date only",
+      matchDatasources: ["docker"],
+      matchPackageNames: ["ghcr.io/searxng/searxng"],
+      versioning: "regex:^(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)-[0-9a-f]+$",
+    },
     // Grouping rules
     {
       description: "Actions Runner Controller Group",
