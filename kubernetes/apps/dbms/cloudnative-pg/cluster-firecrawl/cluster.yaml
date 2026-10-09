@@ -1,0 +1,48 @@
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/postgresql.cnpg.io/cluster_v1.json
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: postgres18-firecrawl
+spec:
+  instances: 1
+  # single instance on local storage: no PDB, so node drains are not blocked
+  enablePDB: false
+  imageName: ghcr.io/cloudnative-pg/postgresql:18.6-standard-trixie@sha256:79be0d10e78b7ac4520cf6c5db199a8bb7f6de53b3229f47e90cab5865528a0d
+  primaryUpdateStrategy: unsupervised
+  storage:
+    size: 5Gi
+    storageClass: local-hostpath
+  superuserSecret:
+    name: cloudnative-pg-secret
+  enableSuperuserAccess: true
+  postgresql:
+    parameters:
+      # pg_cron can only be installed into a single database
+      cron.database_name: firecrawl
+      cron.use_background_workers: "on"
+      max_connections: "200"
+      max_worker_processes: "32"
+      shared_buffers: 256MB
+      # tuning taken from firecrawl nuq.sql (ALTER SYSTEM is disabled in CNPG)
+      bgwriter_delay: 50ms
+      bgwriter_lru_maxpages: "1000"
+      bgwriter_lru_multiplier: "4.0"
+      checkpoint_completion_target: "0.9"
+      checkpoint_timeout: 15min
+      effective_io_concurrency: "200"
+      maintenance_io_concurrency: "100"
+      wal_writer_delay: 10ms
+    extensions:
+      - name: pg_cron
+        image:
+          reference: ghcr.io/cnpg-extensions/pg-cron:1.6.8-202609191730-18-trixie@sha256:431345adf093cfcba61f9dcbc6ea885c62cd249f9a4d7cbcbd394610a8188427
+    shared_preload_libraries: ["pg_cron"]
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      memory: 1Gi
+  monitoring:
+    enablePodMonitor: true

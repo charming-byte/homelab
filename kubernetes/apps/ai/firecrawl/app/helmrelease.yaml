@@ -1,0 +1,243 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: firecrawl
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: firecrawl
+  interval: 1h
+  values:
+    controllers:
+      firecrawl:
+        annotations:
+          reloader.stakater.com/auto: "true"
+        containers:
+          app:
+            # harness spawns api, worker, extract-worker, nuq-worker, nuq-prefetch-worker and nuq-reconciler
+            command: ["node", "dist/src/harness.js", "--start-docker"]
+            env:
+              BROWSER_POOL_SIZE: 2
+              CRAWL_CONCURRENT_REQUESTS: 4
+              ENV: local
+              EXTRACT_WORKER_PORT: 3004
+              HARNESS_STARTUP_TIMEOUT_MS: 60000
+              HOST: 0.0.0.0
+              IS_KUBERNETES: "true"
+              LOGGING_LEVEL: INFO
+              MAX_CONCURRENT_JOBS: 5
+              MODEL_EMBEDDING_NAME: github_copilot/text-embedding-3-small
+              MODEL_NAME: anthropic-haiku-4.5
+              NUM_WORKERS_PER_QUEUE: 8
+              OPENAI_BASE_URL: http://litellm.ai.svc.cluster.local/v1
+              PLAYWRIGHT_MICROSERVICE_URL: http://firecrawl-playwright.ai.svc.cluster.local:3000/scrape
+              PORT: &port 3002
+              REDIS_RATE_LIMIT_URL: &redis redis://dragonfly.dbms.svc.cluster.local:6379/2
+              REDIS_URL: *redis
+              TZ: Europe/Berlin
+              USE_DB_AUTHENTICATION: "false"
+              WORKER_PORT: 3005
+            envFrom: &envFrom
+              - secretRef:
+                  name: "{{ .Release.Name }}-secret"
+            image:
+              repository: ghcr.io/firecrawl/firecrawl
+              tag: 2.11.209@sha256:cebde741a0e6e8711f6714da0aab507f1285d3a083594728df23a31e19eeb7fb
+            probes:
+              liveness: &probes
+                custom: true
+                enabled: true
+                spec:
+                  failureThreshold: 3
+                  httpGet:
+                    path: /v0/health/liveness
+                    port: *port
+                  initialDelaySeconds: 30
+                  periodSeconds: 30
+                  timeoutSeconds: 5
+              readiness:
+                <<: *probes
+                spec:
+                  failureThreshold: 3
+                  httpGet:
+                    path: /v0/health/readiness
+                    port: *port
+                  initialDelaySeconds: 30
+                  periodSeconds: 30
+                  timeoutSeconds: 5
+            resources:
+              limits:
+                memory: 6Gi
+              requests:
+                cpu: 500m
+                memory: 2Gi
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop: ["ALL"]
+              readOnlyRootFilesystem: true
+        initContainers:
+          init-db:
+            envFrom: *envFrom
+            image: &postgresInit
+              repository: ghcr.io/home-operations/postgres-init
+              tag: 18.6.0@sha256:b6d3af974df781c673d37e49bdddfa14a6f5be28b18d2cb7713f0449bea4057b
+          init-schema:
+            dependsOn: init-db
+            env:
+              PGDATABASE: firecrawl
+              PGHOST: postgres18-firecrawl-rw.dbms.svc.cluster.local
+              PGPASSWORD:
+                valueFrom:
+                  secretKeyRef:
+                    key: INIT_POSTGRES_SUPER_PASS
+                    name: "{{ .Release.Name }}-secret"
+              PGUSER: postgres
+            image: *postgresInit
+            command: ["/bin/bash", "-c"]
+            args:
+              - |
+                psql -v ON_ERROR_STOP=1 \
+                  -c "CREATE EXTENSION IF NOT EXISTS pgcrypto;" \
+                  -c "CREATE EXTENSION IF NOT EXISTS pg_cron;" \
+                  -c "GRANT USAGE ON SCHEMA cron TO firecrawl;" \
+                  -c "SET ROLE firecrawl;" \
+                  -f /config/nuq.sql
+      playwright:
+        annotations:
+          reloader.stakater.com/auto: "true"
+        containers:
+          app:
+            env:
+              ALLOW_LOCAL_WEBHOOKS: "false"
+              BLOCK_MEDIA: "true"
+              COREPACK_HOME: /tmp/corepack
+              HOME: /tmp
+              MAX_CONCURRENT_PAGES: 4
+              PORT: &playwrightPort 3000
+            image:
+              repository: ghcr.io/firecrawl/playwright-service
+              tag: latest@sha256:717699bf8a61d94451926c810d19ca1d36278192907e307bf5229a558b08fcc6
+            probes:
+              liveness: &playwrightProbes
+                custom: true
+                enabled: true
+                spec:
+                  failureThreshold: 3
+                  httpGet:
+                    path: /health
+                    port: *playwrightPort
+                  initialDelaySeconds: 30
+                  periodSeconds: 30
+                  timeoutSeconds: 5
+              readiness: *playwrightProbes
+            resources:
+              limits:
+                memory: 4Gi
+              requests:
+                cpu: 200m
+                memory: 512Mi
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop: ["ALL"]
+              readOnlyRootFilesystem: true
+      rabbitmq:
+        containers:
+          app:
+            env:
+              RABBITMQ_DEFAULT_PASS:
+                valueFrom:
+                  secretKeyRef:
+                    key: RABBITMQ_DEFAULT_PASS
+                    name: "{{ .Release.Name }}-secret"
+              HOME: /var/lib/rabbitmq
+              RABBITMQ_DEFAULT_USER: firecrawl
+            image:
+              repository: docker.io/library/rabbitmq
+              tag: 4.3.6-alpine@sha256:2cb43283d8bbd3caa6c0f0dc00e96c8de772df33df7fd8af6aee4d605aeb8ada
+            resources:
+              limits:
+                memory: 1Gi
+              requests:
+                cpu: 50m
+                memory: 256Mi
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop: ["ALL"]
+              readOnlyRootFilesystem: true
+        pod:
+          hostname: rabbitmq
+    defaultPodOptions:
+      securityContext:
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+        runAsGroup: 1000
+        runAsNonRoot: true
+        runAsUser: 1000
+        seccompProfile:
+          type: RuntimeDefault
+    persistence:
+      nuq-sql:
+        advancedMounts:
+          firecrawl:
+            init-schema:
+              - path: /config/nuq.sql
+                subPath: nuq.sql
+                readOnly: true
+        name: firecrawl-configmap
+        type: configMap
+      rabbitmq-data:
+        advancedMounts:
+          rabbitmq:
+            app:
+              - path: /var/lib/rabbitmq
+        type: emptyDir
+      shm:
+        advancedMounts:
+          playwright:
+            app:
+              - path: /dev/shm
+        medium: Memory
+        sizeLimit: 1Gi
+        type: emptyDir
+      tmp:
+        globalMounts:
+          - path: /tmp
+        type: emptyDir
+    route:
+      app:
+        annotations:
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/group: Development & AI
+          gethomepage.dev/name: Firecrawl
+          gethomepage.dev/icon: sh-firecrawl.png
+          gethomepage.dev/description: Web scraping API
+        hostnames: ["{{ .Release.Name }}.${SECRET_DOMAIN}"]
+        parentRefs:
+          - name: envoy-internal
+            namespace: network
+            sectionName: https
+        rules:
+          - backendRefs:
+              - identifier: firecrawl
+                port: *port
+    service:
+      firecrawl:
+        controller: firecrawl
+        ports:
+          http:
+            port: *port
+      playwright:
+        controller: playwright
+        ports:
+          http:
+            port: *playwrightPort
+      rabbitmq:
+        controller: rabbitmq
+        ports:
+          amqp:
+            port: 5672
