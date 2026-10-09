@@ -16,37 +16,31 @@ spec:
           reloader.stakater.com/auto: "true"
         containers:
           app:
-            # harness spawns api, worker, extract-worker, nuq-worker, nuq-prefetch-worker and nuq-reconciler
-            command: ["node", "dist/src/harness.js", "--start-docker"]
+            command: ["node", "--max-old-space-size=768", "dist/src/index.js"]
             env:
-              BROWSER_POOL_SIZE: 2
-              CRAWL_CONCURRENT_REQUESTS: 4
-              ENV: local
-              EXTRACT_WORKER_PORT: 3004
-              HARNESS_STARTUP_TIMEOUT_MS: 60000
-              HOST: 0.0.0.0
-              IS_KUBERNETES: "true"
-              LOGGING_LEVEL: INFO
-              MAX_CONCURRENT_JOBS: 5
-              MODEL_EMBEDDING_NAME: github_copilot/text-embedding-3-small
-              MODEL_NAME: anthropic-haiku-4.5
-              NUM_WORKERS_PER_QUEUE: 8
-              OPENAI_BASE_URL: http://litellm.ai.svc.cluster.local/v1
-              PLAYWRIGHT_MICROSERVICE_URL: http://firecrawl-playwright.ai.svc.cluster.local:3000/scrape
+              <<: &env
+                ENV: local
+                HOST: 0.0.0.0
+                IS_KUBERNETES: "true"
+                LOGGING_LEVEL: INFO
+                MODEL_EMBEDDING_NAME: github_copilot/text-embedding-3-small
+                MODEL_NAME: anthropic-haiku-4.5
+                OPENAI_BASE_URL: http://litellm.ai.svc.cluster.local/v1
+                PLAYWRIGHT_MICROSERVICE_URL: http://firecrawl-playwright.ai.svc.cluster.local:3000/scrape
+                REDIS_RATE_LIMIT_URL: &redis redis://dragonfly.dbms.svc.cluster.local:6379/2
+                REDIS_URL: *redis
+                TZ: Europe/Berlin
+                USE_DB_AUTHENTICATION: "false"
+              FLY_PROCESS_GROUP: app
               PORT: &port 3002
-              REDIS_RATE_LIMIT_URL: &redis redis://dragonfly.dbms.svc.cluster.local:6379/2
-              REDIS_URL: *redis
-              TZ: Europe/Berlin
-              USE_DB_AUTHENTICATION: "false"
-              WORKER_PORT: 3005
             envFrom: &envFrom
               - secretRef:
                   name: "{{ .Release.Name }}-secret"
-            image:
+            image: &image
               repository: ghcr.io/firecrawl/firecrawl
               tag: 2.11.209@sha256:cebde741a0e6e8711f6714da0aab507f1285d3a083594728df23a31e19eeb7fb
             probes:
-              liveness: &probes
+              liveness:
                 custom: true
                 enabled: true
                 spec:
@@ -58,7 +52,8 @@ spec:
                   periodSeconds: 30
                   timeoutSeconds: 5
               readiness:
-                <<: *probes
+                custom: true
+                enabled: true
                 spec:
                   failureThreshold: 3
                   httpGet:
@@ -67,13 +62,14 @@ spec:
                   initialDelaySeconds: 30
                   periodSeconds: 30
                   timeoutSeconds: 5
+            # requests == limits so the scheduler never overcommits a node with firecrawl
             resources:
               limits:
-                memory: 6Gi
+                memory: 1Gi
               requests:
-                cpu: 500m
-                memory: 2Gi
-            securityContext:
+                cpu: 100m
+                memory: 1Gi
+            securityContext: &securityContext
               allowPrivilegeEscalation: false
               capabilities:
                 drop: ["ALL"]
@@ -105,6 +101,171 @@ spec:
                   -c "GRANT USAGE ON SCHEMA cron TO firecrawl;" \
                   -c "SET ROLE firecrawl;" \
                   -f /config/nuq.sql
+      worker:
+        annotations:
+          reloader.stakater.com/auto: "true"
+        containers:
+          app:
+            command: ["node", "--max-old-space-size=384", "dist/src/services/queue-worker.js"]
+            env:
+              <<: *env
+              FLY_PROCESS_GROUP: worker
+              WORKER_PORT: 3005
+            envFrom: *envFrom
+            image: *image
+            probes:
+              liveness:
+                custom: true
+                enabled: true
+                spec:
+                  failureThreshold: 3
+                  httpGet:
+                    path: /liveness
+                    port: 3005
+                  initialDelaySeconds: 30
+                  periodSeconds: 30
+                  timeoutSeconds: 5
+            resources:
+              limits:
+                memory: 640Mi
+              requests:
+                cpu: 50m
+                memory: 640Mi
+            securityContext: *securityContext
+      extract-worker:
+        annotations:
+          reloader.stakater.com/auto: "true"
+        containers:
+          app:
+            command: ["node", "--max-old-space-size=384", "dist/src/services/extract-worker.js"]
+            env:
+              <<: *env
+              FLY_PROCESS_GROUP: extract-worker
+              EXTRACT_WORKER_PORT: 3004
+            envFrom: *envFrom
+            image: *image
+            probes:
+              liveness:
+                custom: true
+                enabled: true
+                spec:
+                  failureThreshold: 3
+                  httpGet:
+                    path: /liveness
+                    port: 3004
+                  initialDelaySeconds: 30
+                  periodSeconds: 30
+                  timeoutSeconds: 5
+            resources:
+              limits:
+                memory: 640Mi
+              requests:
+                cpu: 50m
+                memory: 640Mi
+            securityContext: *securityContext
+      nuq-worker:
+        annotations:
+          reloader.stakater.com/auto: "true"
+        containers:
+          app:
+            command: ["node", "--max-old-space-size=768", "dist/src/services/worker/nuq-worker.js"]
+            env:
+              <<: *env
+              FLY_PROCESS_GROUP: nuq-worker
+              NUQ_WORKER_PORT: 3006
+            envFrom: *envFrom
+            image: *image
+            probes:
+              liveness:
+                custom: true
+                enabled: true
+                spec:
+                  failureThreshold: 3
+                  httpGet:
+                    path: /health
+                    port: 3006
+                  initialDelaySeconds: 30
+                  periodSeconds: 30
+                  timeoutSeconds: 5
+            resources:
+              limits:
+                memory: 1Gi
+              requests:
+                cpu: 50m
+                memory: 1Gi
+            securityContext: *securityContext
+      nuq-prefetch-worker:
+        annotations:
+          reloader.stakater.com/auto: "true"
+        containers:
+          app:
+            command:
+              [
+                "node",
+                "--max-old-space-size=256",
+                "dist/src/services/worker/nuq-prefetch-worker.js",
+              ]
+            env:
+              <<: *env
+              FLY_PROCESS_GROUP: nuq-prefetch-worker
+              NUQ_PREFETCH_WORKER_PORT: 3011
+            envFrom: *envFrom
+            image: *image
+            probes:
+              liveness:
+                custom: true
+                enabled: true
+                spec:
+                  failureThreshold: 3
+                  httpGet:
+                    path: /health
+                    port: 3011
+                  initialDelaySeconds: 30
+                  periodSeconds: 30
+                  timeoutSeconds: 5
+            resources:
+              limits:
+                memory: 384Mi
+              requests:
+                cpu: 50m
+                memory: 384Mi
+            securityContext: *securityContext
+      nuq-reconciler:
+        annotations:
+          reloader.stakater.com/auto: "true"
+        containers:
+          app:
+            command:
+              [
+                "node",
+                "--max-old-space-size=256",
+                "dist/src/services/worker/nuq-reconciler-worker.js",
+              ]
+            env:
+              <<: *env
+              FLY_PROCESS_GROUP: nuq-reconciler
+              NUQ_RECONCILER_WORKER_PORT: 3012
+            envFrom: *envFrom
+            image: *image
+            probes:
+              liveness:
+                custom: true
+                enabled: true
+                spec:
+                  failureThreshold: 3
+                  httpGet:
+                    path: /health
+                    port: 3012
+                  initialDelaySeconds: 30
+                  periodSeconds: 30
+                  timeoutSeconds: 5
+            resources:
+              limits:
+                memory: 384Mi
+              requests:
+                cpu: 50m
+                memory: 384Mi
+            securityContext: *securityContext
       playwright:
         annotations:
           reloader.stakater.com/auto: "true"
@@ -115,7 +276,7 @@ spec:
               BLOCK_MEDIA: "true"
               COREPACK_HOME: /tmp/corepack
               HOME: /tmp
-              MAX_CONCURRENT_PAGES: 4
+              MAX_CONCURRENT_PAGES: 2
               PORT: &playwrightPort 3000
             image:
               repository: ghcr.io/firecrawl/playwright-service
@@ -135,10 +296,10 @@ spec:
               readiness: *playwrightProbes
             resources:
               limits:
-                memory: 4Gi
+                memory: 1536Mi
               requests:
                 cpu: 200m
-                memory: 512Mi
+                memory: 1536Mi
             securityContext:
               allowPrivilegeEscalation: false
               capabilities:
@@ -160,10 +321,10 @@ spec:
               tag: 4.3.6-alpine@sha256:2cb43283d8bbd3caa6c0f0dc00e96c8de772df33df7fd8af6aee4d605aeb8ada
             resources:
               limits:
-                memory: 1Gi
+                memory: 512Mi
               requests:
                 cpu: 50m
-                memory: 256Mi
+                memory: 512Mi
             securityContext:
               allowPrivilegeEscalation: false
               capabilities:
