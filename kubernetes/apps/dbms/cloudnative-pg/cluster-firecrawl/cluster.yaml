@@ -34,7 +34,7 @@ spec:
       maintenance_io_concurrency: "100"
       wal_writer_delay: 10ms
     extensions:
-      - name: pg_cron
+      - name: pg-cron
         image:
           reference: ghcr.io/cnpg-extensions/pg-cron:1.6.8-202609191730-18-trixie@sha256:431345adf093cfcba61f9dcbc6ea885c62cd249f9a4d7cbcbd394610a8188427
     shared_preload_libraries: ["pg_cron"]
