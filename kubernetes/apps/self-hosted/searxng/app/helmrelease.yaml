@@ -15,8 +15,8 @@ spec:
       searxng:
         annotations:
           reloader.stakater.com/auto: "true"
-        replicas: 2
-        strategy: RollingUpdate
+        replicas: 1
+        strategy: Recreate
         containers:
           main:
             image:
@@ -45,9 +45,9 @@ spec:
             resources:
               requests:
                 cpu: 10m
-                memory: 215Mi
+                memory: 256Mi
               limits:
-                memory: 4Gi
+                memory: 512Mi
             securityContext:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true

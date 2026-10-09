@@ -12,5 +12,5 @@ resources:
   - ./miniflux/ks.yaml
   - ./namespace.yaml
   - ./paperless-ngx/ks.yaml
-  - ./sonarqube/ks.yaml
-  #- ./searxng/ks.yaml
+  #- ./sonarqube/ks.yaml
+  - ./searxng/ks.yaml
