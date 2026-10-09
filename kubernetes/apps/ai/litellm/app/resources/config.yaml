@@ -57,6 +57,48 @@ model_list:
     litellm_params:
       model: github_copilot/claude-haiku-4.5
 
+  - model_name: github_copilot/gpt-4.1
+    litellm_params:
+      model: github_copilot/gpt-4.1
+
+  - model_name: github_copilot/gpt-5-mini
+    litellm_params:
+      model: github_copilot/gpt-5-mini
+
+  - model_name: github_copilot/gpt-5.4-mini
+    model_info:
+      mode: responses
+    litellm_params:
+      model: github_copilot/gpt-5.4-mini
+
+  - model_name: github_copilot/gpt-5.6-luna
+    model_info:
+      mode: responses
+    litellm_params:
+      model: github_copilot/gpt-5.6-luna
+
+  - model_name: github_copilot/gpt-6-luna
+    model_info:
+      mode: responses
+    litellm_params:
+      model: github_copilot/gpt-6-luna
+
+  - model_name: github_copilot/kimi-k3
+    litellm_params:
+      model: github_copilot/kimi-k3
+
+  - model_name: github_copilot/mai-code-1.1-flash
+    model_info:
+      mode: responses
+    litellm_params:
+      model: github_copilot/mai-code-1.1-flash
+
+  - model_name: github_copilot/mai-code-1-flash-4th
+    model_info:
+      mode: responses
+    litellm_params:
+      model: github_copilot/mai-code-1-flash-4th
+
   - model_name: github_copilot/text-embedding-3-small
     model_info:
       mode: embedding
