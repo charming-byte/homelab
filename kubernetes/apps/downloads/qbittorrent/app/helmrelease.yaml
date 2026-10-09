@@ -22,6 +22,10 @@ spec:
               FIREWALL_OUTBOUND_SUBNETS: "10.42.0.0/16,10.43.0.0/16"
               SERVER_COUNTRIES: Switzerland
               VPN_PORT_FORWARDING: on
+              VPN_PORT_FORWARDING_UP_COMMAND: >-
+                /bin/sh -c 'wget -O- -nv --retry-connrefused --tries=30 --waitretry=10
+                --post-data "json={\"listen_port\":{{ "{{PORT}}" }}}"
+                http://127.0.0.1:80/api/v2/app/setPreferences 2>&1'
               VPN_SERVICE_PROVIDER: protonvpn
               PORT_FORWARD_ONLY: on
               VPN_TYPE: wireguard
@@ -29,7 +33,7 @@ spec:
               UPDATER_PERIOD: 24h
               WIREGUARD_PERSISTENT_KEEPALIVE_INTERVAL: 15s
               HEALTH_SERVER_ADDRESS: 0.0.0.0:9999
-            envFrom: &envFrom
+            envFrom:
               - secretRef:
                   name: "{{ .Release.Name }}-secret"
             image:
@@ -127,14 +131,6 @@ spec:
                 memory: 128Mi
               limits:
                 memory: 2Gi
-          qbittorrent-port-forward-gluetun-server:
-            image:
-              repository: ghcr.io/mjmeli/qbittorrent-port-forward-gluetun-server
-              tag: 2025.12.21.02@sha256:4e30826d2f46bdcf387b6c3a610478ab3856d55fff457f98196e4d48975eb1dd
-            env:
-              QBT_ADDR: http://localhost:80
-              GTN_ADDR: http://localhost:8000
-            envFrom: *envFrom
     defaultPodOptions:
       securityContext:
         runAsNonRoot: true
