@@ -7,7 +7,6 @@ components:
   - ../../components/common
 resources:
   - ./configarr/ks.yaml
-  - ./lidarr/ks.yaml
   - ./namespace.yaml
   - ./prowlarr/ks.yaml
   - ./pulsarr/ks.yaml
@@ -16,5 +15,4 @@ resources:
   - ./sabnzbd/ks.yaml
   - ./seerr/ks.yaml
   - ./shelfmark/ks.yaml
-  - ./slskd/ks.yaml
   - ./sonarr/ks.yaml
