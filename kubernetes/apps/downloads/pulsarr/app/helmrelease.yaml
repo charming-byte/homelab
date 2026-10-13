@@ -29,7 +29,7 @@ spec:
                   name: "{{ .Release.Name }}-secret"
             image:
               repository: docker.io/lakker/pulsarr
-              tag: 0.19.4@sha256:106f2793eb9acd44364761ed79e20b05249dd700214b8b38ff2ef1502d3d1c2c
+              tag: 0.19.7@sha256:3032ba2bd4ed26e06ce812c896a599febcd8843f64a31b1d9d63c99fb46c130b
             probes:
               liveness: &liveness
                 custom: true
