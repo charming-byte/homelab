@@ -6,4 +6,4 @@ resources:
   - ./helmrelease.yaml
   - ./ocirepository.yaml
   - ./rbac.yaml
-  - https://raw.githubusercontent.com/dragonflydb/dragonfly-operator/v1.7.0/manifests/crd.yaml
+  - https://raw.githubusercontent.com/dragonflydb/dragonfly-operator/v1.7.1/manifests/crd.yaml
