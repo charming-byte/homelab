@@ -31,7 +31,7 @@ spec:
                   name: "{{ .Release.Name }}-secret"
             image:
               repository: docker.io/library/sonarqube
-              tag: 26.9.0.129388-community@sha256:c0f1160bccfa435db4168c2d7df69af3c3ea7bfeb87395613014048fb33a68c1
+              tag: 26.10.0.133078-community@sha256:0b3408443fb6a311253de27941b10977c9b977fd53be2265947bfe14161308b8
             probes:
               liveness: &probes
                 custom: true
