@@ -6,6 +6,5 @@ namespace: ai
 components:
   - ../../components/common
 resources:
-  - ./firecrawl/ks.yaml
   - ./litellm/ks.yaml
   - ./namespace.yaml
