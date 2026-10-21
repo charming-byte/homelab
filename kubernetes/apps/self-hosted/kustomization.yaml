@@ -7,7 +7,6 @@ components:
   - ../../components/common
 resources:
   - ./atuin/ks.yaml
-  - ./bentopdf/ks.yaml
   - ./immich/ks.yaml
   - ./miniflux/ks.yaml
   - ./namespace.yaml
