@@ -1,0 +1,19 @@
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/grafana.integreatly.org/grafanadashboard_v1beta1.json
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  # Keep separate from the former Helm-managed dashboard during upgrades.
+  name: spegel-dashboard
+spec:
+  allowCrossNamespaceImport: true
+  resyncPeriod: 10m
+  configMapRef:
+    name: spegel-dashboard
+    key: dashboard.json
+  datasources:
+    - datasourceName: prometheus
+      inputName: DS_PROMETHEUS
+  instanceSelector:
+    matchLabels:
+      grafana.internal/instance: grafana

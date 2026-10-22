@@ -17,15 +17,9 @@ spec:
     remediation:
       retries: 3
   values:
-    grafanaDashboard:
-      enabled: true
-      grafanaOperator:
-        matchLabels:
-          grafana.internal/instance: grafana
-      mode: GrafanaOperator
     service:
       registry:
-        hostPort: 29999
+        nodePort: 30021
     serviceMonitor:
       enabled: true
     spegel:
