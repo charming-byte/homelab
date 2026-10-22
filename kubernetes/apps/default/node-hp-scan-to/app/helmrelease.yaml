@@ -1,0 +1,59 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: node-hp-scan-to
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: node-hp-scan-to
+  interval: 1h
+  values:
+    controllers:
+      node-hp-scan-to:
+        annotations:
+          reloader.stakater.com/auto: "true"
+        containers:
+          app:
+            image:
+              repository: ghcr.io/charming-byte/node-hp-scan-to
+              tag: envy-local@sha256:567fa255ee690ff1c1a545f56b533e32b72a704d644d278d3482fa52c9662da4
+            env:
+              TZ: Europe/Berlin
+              DIR: /scan
+              LABEL: Paperless
+              PAPERLESS_POST_DOCUMENT_URL: http://paperless-ngx.self-hosted.svc.cluster.local:8000/api/documents/post_document/
+              PATTERN: '"scan"_yyyy-mm-dd_HH-MM-ss'
+              PGID: 1000
+              PUID: 1000
+            envFrom:
+              - secretRef:
+                  name: "{{ .Release.Name }}-secret"
+            probes:
+              liveness: &probes
+                custom: true
+                enabled: true
+                spec:
+                  failureThreshold: 3
+                  httpGet:
+                    path: /health
+                    port: 3000
+                  initialDelaySeconds: 10
+                  periodSeconds: 30
+                  timeoutSeconds: 10
+              readiness: *probes
+            resources:
+              requests:
+                cpu: 10m
+                memory: 128Mi
+              limits:
+                memory: 512Mi
+    defaultPodOptions:
+      imagePullSecrets:
+        - name: node-hp-scan-to-registry
+    persistence:
+      scan:
+        type: emptyDir
+      tmp:
+        type: emptyDir

@@ -9,6 +9,7 @@ resources:
   - ./echo/ks.yaml
   - ./homepage/ks.yaml
   - ./mosquitto/ks.yaml
+  - ./node-hp-scan-to/ks.yaml
   - ./namespace.yaml
   - ./smtp-relay/ks.yaml
   - ./zigbee2mqtt/ks.yaml
