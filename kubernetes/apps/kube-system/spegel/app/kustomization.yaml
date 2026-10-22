@@ -5,3 +5,10 @@ kind: Kustomization
 resources:
   - ./helmrelease.yaml
   - ./ocirepository.yaml
+  - ./grafanadashboard.yaml
+configMapGenerator:
+  - name: spegel-dashboard
+    files:
+      - dashboard.json=./dashboard.json
+generatorOptions:
+  disableNameSuffixHash: true
