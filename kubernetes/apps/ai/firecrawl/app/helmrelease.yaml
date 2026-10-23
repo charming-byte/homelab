@@ -282,7 +282,7 @@ spec:
               PORT: &playwrightPort 3000
             image:
               repository: ghcr.io/firecrawl/playwright-service
-              tag: latest@sha256:5c6690c0d6606aaffbe146398526fecbe82bcba6eb4af881969745908c90d00d
+              tag: latest@sha256:6b54a9733fe6863c2dc225bf8e284db996ef59f6efd5d1e760f0664c09c1f856
             probes:
               liveness: &playwrightProbes
                 custom: true
