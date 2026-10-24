@@ -281,8 +281,8 @@ spec:
               MAX_CONCURRENT_PAGES: 2
               PORT: &playwrightPort 3000
             image:
-              repository: ghcr.io/firecrawl/playwright-service
-              tag: latest@sha256:6b54a9733fe6863c2dc225bf8e284db996ef59f6efd5d1e760f0664c09c1f856
+              repository: ghcr.io/charming-byte/custom-firecrawl-playwright-service
+              tag: f3dac2cc61f84ec8d83196bba42b52abb9bf04e5@sha256:f0c2684a28dd912c07c90cb200393abc0986c9d8c83f52e7e7b0c9ce9d6a98dd
             probes:
               liveness: &playwrightProbes
                 custom: true
