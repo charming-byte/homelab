@@ -82,7 +82,7 @@ spec:
     localRedirectPolicy: true
     # Measurement phase for the sandbox policies: verdicts are logged as
     # AUDIT instead of being enforced. No other Cilium policy exists yet.
-    policyAuditMode: true
+    policyAuditMode: false
     operator:
       dashboards:
         enabled: true
