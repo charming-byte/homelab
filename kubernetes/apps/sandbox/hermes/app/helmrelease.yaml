@@ -20,9 +20,6 @@ spec:
             # Selected by the sandbox-egress-deny CiliumClusterwideNetworkPolicy
             security.homelab/sandbox: "true"
           runtimeClassName: kata
-          # The image entrypoint skips s6-overlay when it is not PID 1, the
-          # pause container reaps zombies (Chromium, git, MCP subprocesses)
-          shareProcessNamespace: true
         initContainers:
           init-home:
             image: &image
@@ -58,6 +55,10 @@ spec:
                 memory: 128Mi
             securityContext: *securityContext
         containers:
+          # s6-overlay (PID 1) supervises gateway and dashboard in one
+          # container: the dashboard chat attaches to the gateway through a
+          # Unix socket in HERMES_HOME, which does not work across the
+          # per-container virtiofs mounts of a Kata pod
           app:
             image: *image
             args: ["gateway", "run"]
@@ -66,14 +67,20 @@ spec:
               API_SERVER_HOST: 0.0.0.0
               API_SERVER_PORT: &apiPort 8642
               FIRECRAWL_API_URL: http://firecrawl.ai.svc.cluster.local:3002
+              HERMES_DASHBOARD: "true"
+              HERMES_DASHBOARD_HOST: 0.0.0.0
+              HERMES_DASHBOARD_OIDC_CLIENT_ID: hermes-dashboard
+              HERMES_DASHBOARD_OIDC_ISSUER: https://sso.${SECRET_DOMAIN}/application/o/hermes/
+              HERMES_DASHBOARD_PORT: &dashboardPort 9119
+              HERMES_DASHBOARD_PUBLIC_URL: https://web-hermes.${SECRET_DOMAIN}
               # Keep Telegram name resolution on CoreDNS instead of DoH
               HERMES_TELEGRAM_DISABLE_FALLBACK_IPS: "true"
               TZ: Europe/Berlin
-            envFrom: &envFrom
+            envFrom:
               - secretRef:
                   name: hermes-secret
             probes:
-              liveness: &apiProbes
+              liveness:
                 custom: true
                 enabled: true
                 spec:
@@ -83,7 +90,16 @@ spec:
                     port: *apiPort
                   periodSeconds: 30
                   timeoutSeconds: 5
-              readiness: *apiProbes
+              readiness:
+                custom: true
+                enabled: true
+                spec:
+                  failureThreshold: 3
+                  httpGet:
+                    path: /api/status
+                    port: *dashboardPort
+                  periodSeconds: 30
+                  timeoutSeconds: 5
               startup:
                 custom: true
                 enabled: true
@@ -97,48 +113,10 @@ spec:
             resources:
               limits:
                 cpu: "2"
-                memory: 3Gi
+                memory: 4Gi
               requests:
-                cpu: 200m
-                memory: 1Gi
-            securityContext: *securityContext
-          dashboard:
-            image: *image
-            command: ["hermes", "dashboard", "--host", "0.0.0.0", "--port", "9119", "--no-open"]
-            env:
-              HERMES_DASHBOARD_OIDC_CLIENT_ID: hermes-dashboard
-              HERMES_DASHBOARD_OIDC_ISSUER: https://sso.${SECRET_DOMAIN}/application/o/hermes/
-              HERMES_DASHBOARD_PUBLIC_URL: https://web-hermes.${SECRET_DOMAIN}
-              TZ: Europe/Berlin
-            envFrom: *envFrom
-            probes:
-              liveness: &dashboardProbes
-                custom: true
-                enabled: true
-                spec:
-                  failureThreshold: 3
-                  httpGet:
-                    path: /api/status
-                    port: &dashboardPort 9119
-                  periodSeconds: 30
-                  timeoutSeconds: 5
-              readiness: *dashboardProbes
-              startup:
-                custom: true
-                enabled: true
-                spec:
-                  failureThreshold: 30
-                  httpGet:
-                    path: /api/status
-                    port: *dashboardPort
-                  periodSeconds: 10
-                  timeoutSeconds: 5
-            resources:
-              limits:
-                memory: 1Gi
-              requests:
-                cpu: 50m
-                memory: 256Mi
+                cpu: 250m
+                memory: 1280Mi
             securityContext: *securityContext
       backup:
         type: cronjob
@@ -233,9 +211,6 @@ spec:
               - path: /opt/data
                 subPath: home
             app:
-              - path: /opt/data
-                subPath: home
-            dashboard:
               - path: /opt/data
                 subPath: home
           backup:
