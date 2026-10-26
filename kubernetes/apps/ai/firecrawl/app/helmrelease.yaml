@@ -14,6 +14,9 @@ spec:
       firecrawl:
         annotations:
           reloader.stakater.com/auto: "true"
+        pod: &sandboxPod
+          labels:
+            security.homelab/sandbox: "true"
         containers:
           app:
             command: ["node", "--max-old-space-size=768", "dist/src/index.js"]
@@ -106,6 +109,7 @@ spec:
       worker:
         annotations:
           reloader.stakater.com/auto: "true"
+        pod: *sandboxPod
         containers:
           app:
             command: ["node", "--max-old-space-size=384", "dist/src/services/queue-worker.js"]
@@ -137,6 +141,7 @@ spec:
       extract-worker:
         annotations:
           reloader.stakater.com/auto: "true"
+        pod: *sandboxPod
         containers:
           app:
             command: ["node", "--max-old-space-size=384", "dist/src/services/extract-worker.js"]
@@ -168,6 +173,7 @@ spec:
       nuq-worker:
         annotations:
           reloader.stakater.com/auto: "true"
+        pod: *sandboxPod
         containers:
           app:
             command: ["node", "--max-old-space-size=768", "dist/src/services/worker/nuq-worker.js"]
@@ -271,6 +277,7 @@ spec:
       playwright:
         annotations:
           reloader.stakater.com/auto: "true"
+        pod: *sandboxPod
         containers:
           app:
             env:

@@ -9,6 +9,7 @@ spec:
   endpointSelector:
     matchLabels:
       app.kubernetes.io/name: hermes
+      app.kubernetes.io/controller: hermes
   ingress:
     - fromEndpoints:
         - matchLabels:
@@ -69,3 +70,19 @@ spec:
               protocol: TCP
             - port: "443"
               protocol: TCP
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/cilium.io/ciliumnetworkpolicy_v2.json
+# Empty rules deny all traffic; the kubelet mounts the NAS volume
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: hermes-backup
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: hermes
+      app.kubernetes.io/controller: backup
+  ingress:
+    - {}
+  egress:
+    - {}

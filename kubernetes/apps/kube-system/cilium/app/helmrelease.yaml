@@ -35,7 +35,7 @@ spec:
         dashboards:
           enabled: true
         enabled:
-          - dns:query;ignoreAAAA;sourceContext=workload-name|reserved-identity;labelsContext=source_namespace,source_workload
+          - dns:ignoreAAAA;sourceContext=workload-name|reserved-identity;labelsContext=source_namespace,source_workload
           - drop:sourceContext=workload-name|reserved-identity;destinationContext=workload-name|reserved-identity;labelsContext=source_namespace,source_workload,destination_namespace,destination_workload,traffic_direction
           - policy:sourceContext=workload-name|reserved-identity;destinationContext=workload-name|reserved-identity;labelsContext=source_namespace,source_workload,destination_namespace,destination_workload,traffic_direction
           - tcp

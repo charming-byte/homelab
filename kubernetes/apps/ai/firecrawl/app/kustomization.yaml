@@ -13,6 +13,7 @@ configMapGenerator:
 configurations:
   - ./resources/kustomizeconfig.yaml
 resources:
+  - ./ciliumnetworkpolicy.yaml
   - ./externalsecret.yaml
   - ./helmrelease.yaml
   - ./ocirepository.yaml
