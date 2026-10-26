@@ -131,6 +131,19 @@
       minimumGroupSize: 2,
     },
     {
+      // Unites the controller image and the bootstrap CRD manifests
+      description: "Agent Sandbox Group",
+      groupName: "agent-sandbox",
+      matchPackageNames: [
+        "kubernetes-sigs/agent-sandbox",
+        "registry.k8s.io/agent-sandbox/agent-sandbox-controller",
+      ],
+      group: {
+        commitMessageTopic: "{{{groupName}}} group",
+      },
+      minimumGroupSize: 2,
+    },
+    {
       description: "Kubernetes Group",
       groupName: "kubernetes",
       matchDatasources: ["docker"],

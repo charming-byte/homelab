@@ -1,0 +1,94 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: agent-sandbox-controller
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: app-template
+  install:
+    remediation:
+      retries: 3
+  interval: 1h
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+      strategy: rollback
+  values:
+    global:
+      createDefaultServiceAccount: false
+    controllers:
+      agent-sandbox-controller:
+        containers:
+          app:
+            args:
+              - --leader-elect=true
+              - --extensions
+            image:
+              repository: registry.k8s.io/agent-sandbox/agent-sandbox-controller
+              tag: v0.4.3@sha256:c2e75539c8c6ac50075cf190cc2ab50e653482e05cba5770a015d469d97e6a4d
+            probes:
+              liveness:
+                custom: true
+                enabled: true
+                spec:
+                  failureThreshold: 3
+                  httpGet:
+                    path: /healthz
+                    port: 8081
+                  initialDelaySeconds: 15
+                  periodSeconds: 20
+                  timeoutSeconds: 1
+              readiness:
+                custom: true
+                enabled: true
+                spec:
+                  failureThreshold: 3
+                  httpGet:
+                    path: /readyz
+                    port: 8081
+                  initialDelaySeconds: 5
+                  periodSeconds: 10
+                  timeoutSeconds: 1
+            resources:
+              limits:
+                memory: 128Mi
+              requests:
+                cpu: 10m
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop: [ALL]
+              readOnlyRootFilesystem: true
+        pod:
+          automountServiceAccountToken: true
+          securityContext:
+            runAsGroup: 65532
+            runAsNonRoot: true
+            runAsUser: 65532
+            seccompProfile:
+              type: RuntimeDefault
+        replicas: 1
+        serviceAccount:
+          identifier: agent-sandbox-controller
+        strategy: RollingUpdate
+    service:
+      app:
+        controller: agent-sandbox-controller
+        ports:
+          metrics:
+            port: 8080
+    serviceAccount:
+      agent-sandbox-controller: {}
+    serviceMonitor:
+      app:
+        endpoints:
+          - interval: 1m
+            path: /metrics
+            port: metrics
+            scheme: http
+            scrapeTimeout: 10s
+        serviceName: agent-sandbox-controller
