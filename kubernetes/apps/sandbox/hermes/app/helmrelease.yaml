@@ -24,10 +24,25 @@ spec:
           # pause container reaps zombies (Chromium, git, MCP subprocesses)
           shareProcessNamespace: true
         initContainers:
-          init-config:
+          init-home:
             image: &image
               repository: docker.io/nousresearch/hermes-agent
               tag: v0.22.5@sha256:9c5561579f3ffdf333401797094ac3a743738d6c25d40f4331c7bf77b694238d
+            command: ["mkdir", "-p", "/pvc/home"]
+            resources:
+              limits:
+                memory: 64Mi
+              requests:
+                cpu: 10m
+                memory: 16Mi
+            securityContext: &securityContext
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop: ["ALL"]
+              readOnlyRootFilesystem: true
+          init-config:
+            dependsOn: init-home
+            image: *image
             command: ["/bin/sh", "-c"]
             # stage2-hook skips the config migration for non-root starts
             # (it calls s6-setuidgid unconditionally), so run it here
@@ -41,11 +56,7 @@ spec:
               requests:
                 cpu: 50m
                 memory: 128Mi
-            securityContext: &securityContext
-              allowPrivilegeEscalation: false
-              capabilities:
-                drop: ["ALL"]
-              readOnlyRootFilesystem: true
+            securityContext: *securityContext
         containers:
           app:
             image: *image
@@ -216,15 +227,21 @@ spec:
         accessMode: ReadWriteOnce
         advancedMounts:
           hermes:
+            init-home:
+              - path: /pvc
             init-config:
               - path: /opt/data
+                subPath: home
             app:
               - path: /opt/data
+                subPath: home
             dashboard:
               - path: /opt/data
+                subPath: home
           backup:
             archive:
               - path: /opt/data
+                subPath: home
         size: 10Gi
         storageClass: local-hostpath
         suffix: data
