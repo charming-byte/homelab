@@ -30,7 +30,21 @@ spec:
     gatewayAPI:
       enabled: false
     hubble:
-      enabled: false
+      enabled: true
+      metrics:
+        dashboards:
+          enabled: true
+        enabled:
+          - dns:query;ignoreAAAA;sourceContext=workload-name|reserved-identity;labelsContext=source_namespace,source_workload
+          - drop:sourceContext=workload-name|reserved-identity;destinationContext=workload-name|reserved-identity;labelsContext=source_namespace,source_workload,destination_namespace,destination_workload,traffic_direction
+          - policy:sourceContext=workload-name|reserved-identity;destinationContext=workload-name|reserved-identity;labelsContext=source_namespace,source_workload,destination_namespace,destination_workload,traffic_direction
+          - tcp
+          - icmp
+        serviceMonitor:
+          enabled: true
+      relay:
+        enabled: true
+        rollOutPods: true
     ipam:
       mode: kubernetes
     ipv4NativeRoutingCIDR: 10.42.0.0/16
@@ -44,6 +58,9 @@ spec:
       algorithm: maglev
       mode: dsr
     localRedirectPolicy: true
+    # Measurement phase for the sandbox policies: verdicts are logged as
+    # AUDIT instead of being enforced. No other Cilium policy exists yet.
+    policyAuditMode: true
     operator:
       dashboards:
         enabled: true

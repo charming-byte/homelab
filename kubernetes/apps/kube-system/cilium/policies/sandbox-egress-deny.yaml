@@ -1,0 +1,80 @@
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/cilium.io/ciliumclusterwidenetworkpolicy_v2.json
+# Deny layer for every workload that fetches untrusted URLs or runs untrusted
+# code. Deny rules win over any allow rule, so per-app allow policies cannot
+# reopen these destinations. The policy itself does not switch the selected
+# endpoints into default deny; that is up to the allow layer of each app.
+apiVersion: cilium.io/v2
+kind: CiliumClusterwideNetworkPolicy
+metadata:
+  name: sandbox-egress-deny
+spec:
+  endpointSelector:
+    matchLabels:
+      security.homelab/sandbox: "true"
+  enableDefaultDeny:
+    egress: false
+    ingress: false
+  egressDeny:
+    # Non-public address space outside the cluster: LAN (FritzBox, OPNsense,
+    # NAS), CGNAT, link-local and cloud metadata, loopback, multicast and
+    # reserved ranges. CIDR rules do not match pods, nodes or the API server,
+    # those are covered by identity below.
+    - toCIDRSet:
+        - cidr: 0.0.0.0/8
+        - cidr: 10.0.0.0/8
+        - cidr: 100.64.0.0/10
+        - cidr: 127.0.0.0/8
+        - cidr: 169.254.0.0/16
+        - cidr: 172.16.0.0/12
+        - cidr: 192.0.0.0/24
+        - cidr: 192.0.2.0/24
+        - cidr: 192.168.0.0/16
+        - cidr: 198.18.0.0/15
+        - cidr: 198.51.100.0/24
+        - cidr: 203.0.113.0/24
+        - cidr: 224.0.0.0/4
+        - cidr: 240.0.0.0/4
+        - cidr: ::1/128
+        - cidr: fc00::/7
+        - cidr: fe80::/10
+        - cidr: ff00::/8
+    # Nodes (kubelet, Talos apid, KubePrism) and the Kubernetes API
+    - toEntities:
+        - host
+        - remote-node
+        - kube-apiserver
+        - health
+        - ingress
+        - unmanaged
+    # Ways back in: LoadBalancer VIPs are translated to their backends before
+    # policy evaluation, so the gateways are denied by identity, not by VIP.
+    # envoy-external stays reachable: it serves only the routes that are
+    # public through the Cloudflare tunnel anyway (split DNS resolves them to
+    # its VIP). envoy-internal and everything else in network is denied.
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: network
+          matchExpressions:
+            - key: gateway.envoyproxy.io/owning-gateway-name
+              operator: NotIn
+              values: ["envoy-external"]
+    # Control plane namespaces; kube-system stays reachable for CoreDNS only
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: kube-system
+          matchExpressions:
+            - key: k8s-app
+              operator: NotIn
+              values: ["kube-dns"]
+    - toEndpoints:
+        - matchExpressions:
+            - key: k8s:io.kubernetes.pod.namespace
+              operator: In
+              values:
+                - actions-runner-system
+                - agent-sandbox-system
+                - cert-manager
+                - flux-system
+                - openebs-system
+                - security

@@ -1,0 +1,39 @@
+_config_version: 51
+
+model:
+  provider: custom:litellm
+  default: anthropic-sonnet-5.5
+
+providers:
+  litellm:
+    base_url: http://litellm.ai.svc.cluster.local/v1
+    key_env: HERMES_LITELLM_API_KEY
+    session_affinity_header: x-litellm-session-id
+
+web:
+  backend: firecrawl
+  keyless_fallback: false
+  keyless_rescue: false
+
+browser:
+  auto_local_for_private_urls: false
+
+security:
+  allow_private_urls: false
+  redact_secrets: true
+
+terminal:
+  backend: local
+
+dashboard:
+  # Pod CIDR: only envoy-internal may reach the dashboard (CiliumNetworkPolicy).
+  trusted_proxies:
+    - 10.42.0.0/16
+
+telemetry:
+  shared_metrics:
+    enabled: false
+    send: false
+
+updates:
+  check: false

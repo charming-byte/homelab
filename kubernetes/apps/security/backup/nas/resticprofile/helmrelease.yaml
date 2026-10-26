@@ -93,4 +93,5 @@ spec:
             subPath: backups/postgres
           - path: /nas/backups/tautulli
             subPath: backups/tautulli
-
+          - path: /nas/backups/hermes
+            subPath: backups/hermes

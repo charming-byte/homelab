@@ -6,5 +6,5 @@ namespace: sandbox
 components:
   - ../../components/common
 resources:
+  - ./hermes/ks.yaml
   - ./namespace.yaml
-  - ./template/ks.yaml

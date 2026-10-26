@@ -3,23 +3,37 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: &app sandbox-template
+  name: &app hermes
   namespace: &namespace sandbox
 spec:
   commonMetadata:
     labels:
       app.kubernetes.io/name: *app
   dependsOn:
-    - name: agent-sandbox
-      namespace: agent-sandbox-system
+    - name: authentik
+      namespace: security
+    - name: cilium-policies
+      namespace: kube-system
+    - name: litellm
+      namespace: ai
+    - name: onepassword-connect
+      namespace: kube-system
+    - name: openebs
+      namespace: openebs-system
   interval: 1h
-  path: ./kubernetes/apps/sandbox/template/app
+  path: ./kubernetes/apps/sandbox/hermes/app
+  postBuild:
+    substitute:
+      APP: *app
+    substituteFrom:
+      - kind: Secret
+        name: cluster-secrets
   prune: true
-  retryInterval: 1m
+  retryInterval: 2m
   sourceRef:
     kind: GitRepository
     name: flux-system
     namespace: flux-system
   targetNamespace: *namespace
-  timeout: 5m
+  timeout: 10m
   wait: false
