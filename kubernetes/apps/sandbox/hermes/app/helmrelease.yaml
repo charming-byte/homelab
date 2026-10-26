@@ -44,15 +44,27 @@ spec:
             dependsOn: init-home
             image: *image
             command: ["/bin/sh", "-c"]
-            # stage2-hook skips the config migration for non-root starts
-            # (it calls s6-setuidgid unconditionally), so run it here
+            # stage2-hook skips the config migration and the dependency
+            # refresh for non-root starts (it calls s6-setuidgid
+            # unconditionally), so run both here. The refresh rebuilds the
+            # extras generation (firecrawl, …) under /opt/data/installs.
             args:
               - |
                 cp /config/config.yaml /opt/data/config.yaml
-                exec /opt/hermes/.venv/bin/python /opt/hermes/scripts/docker_config_migrate.py
+                /opt/hermes/.venv/bin/python /opt/hermes/scripts/docker_config_migrate.py
+                exec /opt/hermes/.venv/bin/python -c '
+                from pathlib import Path
+                from hermes_cli.runtime_state import collect_generations
+                from pm.environments import install_state_dir
+                from pm.recovery import refresh_dependencies
+                from pm.runtime import collect_runtime_generations
+                root = Path("/opt/hermes")
+                print("dependency environment:", refresh_dependencies(root))
+                collect_generations(root) + collect_runtime_generations(install_state_dir(root) / "pm-runtime")
+                '
             resources:
               limits:
-                memory: 512Mi
+                memory: 1Gi
               requests:
                 cpu: 50m
                 memory: 128Mi
