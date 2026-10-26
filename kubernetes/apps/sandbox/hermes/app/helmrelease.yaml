@@ -17,11 +17,9 @@ spec:
         strategy: Recreate
         pod:
           labels:
-            # Selected by the sandbox-egress-deny CiliumClusterwideNetworkPolicy
             security.homelab/sandbox: "true"
           runtimeClassName: kata
-          # The image entrypoint skips s6-overlay when it is not PID 1, the
-          # pause container reaps zombies (Chromium, git, MCP subprocesses)
+          # Without s6 as PID 1 the pause container reaps zombies
           shareProcessNamespace: true
         initContainers:
           init-home:
@@ -44,10 +42,7 @@ spec:
             dependsOn: init-home
             image: *image
             command: ["/bin/sh", "-c"]
-            # stage2-hook skips the config migration and the dependency
-            # refresh for non-root starts (it calls s6-setuidgid
-            # unconditionally), so run both here. The refresh rebuilds the
-            # extras generation (firecrawl, …) under /opt/data/installs.
+            # stage2-hook skips both steps for non-root starts (unconditional s6-setuidgid)
             args:
               - |
                 cp /config/config.yaml /opt/data/config.yaml
@@ -70,11 +65,7 @@ spec:
                 memory: 128Mi
             securityContext: *securityContext
         containers:
-          # Gateway and dashboard share one container: the dashboard chat
-          # attaches to the gateway through a Unix socket in HERMES_HOME, which
-          # does not work across the per-container virtiofs mounts of a Kata
-          # pod. s6-overlay as PID 1 is not an option either, Kata ignores the
-          # subPath it would need for a /run owned by the hermes user.
+          # One container: Unix sockets in HERMES_HOME do not work across Kata's per-container virtiofs mounts
           app:
             image: *image
             command: ["/bin/sh", "-c"]
@@ -91,14 +82,12 @@ spec:
               HERMES_DASHBOARD_OIDC_CLIENT_ID: hermes-dashboard
               HERMES_DASHBOARD_OIDC_ISSUER: https://sso.${SECRET_DOMAIN}/application/o/hermes/
               HERMES_DASHBOARD_PUBLIC_URL: https://web-hermes.${SECRET_DOMAIN}
-              # Keep Telegram name resolution on CoreDNS instead of DoH
               HERMES_TELEGRAM_DISABLE_FALLBACK_IPS: "true"
               TZ: Europe/Berlin
             envFrom:
               - secretRef:
                   name: hermes-secret
             probes:
-              # Restart the container when either process is gone
               liveness:
                 custom: true
                 enabled: true
@@ -149,8 +138,6 @@ spec:
         initContainers:
           archive:
             image: *image
-            # SQLite backup() API, safe while the gateway is running. Runs as
-            # the data owner (10000) and never touches the NAS.
             command: ["/bin/sh", "-c"]
             args:
               - |
@@ -168,8 +155,7 @@ spec:
         containers:
           app:
             image: *image
-            # Writes as the NAS anonymous user (1000), keeps the newest 7
-            # archives; restic copies the directory offsite
+            # UID 1000 is the NAS anonymous user
             command: ["/bin/sh", "-c"]
             args:
               - |

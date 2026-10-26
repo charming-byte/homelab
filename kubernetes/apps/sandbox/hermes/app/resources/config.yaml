@@ -26,7 +26,6 @@ terminal:
   backend: local
 
 dashboard:
-  # Pod CIDR: only envoy-internal may reach the dashboard (CiliumNetworkPolicy).
   trusted_proxies:
     - 10.42.0.0/16
 

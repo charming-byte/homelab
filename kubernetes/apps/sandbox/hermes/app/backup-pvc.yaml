@@ -1,8 +1,6 @@
 ---
 # yaml-language-server: $schema=https://k8s-schemas.home-operations.com/core/persistentvolume_v1.json
-# Static NFS volume for the backup CronJob: Pod Security "restricted" in the
-# sandbox namespace forbids inline NFS volumes. Only the backup controller
-# mounts it (subPath backups/hermes); the agent pod never sees the NAS.
+# Pod Security "restricted" forbids inline NFS volumes
 apiVersion: v1
 kind: PersistentVolume
 metadata:
