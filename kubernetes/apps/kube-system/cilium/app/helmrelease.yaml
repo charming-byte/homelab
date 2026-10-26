@@ -31,6 +31,28 @@ spec:
       enabled: false
     hubble:
       enabled: true
+      # Sandbox DNS and policy verdicts to the agent log, Alloy ships them to Loki
+      export:
+        static:
+          enabled: true
+          filePath: stdout
+          allowList:
+            - '{"source_label":["security.homelab/sandbox=true"],"protocol":["dns"],"event_type":[{"type":129}]}'
+            - '{"source_label":["security.homelab/sandbox=true"],"verdict":["AUDIT","DROPPED"]}'
+            - '{"destination_label":["security.homelab/sandbox=true"],"verdict":["AUDIT","DROPPED"]}'
+          fieldMask:
+            - time
+            - verdict
+            - drop_reason_desc
+            - traffic_direction
+            - source.namespace
+            - source.pod_name
+            - destination.namespace
+            - destination.pod_name
+            - destination_names
+            - IP
+            - l4
+            - l7
       metrics:
         dashboards:
           enabled: true

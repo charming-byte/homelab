@@ -1,0 +1,25 @@
+---
+groups:
+  - name: sandbox-dns
+    rules:
+      - alert: SandboxDnsLongLabel
+        expr: |
+          sum by (src_pod) (count_over_time({namespace="kube-system", container="cilium-agent"} |= `"dns"` | json src_pod="flow.source.pod_name", type="flow.l7.type", query="flow.l7.dns.query" | type="REQUEST" | query=~`.*[^.]{50,}.*` [5m])) > 0
+        labels:
+          severity: warning
+        annotations:
+          summary: "{{ $labels.src_pod }} queried a DNS name with a label of 50+ characters"
+      - alert: SandboxDnsManyNames
+        expr: |
+          count by (src_pod) (sum by (src_pod, query) (count_over_time({namespace="kube-system", container="cilium-agent"} |= `"dns"` | json src_pod="flow.source.pod_name", type="flow.l7.type", query="flow.l7.dns.query" | type="REQUEST" | src_pod!="" [10m]))) > 300
+        labels:
+          severity: warning
+        annotations:
+          summary: "{{ $labels.src_pod }} queried more than 300 distinct DNS names in 10 minutes"
+      - alert: SandboxDnsNxdomain
+        expr: |
+          sum by (src_pod) (count_over_time({namespace="kube-system", container="cilium-agent"} |= `"dns"` | json src_pod="flow.source.pod_name", type="flow.l7.type", rcode="flow.l7.dns.rcode" | type="RESPONSE" | rcode="3" [10m])) > 100
+        labels:
+          severity: warning
+        annotations:
+          summary: "{{ $labels.src_pod }} got more than 100 NXDOMAIN answers in 10 minutes"

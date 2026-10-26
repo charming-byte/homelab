@@ -36,6 +36,17 @@ spec:
             parameters: cluster.local in-addr.arpa ip6.arpa
           - name: autopath
             parameters: "@kubernetes"
+          # Out-of-band testing, request bin and quick tunnel services used for exfiltration
+          - name: template
+            parameters: >-
+              ANY ANY
+              oast.fun oast.live oast.me oast.online oast.pro oast.site interact.sh
+              oastify.com burpcollaborator.net
+              dnslog.cn dnslog.link ceye.io canarytokens.com
+              requestbin.net pipedream.net webhook.site
+              trycloudflare.com ngrok.io ngrok.app ngrok-free.app loca.lt serveo.net
+            configBlock: |-
+              rcode NXDOMAIN
           - name: forward
             parameters: . /etc/resolv.conf
           - configBlock: |-

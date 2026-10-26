@@ -2,6 +2,16 @@
 # yaml-language-server: $schema=https://k8s-schemas.home-operations.com/kustomize.config.k8s.io/kustomization_v1beta1.json
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
+configMapGenerator:
+  - files:
+      - ./rules/sandbox-dns.yaml
+    name: loki-rules-sandbox
+    options:
+      annotations:
+        k8s-sidecar-target-directory: /rules/fake
+        kustomize.toolkit.fluxcd.io/substitute: disabled
+      labels:
+        loki_rule: "true"
 resources:
   - ./helmrelease.yaml
   - ./ocirepository.yaml
