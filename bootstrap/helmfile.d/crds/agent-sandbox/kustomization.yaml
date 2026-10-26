@@ -3,7 +3,7 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-  - https://raw.githubusercontent.com/kubernetes-sigs/agent-sandbox/v0.4.3/k8s/crds/agents.x-k8s.io_sandboxes.yaml
-  - https://raw.githubusercontent.com/kubernetes-sigs/agent-sandbox/v0.4.3/k8s/crds/extensions.agents.x-k8s.io_sandboxclaims.yaml
-  - https://raw.githubusercontent.com/kubernetes-sigs/agent-sandbox/v0.4.3/k8s/crds/extensions.agents.x-k8s.io_sandboxtemplates.yaml
-  - https://raw.githubusercontent.com/kubernetes-sigs/agent-sandbox/v0.4.3/k8s/crds/extensions.agents.x-k8s.io_sandboxwarmpools.yaml
+  - https://raw.githubusercontent.com/kubernetes-sigs/agent-sandbox/v0.5.6/k8s/crds/agents.x-k8s.io_sandboxes.yaml
+  - https://raw.githubusercontent.com/kubernetes-sigs/agent-sandbox/v0.5.6/k8s/crds/extensions.agents.x-k8s.io_sandboxclaims.yaml
+  - https://raw.githubusercontent.com/kubernetes-sigs/agent-sandbox/v0.5.6/k8s/crds/extensions.agents.x-k8s.io_sandboxtemplates.yaml
+  - https://raw.githubusercontent.com/kubernetes-sigs/agent-sandbox/v0.5.6/k8s/crds/extensions.agents.x-k8s.io_sandboxwarmpools.yaml
