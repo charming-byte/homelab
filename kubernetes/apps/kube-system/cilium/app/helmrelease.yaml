@@ -80,8 +80,6 @@ spec:
       algorithm: maglev
       mode: dsr
     localRedirectPolicy: true
-    # Measurement phase for the sandbox policies: verdicts are logged as
-    # AUDIT instead of being enforced. No other Cilium policy exists yet.
     policyAuditMode: false
     operator:
       dashboards:
