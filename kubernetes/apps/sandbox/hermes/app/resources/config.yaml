@@ -2,7 +2,7 @@ _config_version: 51
 
 model:
   provider: custom:litellm
-  default: anthropic-sonnet-5.5
+  default: openrouter/xiaomi/mimo-v2.6-pro
 
 providers:
   litellm:
