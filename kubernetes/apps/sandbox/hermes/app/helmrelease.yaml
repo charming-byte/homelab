@@ -25,7 +25,11 @@ spec:
             image: &image
               repository: docker.io/nousresearch/hermes-agent
               tag: v0.22.5@sha256:9c5561579f3ffdf333401797094ac3a743738d6c25d40f4331c7bf77b694238d
-            command: ["mkdir", "-p", "/pvc/home"]
+            # s6-overlay refuses a /run it does not own (the emptyDir root
+            # is root:10000 with mode 2777), so /run is a subPath owned by 10000
+            command: ["/bin/sh", "-c"]
+            args:
+              - mkdir -p /pvc/home /runvol/run && chmod 0755 /runvol/run && chmod g-s /runvol/run
             resources:
               limits:
                 memory: 64Mi
@@ -223,8 +227,11 @@ spec:
       run:
         advancedMounts:
           hermes:
+            init-home:
+              - path: /runvol
             app:
               - path: /run
+                subPath: run
         type: emptyDir
       shm:
         advancedMounts:
