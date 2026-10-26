@@ -20,16 +20,15 @@ spec:
             # Selected by the sandbox-egress-deny CiliumClusterwideNetworkPolicy
             security.homelab/sandbox: "true"
           runtimeClassName: kata
+          # The image entrypoint skips s6-overlay when it is not PID 1, the
+          # pause container reaps zombies (Chromium, git, MCP subprocesses)
+          shareProcessNamespace: true
         initContainers:
           init-home:
             image: &image
               repository: docker.io/nousresearch/hermes-agent
               tag: v0.22.5@sha256:9c5561579f3ffdf333401797094ac3a743738d6c25d40f4331c7bf77b694238d
-            # s6-overlay refuses a /run it does not own (the emptyDir root
-            # is root:10000 with mode 2777), so /run is a subPath owned by 10000
-            command: ["/bin/sh", "-c"]
-            args:
-              - mkdir -p /pvc/home /runvol/run && chmod 0755 /runvol/run && chmod g-s /runvol/run
+            command: ["mkdir", "-p", "/pvc/home"]
             resources:
               limits:
                 memory: 64Mi
@@ -59,23 +58,26 @@ spec:
                 memory: 128Mi
             securityContext: *securityContext
         containers:
-          # s6-overlay (PID 1) supervises gateway and dashboard in one
-          # container: the dashboard chat attaches to the gateway through a
-          # Unix socket in HERMES_HOME, which does not work across the
-          # per-container virtiofs mounts of a Kata pod
+          # Gateway and dashboard share one container: the dashboard chat
+          # attaches to the gateway through a Unix socket in HERMES_HOME, which
+          # does not work across the per-container virtiofs mounts of a Kata
+          # pod. s6-overlay as PID 1 is not an option either, Kata ignores the
+          # subPath it would need for a /run owned by the hermes user.
           app:
             image: *image
-            args: ["gateway", "run"]
+            command: ["/bin/sh", "-c"]
+            args:
+              - |
+                (until curl -fs -o /dev/null http://127.0.0.1:8642/health; do sleep 2; done
+                 exec hermes dashboard --host 0.0.0.0 --port 9119 --no-open) &
+                exec /opt/hermes/docker/entrypoint-dispatch.sh gateway run
             env:
               API_SERVER_ENABLED: "true"
               API_SERVER_HOST: 0.0.0.0
               API_SERVER_PORT: &apiPort 8642
               FIRECRAWL_API_URL: http://firecrawl.ai.svc.cluster.local:3002
-              HERMES_DASHBOARD: "true"
-              HERMES_DASHBOARD_HOST: 0.0.0.0
               HERMES_DASHBOARD_OIDC_CLIENT_ID: hermes-dashboard
               HERMES_DASHBOARD_OIDC_ISSUER: https://sso.${SECRET_DOMAIN}/application/o/hermes/
-              HERMES_DASHBOARD_PORT: &dashboardPort 9119
               HERMES_DASHBOARD_PUBLIC_URL: https://web-hermes.${SECRET_DOMAIN}
               # Keep Telegram name resolution on CoreDNS instead of DoH
               HERMES_TELEGRAM_DISABLE_FALLBACK_IPS: "true"
@@ -84,16 +86,19 @@ spec:
               - secretRef:
                   name: hermes-secret
             probes:
+              # Restart the container when either process is gone
               liveness:
                 custom: true
                 enabled: true
                 spec:
+                  exec:
+                    command:
+                      - /bin/sh
+                      - -c
+                      - curl -fs -o /dev/null http://127.0.0.1:8642/health && curl -fs -o /dev/null http://127.0.0.1:9119/api/status
                   failureThreshold: 3
-                  httpGet:
-                    path: /health
-                    port: *apiPort
                   periodSeconds: 30
-                  timeoutSeconds: 5
+                  timeoutSeconds: 10
               readiness:
                 custom: true
                 enabled: true
@@ -101,7 +106,7 @@ spec:
                   failureThreshold: 3
                   httpGet:
                     path: /api/status
-                    port: *dashboardPort
+                    port: &dashboardPort 9119
                   periodSeconds: 30
                   timeoutSeconds: 5
               startup:
@@ -110,8 +115,8 @@ spec:
                 spec:
                   failureThreshold: 30
                   httpGet:
-                    path: /health
-                    port: *apiPort
+                    path: /api/status
+                    port: *dashboardPort
                   periodSeconds: 10
                   timeoutSeconds: 5
             resources:
@@ -227,11 +232,8 @@ spec:
       run:
         advancedMounts:
           hermes:
-            init-home:
-              - path: /runvol
             app:
               - path: /run
-                subPath: run
         type: emptyDir
       shm:
         advancedMounts:
