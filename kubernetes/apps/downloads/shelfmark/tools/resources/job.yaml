@@ -43,7 +43,7 @@ spec:
             requests: { cpu: 50m, memory: 64Mi }
             limits: { memory: 256Mi }
         - name: merge
-          image: ghcr.io/djdembeck/m4b-merge:1.0.0@sha256:cc61635ca687ed12eb57f7d733b1e47de1427f7f3b4b8d17a8f42b950c2b867b
+          image: ghcr.io/djdembeck/m4b-merge:v2.0.0@sha256:9ba63c9ce201bb3bd62f051fc1dbd02ac7e5669c88f7c48e75ee6ce609398b38
           command: ["/bin/sh", "-c"]
           args:
             - |
