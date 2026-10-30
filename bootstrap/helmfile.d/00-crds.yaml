@@ -37,8 +37,3 @@ releases:
     namespace: default
     chart: cloudnative-pg/cloudnative-pg
     version: 0.29.1
-
-  # No upstream Helm chart: helmfile renders the raw CRD manifests through chartify
-  - name: agent-sandbox
-    namespace: agent-sandbox-system
-    chart: ./crds/agent-sandbox
