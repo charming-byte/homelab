@@ -224,6 +224,7 @@ spec:
             archive:
               - path: /opt/data
                 subPath: home
+        retain: true
         size: 10Gi
         storageClass: local-hostpath
         suffix: data
