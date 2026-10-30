@@ -6,7 +6,7 @@ metadata:
   name: hermes
 spec:
   failedPodPolicy: Recreate
-  operatingMode: Suspended
+  operatingMode: Running
   service: false
   podTemplate:
     metadata:
