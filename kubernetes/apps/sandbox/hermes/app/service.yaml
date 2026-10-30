@@ -1,0 +1,20 @@
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/core/service_v1.json
+apiVersion: v1
+kind: Service
+metadata:
+  name: hermes
+spec:
+  ports:
+    - name: api
+      port: 8642
+      protocol: TCP
+      targetPort: 8642
+    - name: web
+      port: 9119
+      protocol: TCP
+      targetPort: 9119
+  selector:
+    app.kubernetes.io/controller: hermes
+    app.kubernetes.io/instance: hermes
+    app.kubernetes.io/name: hermes

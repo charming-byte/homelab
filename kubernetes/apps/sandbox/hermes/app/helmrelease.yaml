@@ -11,123 +11,6 @@ spec:
   interval: 1h
   values:
     controllers:
-      hermes:
-        annotations:
-          reloader.stakater.com/auto: "true"
-        strategy: Recreate
-        pod:
-          labels:
-            security.homelab/sandbox: "true"
-          runtimeClassName: kata
-          # Without s6 as PID 1 the pause container reaps zombies
-          shareProcessNamespace: true
-        initContainers:
-          init-home:
-            image: &image
-              repository: docker.io/nousresearch/hermes-agent
-              tag: v0.22.5@sha256:9c5561579f3ffdf333401797094ac3a743738d6c25d40f4331c7bf77b694238d
-            command: ["mkdir", "-p", "/pvc/home"]
-            resources:
-              limits:
-                memory: 64Mi
-              requests:
-                cpu: 10m
-                memory: 16Mi
-            securityContext: &securityContext
-              allowPrivilegeEscalation: false
-              capabilities:
-                drop: ["ALL"]
-              readOnlyRootFilesystem: true
-          init-config:
-            dependsOn: init-home
-            image: *image
-            command: ["/bin/sh", "-c"]
-            # stage2-hook skips both steps for non-root starts (unconditional s6-setuidgid)
-            args:
-              - |
-                cp /config/config.yaml /opt/data/config.yaml
-                /opt/hermes/.venv/bin/python /opt/hermes/scripts/docker_config_migrate.py
-                exec /opt/hermes/.venv/bin/python -c '
-                from pathlib import Path
-                from hermes_cli.runtime_state import collect_generations
-                from pm.environments import install_state_dir
-                from pm.recovery import refresh_dependencies
-                from pm.runtime import collect_runtime_generations
-                root = Path("/opt/hermes")
-                print("dependency environment:", refresh_dependencies(root))
-                collect_generations(root) + collect_runtime_generations(install_state_dir(root) / "pm-runtime")
-                '
-            resources:
-              limits:
-                memory: 1Gi
-              requests:
-                cpu: 50m
-                memory: 128Mi
-            securityContext: *securityContext
-        containers:
-          # One container: Unix sockets in HERMES_HOME do not work across Kata's per-container virtiofs mounts
-          app:
-            image: *image
-            command: ["/bin/sh", "-c"]
-            args:
-              - |
-                (until curl -fs -o /dev/null http://127.0.0.1:8642/health; do sleep 2; done
-                 exec hermes dashboard --host 0.0.0.0 --port 9119 --no-open) &
-                exec /opt/hermes/docker/entrypoint-dispatch.sh gateway run
-            env:
-              API_SERVER_ENABLED: "true"
-              API_SERVER_HOST: 0.0.0.0
-              API_SERVER_PORT: &apiPort 8642
-              FIRECRAWL_API_URL: http://firecrawl.ai.svc.cluster.local:3002
-              HERMES_DASHBOARD_OIDC_CLIENT_ID: hermes-dashboard
-              HERMES_DASHBOARD_OIDC_ISSUER: https://sso.${SECRET_DOMAIN}/application/o/hermes/
-              HERMES_DASHBOARD_PUBLIC_URL: https://web-hermes.${SECRET_DOMAIN}
-              HERMES_TELEGRAM_DISABLE_FALLBACK_IPS: "true"
-              TZ: Europe/Berlin
-            envFrom:
-              - secretRef:
-                  name: hermes-secret
-            probes:
-              liveness:
-                custom: true
-                enabled: true
-                spec:
-                  exec:
-                    command:
-                      - /bin/sh
-                      - -c
-                      - curl -fs -o /dev/null http://127.0.0.1:8642/health && curl -fs -o /dev/null http://127.0.0.1:9119/api/status
-                  failureThreshold: 3
-                  periodSeconds: 30
-                  timeoutSeconds: 10
-              readiness:
-                custom: true
-                enabled: true
-                spec:
-                  failureThreshold: 3
-                  httpGet:
-                    path: /api/status
-                    port: &dashboardPort 9119
-                  periodSeconds: 30
-                  timeoutSeconds: 5
-              startup:
-                custom: true
-                enabled: true
-                spec:
-                  failureThreshold: 30
-                  httpGet:
-                    path: /api/status
-                    port: *dashboardPort
-                  periodSeconds: 10
-                  timeoutSeconds: 5
-            resources:
-              limits:
-                cpu: "2"
-                memory: 4Gi
-              requests:
-                cpu: 250m
-                memory: 1280Mi
-            securityContext: *securityContext
       backup:
         type: cronjob
         cronjob:
@@ -137,7 +20,9 @@ spec:
           successfulJobsHistory: 2
         initContainers:
           archive:
-            image: *image
+            image: &image
+              repository: docker.io/nousresearch/hermes-agent
+              tag: v0.22.5@sha256:9c5561579f3ffdf333401797094ac3a743738d6c25d40f4331c7bf77b694238d
             command: ["/bin/sh", "-c"]
             args:
               - |
@@ -151,7 +36,11 @@ spec:
               requests:
                 cpu: 50m
                 memory: 256Mi
-            securityContext: *securityContext
+            securityContext: &securityContext
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop: ["ALL"]
+              readOnlyRootFilesystem: true
         containers:
           app:
             image: *image
@@ -200,26 +89,9 @@ spec:
               - path: /backups
                 subPath: backups/hermes
         existingClaim: hermes-backup
-      config:
-        advancedMounts:
-          hermes:
-            init-config:
-              - path: /config
-                readOnly: true
-        name: hermes-configmap
-        type: configMap
       data:
         accessMode: ReadWriteOnce
         advancedMounts:
-          hermes:
-            init-home:
-              - path: /pvc
-            init-config:
-              - path: /opt/data
-                subPath: home
-            app:
-              - path: /opt/data
-                subPath: home
           backup:
             archive:
               - path: /opt/data
@@ -228,56 +100,7 @@ spec:
         size: 10Gi
         storageClass: local-hostpath
         suffix: data
-      run:
-        advancedMounts:
-          hermes:
-            app:
-              - path: /run
-        type: emptyDir
-      shm:
-        advancedMounts:
-          hermes:
-            app:
-              - path: /dev/shm
-        medium: Memory
-        sizeLimit: 1Gi
-        type: emptyDir
       tmp:
         globalMounts:
           - path: /tmp
         type: emptyDir
-    route:
-      hermes:
-        annotations:
-          gethomepage.dev/description: Self-hosted AI agent
-          gethomepage.dev/enabled: "true"
-          gethomepage.dev/group: Development & AI
-          gethomepage.dev/icon: mdi-robot
-          gethomepage.dev/name: Hermes
-        hostnames: ["web-hermes.${SECRET_DOMAIN}"]
-        parentRefs:
-          - name: envoy-internal
-            namespace: network
-            sectionName: https
-        rules:
-          - backendRefs:
-              - identifier: app
-                port: *dashboardPort
-      api:
-        hostnames: ["api-hermes.${SECRET_DOMAIN}"]
-        parentRefs:
-          - name: envoy-internal
-            namespace: network
-            sectionName: https
-        rules:
-          - backendRefs:
-              - identifier: app
-                port: *apiPort
-    service:
-      app:
-        controller: hermes
-        ports:
-          api:
-            port: *apiPort
-          web:
-            port: *dashboardPort

@@ -16,4 +16,7 @@ resources:
   - ./ciliumnetworkpolicy.yaml
   - ./externalsecret.yaml
   - ./helmrelease.yaml
+  - ./httproute.yaml
   - ./ocirepository.yaml
+  - ./sandbox.yaml
+  - ./service.yaml

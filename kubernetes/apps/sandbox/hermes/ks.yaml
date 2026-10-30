@@ -10,6 +10,8 @@ spec:
     labels:
       app.kubernetes.io/name: *app
   dependsOn:
+    - name: agent-sandbox
+      namespace: agent-sandbox-system
     - name: authentik
       namespace: security
     - name: cilium-policies

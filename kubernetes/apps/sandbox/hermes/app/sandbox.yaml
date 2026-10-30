@@ -1,0 +1,181 @@
+---
+# Pod spec changes only apply to a new pod: delete the pod to roll out image or config updates
+apiVersion: agents.x-k8s.io/v1beta1
+kind: Sandbox
+metadata:
+  name: hermes
+spec:
+  failedPodPolicy: Recreate
+  operatingMode: Suspended
+  service: false
+  podTemplate:
+    metadata:
+      labels:
+        app.kubernetes.io/controller: hermes
+        app.kubernetes.io/instance: hermes
+        app.kubernetes.io/name: hermes
+        security.homelab/sandbox: "true"
+    spec:
+      automountServiceAccountToken: false
+      enableServiceLinks: false
+      runtimeClassName: kata
+      # Without s6 as PID 1 the pause container reaps zombies
+      shareProcessNamespace: true
+      securityContext:
+        fsGroup: 10000
+        fsGroupChangePolicy: OnRootMismatch
+        runAsGroup: 10000
+        runAsNonRoot: true
+        runAsUser: 10000
+        seccompProfile:
+          type: RuntimeDefault
+      initContainers:
+        - name: init-home
+          image: &image docker.io/nousresearch/hermes-agent:v0.22.5@sha256:9c5561579f3ffdf333401797094ac3a743738d6c25d40f4331c7bf77b694238d
+          command: ["mkdir", "-p", "/pvc/home"]
+          resources:
+            limits:
+              memory: 64Mi
+            requests:
+              cpu: 10m
+              memory: 16Mi
+          securityContext: &securityContext
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+            readOnlyRootFilesystem: true
+          volumeMounts:
+            - name: data
+              mountPath: /pvc
+            - name: tmp
+              mountPath: /tmp
+        - name: init-config
+          image: *image
+          command: ["/bin/sh", "-c"]
+          # stage2-hook skips both steps for non-root starts (unconditional s6-setuidgid)
+          args:
+            - |
+              cp /config/config.yaml /opt/data/config.yaml
+              /opt/hermes/.venv/bin/python /opt/hermes/scripts/docker_config_migrate.py
+              exec /opt/hermes/.venv/bin/python -c '
+              from pathlib import Path
+              from hermes_cli.runtime_state import collect_generations
+              from pm.environments import install_state_dir
+              from pm.recovery import refresh_dependencies
+              from pm.runtime import collect_runtime_generations
+              root = Path("/opt/hermes")
+              print("dependency environment:", refresh_dependencies(root))
+              collect_generations(root) + collect_runtime_generations(install_state_dir(root) / "pm-runtime")
+              '
+          resources:
+            limits:
+              memory: 1Gi
+            requests:
+              cpu: 50m
+              memory: 128Mi
+          securityContext: *securityContext
+          volumeMounts:
+            - name: config
+              mountPath: /config
+              readOnly: true
+            - name: data
+              mountPath: /opt/data
+              subPath: home
+            - name: tmp
+              mountPath: /tmp
+      containers:
+        # One container: Unix sockets in HERMES_HOME do not work across Kata's per-container virtiofs mounts
+        - name: app
+          image: *image
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              (until curl -fs -o /dev/null http://127.0.0.1:8642/health; do sleep 2; done
+               exec hermes dashboard --host 0.0.0.0 --port 9119 --no-open) &
+              exec /opt/hermes/docker/entrypoint-dispatch.sh gateway run
+          env:
+            - name: API_SERVER_ENABLED
+              value: "true"
+            - name: API_SERVER_HOST
+              value: 0.0.0.0
+            - name: API_SERVER_PORT
+              value: "8642"
+            - name: FIRECRAWL_API_URL
+              value: http://firecrawl.ai.svc.cluster.local:3002
+            - name: HERMES_DASHBOARD_OIDC_CLIENT_ID
+              value: hermes-dashboard
+            - name: HERMES_DASHBOARD_OIDC_ISSUER
+              value: https://sso.${SECRET_DOMAIN}/application/o/hermes/
+            - name: HERMES_DASHBOARD_PUBLIC_URL
+              value: https://web-hermes.${SECRET_DOMAIN}
+            - name: HERMES_TELEGRAM_DISABLE_FALLBACK_IPS
+              value: "true"
+            - name: TZ
+              value: Europe/Berlin
+          envFrom:
+            - secretRef:
+                name: hermes-secret
+          ports:
+            - name: api
+              containerPort: 8642
+              protocol: TCP
+            - name: web
+              containerPort: 9119
+              protocol: TCP
+          livenessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - curl -fs -o /dev/null http://127.0.0.1:8642/health && curl -fs -o /dev/null http://127.0.0.1:9119/api/status
+            failureThreshold: 3
+            periodSeconds: 30
+            timeoutSeconds: 10
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /api/status
+              port: 9119
+            periodSeconds: 30
+            timeoutSeconds: 5
+          startupProbe:
+            failureThreshold: 30
+            httpGet:
+              path: /api/status
+              port: 9119
+            periodSeconds: 10
+            timeoutSeconds: 5
+          resources:
+            limits:
+              cpu: "2"
+              memory: 4Gi
+            requests:
+              cpu: 250m
+              memory: 1280Mi
+          securityContext: *securityContext
+          volumeMounts:
+            - name: data
+              mountPath: /opt/data
+              subPath: home
+            - name: run
+              mountPath: /run
+            - name: shm
+              mountPath: /dev/shm
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: config
+          configMap:
+            name: hermes-configmap
+        # Owned by the HelmRelease, which also mounts it in the backup cronjob
+        - name: data
+          persistentVolumeClaim:
+            claimName: hermes-data
+        - name: run
+          emptyDir: {}
+        - name: shm
+          emptyDir:
+            medium: Memory
+            sizeLimit: 1Gi
+        - name: tmp
+          emptyDir: {}
