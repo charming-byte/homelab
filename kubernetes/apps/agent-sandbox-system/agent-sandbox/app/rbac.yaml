@@ -17,7 +17,7 @@ rules:
   - apiGroups: ["coordination.k8s.io"]
     resources: ["leases"]
     verbs: ["create", "get", "list", "patch", "update", "watch"]
-  - apiGroups: ["events.k8s.io"]
+  - apiGroups: ["", "events.k8s.io"]
     resources: ["events"]
     verbs: ["create", "patch"]
 ---
@@ -61,7 +61,6 @@ rules:
       - sandboxclaims/finalizers
       - sandboxclaims/status
       - sandboxtemplates/finalizers
-      - sandboxtemplates/status
       - sandboxwarmpools/finalizers
       - sandboxwarmpools/status
     verbs: ["get", "patch", "update"]
