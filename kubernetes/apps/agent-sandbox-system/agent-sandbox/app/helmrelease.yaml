@@ -29,7 +29,7 @@ spec:
               - --extensions
             image:
               repository: registry.k8s.io/agent-sandbox/agent-sandbox-controller
-              tag: v1.0.9@sha256:ef1a1a3076afc996e711c44b388fbb7ffb7cd6858953d7e685166b299d77bd38
+              tag: v1.0.10@sha256:594f4853913bca2b336d0267fe0978445f1aaa5837ed23797e48e745c8d6b610
             probes:
               liveness:
                 custom: true
