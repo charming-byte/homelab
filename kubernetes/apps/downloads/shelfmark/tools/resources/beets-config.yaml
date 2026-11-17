@@ -8,7 +8,7 @@
 # the merge + beets steps copy cover.jpg / metadata.yml themselves.
 plugins: audible edit fromfilename scrub
 
-directory: /media/media/audiobooks/library
+directory: /data/media/audiobooks/library
 library: /config/library.db
 
 # Non-interactive import: never prompt; with no metadata.yml / no confident

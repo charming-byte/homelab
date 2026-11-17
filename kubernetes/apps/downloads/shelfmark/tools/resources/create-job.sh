@@ -22,8 +22,8 @@ done
 
 SRC="$(printf '%s' "$SRC_B64" | base64 -d)"
 case "$SRC" in
-  /media/media/*) ;;
-  *) echo "source path not under /media/media: ${SRC}" >&2; exit 1 ;;
+  /data/media/*) ;;
+  *) echo "source path not under /data/media: ${SRC}" >&2; exit 1 ;;
 esac
 case "$SRC" in
   *..* | *$'\n'*) echo "source path rejected: ${SRC}" >&2; exit 1 ;;

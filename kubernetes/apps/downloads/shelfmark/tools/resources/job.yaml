@@ -37,7 +37,7 @@ spec:
             - { name: ASIN_OUT, value: "/work/asin" }
           volumeMounts:
             - { name: work, mountPath: /work }
-            - { name: media, mountPath: /media, readOnly: true }
+            - { name: media, mountPath: /data, readOnly: true }
             - { name: scripts, mountPath: /scripts, readOnly: true }
           resources:
             requests: { cpu: 50m, memory: 64Mi }
@@ -194,7 +194,7 @@ spec:
             - { name: TMPDIR, value: "/work/tmp" }
           volumeMounts:
             - { name: work, mountPath: /work }
-            - { name: media, mountPath: /media }
+            - { name: media, mountPath: /data }
             - { name: tmp, mountPath: /tmp }
           resources:
             requests: { cpu: "1", memory: 512Mi }
@@ -220,8 +220,8 @@ spec:
               echo "importing: $BOOK"
               if ! /lsiopy/bin/beet -c /cfg/config.yaml import -q "$BOOK"; then
                 echo "beet import failed - moving merged output to _unsorted"
-                mkdir -p /media/media/audiobooks/library/_unsorted
-                mv "$BOOK"/* /media/media/audiobooks/library/_unsorted/
+                mkdir -p /data/media/audiobooks/library/_unsorted
+                mv "$BOOK"/* /data/media/audiobooks/library/_unsorted/
                 exit 0
               fi
 
@@ -240,7 +240,7 @@ spec:
               fi
           volumeMounts:
             - { name: work, mountPath: /work }
-            - { name: media, mountPath: /media }
+            - { name: media, mountPath: /data }
             - { name: beets-config, mountPath: /cfg, readOnly: true }
             - { name: beets-home, mountPath: /config }
             - { name: tmp, mountPath: /tmp }
@@ -256,8 +256,8 @@ spec:
           emptyDir: {}
         - name: media
           nfs:
-            server: nas.internal
-            path: /media-root
+            server: 192.168.178.140
+            path: /mnt/user/data
         - name: scripts
           configMap:
             name: audiobook-m4b-scripts
