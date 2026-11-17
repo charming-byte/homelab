@@ -45,7 +45,7 @@ spec:
               CUSTOM_SCRIPT_JSON_PAYLOAD: "true"
               CUSTOM_SCRIPT_PATH_MODE: absolute
               HIDE_LOCAL_AUTH: "true"
-              INGEST_DIR: /media/media/books/ingest
+              INGEST_DIR: /data/media/books/ingest
               OIDC_ADMIN_GROUP: shelfmark Admins
               OIDC_AUTO_PROVISION: "true"
               OIDC_AUTO_REDIRECT: "true"
