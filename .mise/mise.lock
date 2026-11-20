@@ -32,90 +32,90 @@ url_api = "https://api.github.com/repos/FiloSottile/age/releases/assets/53554188
 provenance = "github-attestations"
 
 [[tools.cloudflared]]
-version = "2026.11.0"
+version = "2026.11.1"
 backend = "aqua:cloudflare/cloudflared"
-specifiers = ["2026.11.0"]
+specifiers = ["2026.11.1"]
 
 [tools.cloudflared."platforms.linux-arm64"]
-checksum = "sha256:abe54a006acf9faf2d19ee9d953cb0d0804e92f59c5382a162e57b84d086f56f"
+checksum = "sha256:b155cec3e48e489cfb8e5c602769fb8c771083018d8881d68b4d18a791567c5a"
 checksum_source = "mise-versions"
-url = "https://github.com/cloudflare/cloudflared/releases/download/2026.11.0/cloudflared-linux-arm64"
-url_api = "https://api.github.com/repos/cloudflare/cloudflared/releases/assets/739395569"
+url = "https://github.com/cloudflare/cloudflared/releases/download/2026.11.1/cloudflared-linux-arm64"
+url_api = "https://api.github.com/repos/cloudflare/cloudflared/releases/assets/759527003"
 
 [tools.cloudflared."platforms.linux-x64"]
-checksum = "sha256:51f7c68b57ed7269164075d7e789efce5b59355982f06392deeb037d982a51fd"
+checksum = "sha256:97bb3b02d23a5980fc9c15a1a270e692da1923f103f920d5b16d4931d5ab55e7"
 checksum_source = "mise-versions"
-url = "https://github.com/cloudflare/cloudflared/releases/download/2026.11.0/cloudflared-linux-amd64"
-url_api = "https://api.github.com/repos/cloudflare/cloudflared/releases/assets/739395030"
+url = "https://github.com/cloudflare/cloudflared/releases/download/2026.11.1/cloudflared-linux-amd64"
+url_api = "https://api.github.com/repos/cloudflare/cloudflared/releases/assets/759526142"
 
 [tools.cloudflared."platforms.macos-arm64"]
-checksum = "sha256:8c2f90277ef06a6080bb40b964d33f09f1188102f8798f2e344174b6cf41accf"
+checksum = "sha256:02fe4bcf08f2c09699cff30658228a739a0c47fb75f3653d1b8772a27ade4462"
 checksum_source = "mise-versions"
-url = "https://github.com/cloudflare/cloudflared/releases/download/2026.11.0/cloudflared-darwin-arm64.tgz"
-url_api = "https://api.github.com/repos/cloudflare/cloudflared/releases/assets/739392999"
+url = "https://github.com/cloudflare/cloudflared/releases/download/2026.11.1/cloudflared-darwin-arm64.tgz"
+url_api = "https://api.github.com/repos/cloudflare/cloudflared/releases/assets/759523594"
 
 [tools.cloudflared."platforms.macos-x64"]
-checksum = "sha256:8a59d51120cebbe902f0a8d6e1b7a7fd4f9a5bb4dcb3e0f05872483e75e7db6b"
+checksum = "sha256:5e0403b188dfee71fbd9b995e7dc9910d61b661c52371935ab6475d41185632f"
 checksum_source = "mise-versions"
-url = "https://github.com/cloudflare/cloudflared/releases/download/2026.11.0/cloudflared-darwin-amd64.tgz"
-url_api = "https://api.github.com/repos/cloudflare/cloudflared/releases/assets/739393352"
+url = "https://github.com/cloudflare/cloudflared/releases/download/2026.11.1/cloudflared-darwin-amd64.tgz"
+url_api = "https://api.github.com/repos/cloudflare/cloudflared/releases/assets/759524027"
 
 [[tools.flux2]]
-version = "2.10.0"
+version = "2.10.1"
 backend = "aqua:fluxcd/flux2"
-specifiers = ["2.10.0"]
+specifiers = ["2.10.1"]
 
 [tools.flux2."platforms.linux-arm64"]
-checksum = "sha256:c3c435052e5e18156858bc73f26bcadb62821a6e30951b4b302beb4e65a532c2"
+checksum = "sha256:da18ddb25c9614405d9e2f13ad014fd660bfcbe7218674cabf9325db73f811e2"
 checksum_source = "mise-versions"
-url = "https://github.com/fluxcd/flux2/releases/download/v2.10.0/flux_2.10.0_linux_arm64.tar.gz"
-url_api = "https://api.github.com/repos/fluxcd/flux2/releases/assets/678609576"
+url = "https://github.com/fluxcd/flux2/releases/download/v2.10.1/flux_2.10.1_linux_arm64.tar.gz"
+url_api = "https://api.github.com/repos/fluxcd/flux2/releases/assets/771871016"
 
 [tools.flux2."platforms.linux-x64"]
-checksum = "sha256:208dd7012c04fedeed5b2d0b6e63df3b15b1c34a381527811685c098bc9f8659"
+checksum = "sha256:967365ff84aabc97871827ff33713ef0c09f62dd83c18759e3a5e39adcea9285"
 checksum_source = "mise-versions"
-url = "https://github.com/fluxcd/flux2/releases/download/v2.10.0/flux_2.10.0_linux_amd64.tar.gz"
-url_api = "https://api.github.com/repos/fluxcd/flux2/releases/assets/678609567"
+url = "https://github.com/fluxcd/flux2/releases/download/v2.10.1/flux_2.10.1_linux_amd64.tar.gz"
+url_api = "https://api.github.com/repos/fluxcd/flux2/releases/assets/771871002"
 
 [tools.flux2."platforms.macos-arm64"]
-checksum = "sha256:339c5dba218e2b0a04a0841d1dace6c00d65736dc3286038463fa86754ff6c53"
+checksum = "sha256:c0a8dc285c568905ae38e25074985f3181c82a3c8d66316959561f27a626909d"
 checksum_source = "mise-versions"
-url = "https://github.com/fluxcd/flux2/releases/download/v2.10.0/flux_2.10.0_darwin_arm64.tar.gz"
-url_api = "https://api.github.com/repos/fluxcd/flux2/releases/assets/678609572"
+url = "https://github.com/fluxcd/flux2/releases/download/v2.10.1/flux_2.10.1_darwin_arm64.tar.gz"
+url_api = "https://api.github.com/repos/fluxcd/flux2/releases/assets/771871028"
 
 [tools.flux2."platforms.macos-x64"]
-checksum = "sha256:23fc019f5b682c1ff6841a2ce06798b3c8e17452998cb9c2dd57a6440e6340ff"
+checksum = "sha256:0e083b1a53887ffee1624c67de74eea3ed9d7fd0215efb4b4090c8cc97abb824"
 checksum_source = "mise-versions"
-url = "https://github.com/fluxcd/flux2/releases/download/v2.10.0/flux_2.10.0_darwin_amd64.tar.gz"
-url_api = "https://api.github.com/repos/fluxcd/flux2/releases/assets/678609570"
+url = "https://github.com/fluxcd/flux2/releases/download/v2.10.1/flux_2.10.1_darwin_amd64.tar.gz"
+url_api = "https://api.github.com/repos/fluxcd/flux2/releases/assets/771871014"
 
 [[tools.gh]]
-version = "2.104.0"
+version = "2.105.0"
 backend = "aqua:cli/cli"
-specifiers = ["2.104.0"]
+specifiers = ["2.105.0"]
 
 [tools.gh."platforms.linux-arm64"]
-checksum = "sha256:cb34cefc6f4e77b90731374a2b737516bb8f3033c6ca46aa949e5344f68069e3"
-url = "https://github.com/cli/cli/releases/download/v2.104.0/gh_2.104.0_linux_arm64.tar.gz"
-url_api = "https://api.github.com/repos/cli/cli/releases/assets/740718938"
+checksum = "sha256:b1278c75107423d818f1937fd92cafc9e5e9b606631568f68d7fb816f5885a02"
+url = "https://github.com/cli/cli/releases/download/v2.105.0/gh_2.105.0_linux_arm64.tar.gz"
+url_api = "https://api.github.com/repos/cli/cli/releases/assets/761188590"
 provenance = "github-attestations"
 
 [tools.gh."platforms.linux-x64"]
-checksum = "sha256:98cb101ad87dbbd3f6b2f2bfcbd43197ccd07643140121d8a9cfaa91eadbc24e"
-url = "https://github.com/cli/cli/releases/download/v2.104.0/gh_2.104.0_linux_amd64.tar.gz"
-url_api = "https://api.github.com/repos/cli/cli/releases/assets/740718892"
+checksum = "sha256:79e7ab5db738c48777b696e374f8b428f0647debfb424f44d2f426370407fe2f"
+url = "https://github.com/cli/cli/releases/download/v2.105.0/gh_2.105.0_linux_amd64.tar.gz"
+url_api = "https://api.github.com/repos/cli/cli/releases/assets/761188566"
 provenance = "github-attestations"
 
 [tools.gh."platforms.macos-arm64"]
-checksum = "sha256:23b12706219b9892e44236f988444a24adcf29284e16b35e03ba5b863fb6eb8e"
-url = "https://github.com/cli/cli/releases/download/v2.104.0/gh_2.104.0_macOS_arm64.zip"
-url_api = "https://api.github.com/repos/cli/cli/releases/assets/740719079"
+checksum = "sha256:2a5d03103ae444927383b93d9ffd65579a26e2eb900ce1cf11f55258d5319ded"
+url = "https://github.com/cli/cli/releases/download/v2.105.0/gh_2.105.0_macOS_arm64.zip"
+url_api = "https://api.github.com/repos/cli/cli/releases/assets/761188673"
 provenance = "github-attestations"
 
 [tools.gh."platforms.macos-x64"]
-checksum = "sha256:a8c2a708dbae89dc7c05ba7b0beafc95bd8d09ab4a3505467b77d32ebf364dc6"
-url = "https://github.com/cli/cli/releases/download/v2.104.0/gh_2.104.0_macOS_amd64.zip"
-url_api = "https://api.github.com/repos/cli/cli/releases/assets/740719067"
+checksum = "sha256:23602cbccbbdc6285a8520745b714cb927ce2ca621779373c2a20cd8e33fda66"
+url = "https://github.com/cli/cli/releases/download/v2.105.0/gh_2.105.0_macOS_amd64.zip"
+url_api = "https://api.github.com/repos/cli/cli/releases/assets/761188667"
 provenance = "github-attestations"
 
 [[tools."github:mitsuhiko/minijinja"]]
