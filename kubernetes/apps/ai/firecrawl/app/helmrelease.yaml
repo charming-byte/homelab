@@ -43,7 +43,7 @@ spec:
                   name: "{{ .Release.Name }}-secret"
             image: &image
               repository: ghcr.io/firecrawl/firecrawl
-              tag: 2.11.743@sha256:41871c2290a498de7fd1456c7c869bc0345f45646a410daa8fc1e128372ce7a6
+              tag: 2.11.809@sha256:e12baea631bc48c30566403166192735c2e31b0232aed81274c9a6dea67d1d19
             probes:
               liveness:
                 custom: true
