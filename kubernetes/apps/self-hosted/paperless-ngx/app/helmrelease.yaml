@@ -36,6 +36,7 @@ spec:
               PAPERLESS_REDIS_PREFIX: paperless-
               PAPERLESS_TIME_ZONE: Europe/Berlin
               PAPERLESS_URL: https://paperless.${SECRET_DOMAIN}
+              PAPERLESS_ALLOWED_HOSTS: paperless-ngx.self-hosted.svc.cluster.local
               S6_READ_ONLY_ROOT: 1
               S6_YES_I_WANT_A_WORLD_WRITABLE_RUN_BECAUSE_KUBERNETES: 1
               USERMAP_UID: 1000
@@ -50,6 +51,9 @@ spec:
                   httpGet:
                     path: /
                     port: 8000
+                    httpHeaders:
+                      - name: Host
+                        value: localhost
                   initialDelaySeconds: 120
                   failureThreshold: 3
                   periodSeconds: 60
