@@ -327,7 +327,7 @@ spec:
               RABBITMQ_DEFAULT_USER: firecrawl
             image:
               repository: docker.io/library/rabbitmq
-              tag: 4.4.1-alpine@sha256:6bf98f3f634a57951103efe3e9ff866b5d8b3faa35cc7be12b2ce052d8367a12
+              tag: 4.4.1-alpine@sha256:a6b49ed79df2bc842eb3df93bdf5250d1abed236350b3e4560932e805253946c
             resources:
               limits:
                 memory: 512Mi
